@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quintal do Carmo • Escala 5x2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0807;--wood1:#2a1711;--wood2:#4a2a22;--wood3:#8b5e3c;--wood4:#c49a6c;--neon:#c3dc2f;--glow:rgba(195,220,47,.55);--text:#f3ece4;--muted:#a8968a;--danger:#ff6b5a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',system-ui,sans-serif;color:var(--text);min-height:100vh;
+background:radial-gradient(1200px 600px at 10% -10%,#3a1f16 0,transparent 60%),repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 2px,transparent 2px 6px),var(--bg)}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo svg{width:46px;height:46px;filter:drop-shadow(0 0 6px var(--glow))}
+.brand{font-weight:600;letter-spacing:.18em;color:var(--neon);text-shadow:0 0 10px var(--glow);font-size:20px}
+.sub{color:var(--muted);font-size:12px;letter-spacing:.08em}
+.card{background:linear-gradient(160deg,var(--wood1),#1a0f0b);border:1px solid var(--wood2);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card h2{font-size:20px;font-weight:600;margin-bottom:6px}
+.card h3{font-size:16px;font-weight:500;margin-bottom:10px;color:var(--wood4)}
+.muted{color:var(--muted);font-size:14px;margin-bottom:12px}
+.login{max-width:460px;margin:30px auto}
+.inp,select{width:100%;padding:12px 14px;background:#120b08;border:1px solid var(--wood3);border-radius:10px;color:var(--text);font:inherit;margin-bottom:12px}
+.inp:focus,select:focus{outline:none;border-color:var(--neon);box-shadow:0 0 0 2px var(--glow)}
+td .inp,td select{margin:0;padding:8px 10px}
+.btn{background:var(--neon);color:#10140a;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer;box-shadow:0 0 14px var(--glow)}
+.btn:hover{filter:brightness(1.08)}
+.btn.sm{padding:7px 12px;font-size:14px}
+.btn.ghost{background:transparent;color:var(--neon);border:1px solid var(--neon);box-shadow:none}
+.btn.dng{background:transparent;color:var(--danger);border:1px solid var(--danger);box-shadow:none}
+.seg{display:flex;gap:6px;margin-bottom:16px;background:#120b08;padding:5px;border-radius:12px}
+.seg button{flex:1;padding:10px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:inherit;cursor:pointer}
+.seg button.on{background:var(--wood2);color:var(--neon)}
+.err{color:var(--danger);font-size:14px;margin-top:10px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{padding:9px 16px;border-radius:999px;border:1px solid var(--wood2);background:var(--wood1);color:var(--muted);font:inherit;cursor:pointer}
+.tabs button.on{color:#10140a;background:var(--neon);border-color:var(--neon);box-shadow:0 0 12px var(--glow)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--wood1);border:1px solid var(--wood2);border-radius:14px;padding:14px}
+.stat b{display:block;font-size:30px;color:var(--neon);text-shadow:0 0 10px var(--glow);font-weight:600}
+.stat span{color:var(--muted);font-size:13px}
+.nav{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.wl{font-weight:500;color:var(--wood4)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:14px 0}
+.day{border-radius:12px;padding:12px 4px;text-align:center;border:1px solid var(--wood2)}
+.day .dn{font-weight:600;font-size:15px}.day .dd{font-size:12px;color:var(--muted);margin-bottom:8px}.day .st{font-size:11px;font-weight:600;letter-spacing:.05em}
+.day.on{background:rgba(195,220,47,.1);border-color:rgba(195,220,47,.4)}.day.on .st{color:var(--neon)}
+.day.off{background:var(--wood2);border-color:var(--wood3)}.day.off .st{color:var(--wood4)}
+.day.today{box-shadow:0 0 0 2px var(--neon),0 0 14px var(--glow)}
+.scroll{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:9px 8px;text-align:center;border-bottom:1px solid var(--wood2)}
+.tbl th{color:var(--wood4);font-weight:500}.tbl td:first-child,.tbl th:first-child{text-align:left}
+.pill{display:inline-block;min-width:54px;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.on{background:rgba(195,220,47,.14);color:var(--neon)}
+.pill.off{background:var(--wood3);color:#fff}
+.pill.sun{background:var(--wood4);color:#1a0f0b}
+.bad{color:var(--danger);font-weight:600}
+.chk{padding:8px 0;border-bottom:1px solid var(--wood2);font-size:14px}
+.chk.ok::before{content:"✓ ";color:var(--neon)}.chk.no::before{content:"! ";color:var(--danger);font-weight:700}
+.chart{position:relative;height:300px}
+textarea.inp{height:140px;font-family:monospace;font-size:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.row .inp{flex:1;min-width:180px;margin:0}
+.min{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+.min label{font-size:13px;color:var(--muted)}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--neon);color:#10140a;padding:10px 18px;border-radius:999px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+#toast.show{opacity:1}
+@media(max-width:640px){.days{grid-template-columns:repeat(4,1fr)}.wrap{padding:12px}}
+@media print{body{background:#fff;color:#000}.noprint{display:none!important}.card{background:#fff;border:1px solid #999;box-shadow:none}.tbl th,.tbl td{color:#000;border-color:#999}.pill{border:1px solid #666;background:#fff!important;color:#000!important}.brand{color:#000;text-shadow:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+var DAYS=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+var SH=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+var STORE='qdc_escala_v2', MGR_KEY='qdc_mgr_hash';
+var EPOCH=Date.UTC(2026,0,4); // um domingo
+var HORIZON=12;
+var NAMES=['Carlos','Ana','Bruno','Daniela','Eduardo','Fernanda','Gustavo','Helena','Igor','Juliana','Lucas','Mariana','Nelson','Patrícia','Rafael'];
+var LOGO='<svg viewBox="0 0 48 48" fill="none" stroke="#c3dc2f" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="23" r="12"/><path d="M28 29l8 9"/></svg>';
+var S=null, pub=null;
+var view={role:null,mode:'emp',tab:'painel',week:0,empId:null,err:null,chart:null};
+
+/* ---------- utilidades ---------- */
+function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/\s+/g,' ');}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&','<':'<','>':'>','"':'&quot;',"'":'&#39;'}[c];});}
+function pad(n){return (n<10?'0':'')+n;}
+function curWeekIdx(){var n=new Date();var d=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((d-n.getDay()*864e5-EPOCH)/(7*864e5));}
+function fmt(w,i){var d=new Date(EPOCH+(w*7+i)*864e5);return pad(d.getUTCDate())+'/'+pad(d.getUTCMonth()+1);}
+function isoOf(w,i){return new Date(EPOCH+(w*7+i)*864e5).toISOString().slice(0,10);}
+function todayIso(){var n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());}
+function val(id){var e=document.getElementById(id);return e?e.value:'';}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='show';setTimeout(function(){t.className='';},2200);}
+function hash(s){var h=5381;s='qdc|'+s;for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return String(h);}
+function getMgr(){try{return localStorage.getItem(MGR_KEY)||'';}catch(e){return '';}}
+function setMgr(h){try{localStorage.setItem(MGR_KEY,h);}catch(e){}}
+
+/* ---------- estado ---------- */
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S));}catch(e){}}
+function defaultState(){
+  var st={employees:[],mins:[10,7,7,8,9,12,12],sundayEvery:3,nextId:1};
+  NAMES.forEach(function(n){st.employees.push({id:st.nextId++,name:n,fixedOff:0,female:false,phase:0});});
+  autoFixed(st,true);autoPhases(st);
+  return st;
+}
+function load(){
+  try{var r=localStorage.getItem(STORE);if(r){S=JSON.parse(r);return;}}catch(e){}
+  S=defaultState();save();
+}
+
+/* ---------- motor da escala ---------- */
+function everyOf(st,e){return e.female?Math.min(2,st.sundayEvery):st.sundayEvery;}
+function isSunOff(st,e,w){var k=everyOf(st,e);return (((w+e.phase)%k)+k)%k===0;}
+
+// Distribui a folga fixa (segunda a sábado) pelos dias com mais folga de cobertura
+function autoFixed(st,reset){
+  var n=st.employees.length,cnt=[0,0,0,0,0,0,0];
+  if(reset)st.employees.forEach(function(e){e.fixedOff=0;});
+  st.employees.forEach(function(e){if(e.fixedOff)cnt[e.fixedOff]++;});
+  st.employees.forEach(function(e){
+    if(e.fixedOff)return;
+    var best=1,bs=-1e9;
+    for(var d=1;d<=6;d++){var sc=(n-cnt[d])-st.mins[d];if(sc>bs){bs=sc;best=d;}}
+    e.fixedOff=best;cnt[best]++;
+  });
+}
+
+// Distribui o rodízio de domingos para equilibrar quantos folgam em cada domingo
+function autoPhases(st){
+  var base=curWeekIdx(),load=[],i;
+  for(i=0;i<HORIZON;i++)load.push(0);
+  var list=st.employees.slice().sort(function(a,b){return everyOf(st,a)-everyOf(st,b);});
+  list.forEach(function(e){
+    var k=everyOf(st,e),bp=0,bm=1e9,p,v,mx;
+    for(p=0;p<k;p++){
+      mx=0;
+      for(i=0;i<HORIZON;i++){v=load[i]+((((base+i+p)%k)+k)%k===0?1:0);if(v>mx)mx=v;}
+      if(mx<bm){bm=mx;bp=p;}
+    }
+    e.phase=bp;
+    for(i=0;i<HORIZON;i++){if((((base+i+bp)%k)+k)%k===0)load[i]++;}
+  });
+}
+
+// Monta uma semana: folga fixa + (domingo OU segunda folga automática)
+function buildWeek(st,w){
+  var n=st.employees.length,off=[0,0,0,0,0,0,0],res={};
+  if(!n)return {off:res,work:off};
+  st.employees.forEach(function(e){
+    res[e.id]=[e.fixedOff];off[e.fixedOff]++;
+    if(isSunOff(st,e,w)){res[e.id].push(0);off[0]++;}
+  });
+  var rot=((w%n)+n)%n;
+  var order=st.employees.slice(rot).concat(st.employees.slice(0,rot));
+  order.forEach(function(e){
+    if(res[e.id].length>=2)return;
+    var best=-1,bs=-1e9;
+    for(var d=1;d<=6;d++){
+      if(d===e.fixedOff)continue;
+      var sc=(n-off[d])-st.mins[d]+(Math.abs(d-e.fixedOff)===1?0.5:0);
+      if(sc>bs){bs=sc;best=d;}
+    }
+    res[e.id].push(best);off[best]++;
+  });
+  return {off:res,work:off.map(function(x){return n-x;})};
+}
+
+// Confere as regras nas próximas semanas
+function checkRules(st,w0,cnt){
+  var out=[],wks=[],i,d;
+  for(i=0;i<cnt;i++)wks.push(buildWeek(st,w0+i));
+  var worst=[0,0,0,0,0,0,0];
+  wks.forEach(function(wk){wk.work.forEach(function(c,d){var df=st.mins[d]-c;if(df>worst[d])worst[d]=df;});});
+  var cov=[];worst.forEach(function(x,d){if(x>0)cov.push(SH[d]+' (faltam '+x+')');});
+  out.push(cov.length?{ok:false,t:'Cobertura abaixo do mínimo: '+cov.join(', ')+'. Ajuste folgas fixas ou os mínimos.'}:{ok:true,t:'Cobertura mínima atendida em todos os dias das próximas '+cnt+' semanas.'});
+  var mx=0,sunBad=false,twoOk=true;
+  st.employees.forEach(function(e){
+    var r=0,sr=0,lim=e.female?1:2;
+    wks.forEach(function(wk){
+      var o=wk.off[e.id];
+      if(o.length!==2||o[0]===o[1])twoOk=false;
+      for(d=0;d<7;d++){
+        var isOff=o.indexOf(d)>-1;
+        if(isOff)r=0;else{r++;if(r>mx)mx=r;}
+        if(d===0){if(isOff)sr=0;else{sr++;if(sr>lim)sunBad=true;}}
+      }
+    });
+  });
+  out.push(twoOk?{ok:true,t:'Todos os colaboradores têm 5 dias de trabalho e 2 de folga em cada semana.'}:{ok:false,t:'Há semana sem exatamente 2 folgas.'});
+  out.push(mx<=6?{ok:true,t:'Ninguém passa de 6 dias seguidos sem folga (máximo encontrado: '+mx+').'}:{ok:false,t:'Há colaborador com '+mx+' dias seguidos sem folga.'});
+  out.push(!sunBad?{ok:true,t:'Domingo de folga garantido: ao menos 1 a cada 3 semanas (1 a cada 2 para mulheres).'}:{ok:false,t:'Rodízio de domingo fora do mínimo. Use "Redistribuir domingos".'});
+  return out;
+}
+
+/* ---------- fonte de dados (publicada ou local) ---------- */
+function source(){
+  if(pub&&pub.employees&&pub.weeks&&pub.weeks.length){
+    return {local:false,emps:pub.employees,lo:pub.startWeek,hi:pub.startWeek+pub.weeks.length-1,updated:pub.updated,wk:function(w){return pub.weeks[w-pub.startWeek];}};
+  }
+  var c=curWeekIdx();
+  return {local:true,emps:S.employees,lo:c,hi:c+HORIZON-1,updated:null,wk:function(w){return buildWeek(S,w);}};
+}
+function findEmp(list,name){
+  var q=norm(name);if(!q)return null;
+  var ex=list.filter(function(e){return norm(e.name)===q;});
+  if(ex.length===1)return ex[0];
+  var pre=list.filter(function(e){return norm(e.name).indexOf(q)===0;});
+  if(pre.length===1&&q.length>=3)return pre[0];
+  return null;
+}
+function buildPub(){
+  var s=curWeekIdx(),weeks=[],i;
+  for(i=0;i<HORIZON;i++){var b=buildWeek(S,s+i);weeks.push({off:b.off,work:b.work});}
+  return {updated:new Date().toISOString(),startWeek:s,employees:S.employees.map(function(e){return {id:e.id,name:e.name,fixedOff:e.fixedOff};}),weeks:weeks};
+}
+
+/* ---------- telas ---------- */
+function header(right){
+  return '<div class="top"><div class="logo">'+LOGO+'<div><div class="brand">QUINTAL DO CARMO</div><div class="sub">Chopp, Petisco & Winebar • Escala 5x2</div></div></div><div class="noprint" style="margin-left:auto">'+(right||'')+'</div></div>';
+}
+
+function loginView(){
+  var m=view.mode,hasP=!!getMgr();
+  var h=header('');
+  h+='<div class="card login"><div class="seg"><button class="'+(m==='emp'?'on':'')+'" data-act="mode" data-v="emp">Sou funcionário</button><button class="'+(m==='mgr'?'on':'')+'" data-act="mode" data-v="mgr">Sou gestor</button></div>';
+  if(m==='emp'){
+    h+='<h2>Veja sua escala da semana</h2><p class="muted">Digite seu nome para ver seus dias de trabalho e de folga.</p><input id="inName" class="inp" placeholder="Seu nome" autocomplete="off"><button class="btn" data-act="loginEmp">Ver minha escala</button>';
+  }else{
+    h+='<h2>Área do gestor</h2>';
+    if(hasP){h+='<p class="muted">Digite a senha para organizar a escala.</p><input id="inPass" type="password" class="inp" placeholder="Senha"><button class="btn" data-act="loginMgr">Entrar</button>';}
+    else{h+='<p class="muted">Primeiro acesso: crie uma senha de gestor (mínimo 6 caracteres). Ela fica salva só neste aparelho.</p><input id="inPass" type="password" class="inp" placeholder="Nova senha"><input id="inPass2" type="password" class="inp" placeholder="Repita a senha"><button class="btn" data-act="loginMgr">Criar senha e entrar</button>';}
+  }
+  if(view.err)h+='<div class="err">'+esc(view.err)+'</div>';
+  return h+'</div>';
+}
+
+function empView(){
+  var src=source(),e=null,i;
+  for(i=0;i<src.emps.length;i++){if(src.emps[i].id===view.empId)e=src.emps[i];}
+  if(!e){view.role=null;return loginView();}
+  var c=curWeekIdx();
+  var w=Math.min(Math.max(view.week,src.lo),src.hi);view.week=w;
+  var wk=src.wk(w),off=(wk&&wk.off[e.id])||[];
+  var h=header('<button class="btn ghost sm" data-act="logout">Sair</button>');
+  h+='<div class="card"><h2>Olá, '+esc(e.name)+'</h2><p class="muted">Sua escala de domingo a sábado. As folgas são definidas pela gerência.</p>';
+  h+='<div class="nav"><button class="btn sm ghost" data-act="wk" data-v="-1">←</button><span class="wl">Semana de '+fmt(w,0)+' a '+fmt(w,6)+'</span><button class="btn sm ghost" data-act="wk" data-v="1">→</button><button class="btn sm ghost" data-act="wk0">Esta semana</button></div><div class="days">';
+  var ti=todayIso();
+  for(i=0;i<7;i++){
+    var o=off.indexOf(i)>-1;
+    h+='<div class="day '+(o?'off':'on')+(isoOf(w,i)===ti?' today':'')+'"><div class="dn">'+SH[i]+'</div><div class="dd">'+fmt(w,i)+'</div><div class="st">'+(o?'FOLGA':'TRABALHA')+'</div></div>';
+  }
+  h+='</div>';
+  var nextSun='-';
+  for(var k=Math.max(c,src.lo);k<=src.hi;k++){var x=src.wk(k);if(x&&x.off[e.id]&&x.off[e.id].indexOf(0)>-1&&isoOf(k,0)>=ti){nextSun=fmt(k,0);break;}}
+  h+='<div class="stats"><div class="stat"><b>'+(7-off.length)+' / '+off.length+'</b><span>dias de trabalho / folga nesta semana</span></div><div class="stat"><b>'+SH[e.fixedOff]+'</b><span>sua folga fixa ('+DAYS[e.fixedOff]+')</span></div><div class="stat"><b>'+nextSun+'</b><span>próximo domingo de folga</span></div></div>';
+  if(c>src.hi)h+='<div class="err">A escala publicada está desatualizada. Fale com o gestor.</div>';
+  h+='<p class="muted">'+(src.local?'Modo demonstração: dados deste aparelho.':'Escala publicada em '+new Date(src.updated).toLocaleString('pt-BR')+'.')+'</p></div>';
+  return h;
+}
+
+function weekNav(){
+  var w=view.week;
+  return '<div class="nav noprint"><button class="btn sm ghost" data-act="wk" data-v="-1">←</button><span class="wl">Semana de '+fmt(w,0)+' a '+fmt(w,6)+'</span><button class="btn sm ghost" data-act="wk" data-v="1">→</button><button class="btn sm ghost" data-act="wk0">Hoje</button></div>';
+}
+
+function mgrView(){
+  var tabs=[['painel','Painel'],['escala','Escala'],['equipe','Equipe'],['regras','Regras'],['publicar','Publicar']];
+  var h=header('<button class="btn ghost sm" data-act="logout">Sair</button>');
+  h+='<div class="tabs noprint">'+tabs.map(function(t){return '<button class="'+(view.tab===t[0]?'on':'')+'" data-act="tab" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
+  if(view.tab==='painel')h+=tabPainel();
+  else if(view.tab==='escala')h+=tabEscala();
+  else if(view.tab==='equipe')h+=tabEquipe();
+  else if(view.tab==='regras')h+=tabRegras();
+  else h+=tabPublicar();
+  return h;
+}
+
+function tabPainel(){
+  var rules=checkRules(S,curWeekIdx(),HORIZON),bad=rules.filter(function(r){return !r.ok;}).length;
+  var h='<div class="stats"><div class="stat"><b>'+S.employees.length+'</b><span>colaboradores</span></div><div class="stat"><b>5x2</b><span>5 dias de trabalho, 2 de folga</span></div><div class="stat"><b>1 / '+S.sundayEvery+'</b><span>domingo de folga a cada '+S.sundayEvery+' semanas</span></div><div class="stat"><b class="'+(bad?'bad':'')+'">'+bad+'</b><span>alertas de regra</span></div></div>';
+  h+='<div class="card"><h3>Cobertura da semana</h3>'+weekNav()+'<div class="chart"><canvas id="cv"></canvas></div></div>';
+  h+='<div class="card"><h3>Checagem das regras (próximas '+HORIZON+' semanas)</h3>'+rules.map(function(r){return '<div class="chk '+(r.ok?'ok':'no')+'">'+esc(r.t)+'</div>';}).join('')+'</div>';
+  return h;
+}
+
+function tabEscala(){
+  var b=buildWeek(S,view.week),w=view.week,i;
+  var h='<div class="card"><h3>Escala de domingo a sábado</h3>'+weekNav()+'<div class="scroll"><table class="tbl"><thead><tr><th>Colaborador</th>';
+  for(i=0;i<7;i++)h+='<th>'+SH[i]+'<br><small>'+fmt(w,i)+'</small></th>';
+  h+='</tr></thead><tbody>';
+  S.employees.forEach(function(e){
+    h+='<tr><td>'+esc(e.name)+'</td>';
+    var o=b.off[e.id];
+    for(i=0;i<7;i++){
+      var isOff=o.indexOf(i)>-1;
+      h+='<td>'+(isOff?'<span class="pill '+(i===0?'sun':'off')+'">Folga</span>':'<span class="pill on">Trab.</span>')+'</td>';
+    }
+    h+='</tr>';
+  });
+  h+='</tbody><tfoot><tr><td><b>Trabalhando</b></td>';
+  for(i=0;i<7;i++)h+='<td class="'+(b.work[i]<S.mins[i]?'bad':'')+'">'+b.work[i]+'</td>';
+  h+='</tr><tr><td>Mínimo</td>';
+  for(i=0;i<7;i++)h+='<td>'+S.mins[i]+'</td>';
+  h+='</tr></tfoot></table></div><div class="row noprint" style="margin-top:14px"><button class="btn" data-act="print">Imprimir escala</button></div></div>';
+  return h;
+}
+
+function tabEquipe(){
+  var c=curWeekIdx();
+  var h='<div class="card"><h3>Equipe e folgas fixas</h3><p class="muted">Troque a folga fixa de alguém (segunda a sábado) e o sistema recalcula toda a escala automaticamente. O domingo segue o rodízio.</p><div class="scroll"><table class="tbl"><thead><tr><th>Nome</th><th>Folga fixa</th><th>Mulher</th><th>Próximos domingos de folga</th><th></th></tr></thead><tbody>';
+  S.employees.forEach(function(e){
+    var sel='';for(var d=1;d<=6;d++)sel+='<option value="'+d+'"'+(e.fixedOff===d?' selected':'')+'>'+DAYS[d]+'</option>';
+    var suns=[];for(var k=c;k<c+HORIZON&&suns.length<3;k++){if(isSunOff(S,e,k)&&isoOf(k,0)>=todayIso())suns.push(fmt(k,0));}
+    h+='<tr><td><input class="inp" data-chg="name" data-id="'+e.id+'" value="'+esc(e.name)+'"></td><td><select data-chg="fixed" data-id="'+e.id+'">'+sel+'</select></td><td><input type="checkbox" data-chg="fem" data-id="'+e.id+'"'+(e.female?' checked':'')+'></td><td>'+suns.join(' • ')+'</td><td><button class="btn dng sm" data-act="rm" data-id="'+e.id+'">Remover</button></td></tr>';
+  });
+  h+='</tbody></table></div><div class="row" style="margin-top:14px"><input id="newName" class="inp" placeholder="Nome do novo colaborador"><button class="btn" data-act="add">Adicionar</button></div>';
+  h+='<div class="row"><button class="btn ghost" data-act="refixed">Redistribuir folgas fixas</button><button class="btn ghost" data-act="rephase">Redistribuir domingos</button></div></div>';
+  return h;
+}
+
+function tabRegras(){
+  var h='<div class="card"><h3>Mínimo de pessoas trabalhando por dia</h3><div class="min">';
+  for(var d=0;d<7;d++)h+='<div><label>'+SH[d]+'</label><input class="inp" type="number" min="0" max="'+S.employees.length+'" data-chg="min" data-d="'+d+'" value="'+S.mins[d]+'"></div>';
+  h+='</div></div><div class="card"><h3>Rodízio de domingo</h3><select data-chg="every"><option value="3"'+(S.sundayEvery===3?' selected':'')+'>Domingo de folga a cada 3 semanas (padrão)</option><option value="2"'+(S.sundayEvery===2?' selected':'')+'>Domingo de folga a cada 2 semanas</option></select></div>';
+  h+='<div class="card"><h3>Regras aplicadas</h3><div class="chk ok">Todo colaborador tem 5 dias de trabalho e 2 de folga por semana.</div><div class="chk ok">A folga fixa só pode ser de segunda a sábado. O domingo é controlado pelo rodízio.</div><div class="chk ok">Domingo: ao menos 1 folga a cada 3 semanas (Lei 10.101/2000, art. 6, comércio em geral) e a cada 2 semanas para mulheres (CLT, art. 386).</div><div class="chk ok">Nenhum colaborador passa de 6 dias seguidos sem folga.</div><div class="chk no">Pendente: a convenção coletiva do SINTHORESSARA ainda não foi incorporada. Ela pode exigir regras mais favoráveis, como mais domingos de folga, regras para feriados ou adicionais. Confira com o contador ou jurídico.</div><div class="chk no">Não controlado: horário diário, intervalos, interjornada de 11h, feriados e banco de horas.</div></div>';
+  return h;
+}
+
+function tabPublicar(){
+  var json=JSON.stringify(buildPub());
+  return '<div class="card"><h3>Publicar escala para os funcionários</h3><p class="muted">Os dados do gestor ficam neste aparelho. Para os funcionários verem a escala no celular deles, publique o arquivo abaixo: baixe o <b>escala.json</b> e envie para o mesmo repositório do GitHub (Add file → Upload files → Commit changes). Repita sempre que alterar a escala. O arquivo cobre '+HORIZON+' semanas. Atenção: em repositório público, nomes e escalas ficam visíveis para quem tiver o link.</p><textarea id="pubTxt" class="inp" readonly>'+esc(json)+'</textarea><div class="row"><button class="btn" data-act="dl">Baixar escala.json</button><button class="btn ghost" data-act="copy">Copiar conteúdo</button></div></div>';
+}
+
+/* ---------- gráfico ---------- */
+function drawChart(){
+  var cv=document.getElementById('cv');if(!cv||typeof Chart==='undefined')return;
+  if(view.chart){view.chart.destroy();view.chart=null;}
+  var b=buildWeek(S,view.week),n=S.employees.length;
+  view.chart=new Chart(cv,{data:{labels:SH,datasets:[
+    {type:'bar',label:'Trabalhando',data:b.work,backgroundColor:'rgba(195,220,47,.75)',borderColor:'#c3dc2f',borderWidth:1,borderRadius:6},
+    {type:'bar',label:'Folgando',data:b.work.map(function(x){return n-x;}),backgroundColor:'rgba(139,94,60,.8)',borderRadius:6},
+    {type:'line',label:'Mínimo',data:S.mins,borderColor:'#c49a6c',backgroundColor:'#c49a6c',borderDash:[6,4],pointRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#f3ece4'}}},scales:{x:{ticks:{color:'#a8968a'},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#a8968a',precision:0},grid:{color:'rgba(255,255,255,.06)'}}}}});
+}
+
+/* ---------- render e eventos ---------- */
+function render(){
+  var h=view.role==='mgr'?mgrView():(view.role==='emp'?empView():loginView());
+  document.getElementById('app').innerHTML='<div class="wrap">'+h+'</div>';
+  if(view.role==='mgr'&&view.tab==='painel')drawChart();
+}
+function getEmp(id){for(var i=0;i<S.employees.length;i++){if(S.employees[i].id===id)return S.employees[i];}return null;}
+function recalc(){save();render();toast('Escala recalculada');}
+
+function act(a,id,v){
+  var c=curWeekIdx(),lo,hi;
+  if(a==='mode'){view.mode=v;view.err=null;render();}
+  else if(a==='loginEmp'){
+    var e=findEmp(source().emps,val('inName'));
+    if(!e){view.err='Nome não encontrado. Digite seu nome como está na escala (nome e sobrenome, se houver repetido).';render();return;}
+    view.role='emp';view.empId=e.id;view.week=c;view.err=null;render();
+  }
+  else if(a==='loginMgr'){
+    var p=val('inPass'),hv=getMgr();
+    if(!hv){
+      if(p.length<6){view.err='A senha precisa ter pelo menos 6 caracteres.';render();return;}
+      if(p!==val('inPass2')){view.err='As senhas não conferem.';render();return;}
+      setMgr(hash(p));
+    }else if(hash(p)!==hv){view.err='Senha incorreta.';render();return;}
+    view.role='mgr';view.tab='painel';view.week=c;view.err=null;render();
+  }
+  else if(a==='logout'){view.role=null;view.empId=null;view.err=null;render();}
+  else if(a==='tab'){view.tab=v;render();}
+  else if(a==='wk'){
+    if(view.role==='mgr'){lo=c-4;hi=c+HORIZON-1;}else{var s=source();lo=s.lo;hi=s.hi;}
+    view.week=Math.min(Math.max(view.week+parseInt(v,10),lo),hi);render();
+  }
+  else if(a==='wk0'){view.week=c;render();}
+  else if(a==='print'){window.print();}
+  else if(a==='add'){
+    var nm=val('newName').trim();if(!nm)return;
+    var ne={id:S.nextId++,name:nm,fixedOff:0,female:false,phase:0};
+    S.employees.push(ne);autoFixed(S,false);autoPhases(S);recalc();
+  }
+  else if(a==='rm'){
+    var em=getEmp(id);
+    if(em&&confirm('Remover '+em.name+' da escala?')){S.employees=S.employees.filter(function(x){return x.id!==id;});recalc();}
+  }
+  else if(a==='refixed'){if(confirm('Redistribuir as folgas fixas de todos?')){autoFixed(S,true);recalc();}}
+  else if(a==='rephase'){autoPhases(S);recalc();}
+  else if(a==='dl'){
+    var blob=new Blob([JSON.stringify(buildPub())],{type:'application/json'});
+    var l=document.createElement('a');l.href=URL.createObjectURL(blob);l.download='escala.json';document.body.appendChild(l);l.click();document.body.removeChild(l);
+  }
+  else if(a==='copy'){
+    var t=document.getElementById('pubTxt');t.select();
+    try{document.execCommand('copy');toast('Conteúdo copiado');}catch(e2){toast('Selecione e copie manualmente');}
+  }
+}
+
+function onChange(el){
+  var k=el.getAttribute('data-chg'),id=parseInt(el.getAttribute('data-id'),10),e=getEmp(id);
+  if(k==='name'&&e){
+    var nm=el.value.trim();if(!nm){render();return;}
+    e.name=nm;
+    var dup=S.employees.filter(function(x){return norm(x.name)===norm(nm);}).length>1;
+    save();toast(dup?'Atenção: há nomes repetidos. Use sobrenome.':'Nome salvo');
+  }
+  else if(k==='fixed'&&e){e.fixedOff=parseInt(el.value,10);recalc();}
+  else if(k==='fem'&&e){e.female=el.checked;autoPhases(S);recalc();}
+  else if(k==='min'){
+    var d=parseInt(el.getAttribute('data-d'),10),n=parseInt(el.value,10);
+    S.mins[d]=isNaN(n)||n<0?0:n;recalc();
+  }
+  else if(k==='every'){S.sundayEvery=parseInt(el.value,10);autoPhases(S);recalc();}
+}
+
+document.addEventListener('click',function(ev){
+  var el=ev.target.closest('[data-act]');if(!el)return;
+  act(el.getAttribute('data-act'),parseInt(el.getAttribute('data-id'),10),el.getAttribute('data-v'));
+});
+document.addEventListener('change',function(ev){
+  if(ev.target.hasAttribute&&ev.target.hasAttribute('data-chg'))onChange(ev.target);
+});
+document.addEventListener('keydown',function(ev){
+  if(ev.key!=='Enter'||ev.target.tagName!=='INPUT')return;
+  var id=ev.target.id,b=null;
+  if(id==='inName')b=document.querySelector('[data-act="loginEmp"]');
+  else if(id==='inPass'||id==='inPass2')b=document.querySelector('[data-act="loginMgr"]');
+  else if(id==='newName')b=document.querySelector('[data-act="add"]');
+  if(b)b.click();
+});
+
+/* ---------- início (sempre por último) ---------- */
+function init(){
+  load();
+  view.week=curWeekIdx();
+  render();
+  try{
+    fetch('escala.json?t='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(j){
+      if(j&&j.weeks){pub=j;if(view.role===null||view.role==='emp')render();}
+    }).catch(function(){});
+  }catch(e){}
+}
+init();
+</script>
+</body>
+</html>
