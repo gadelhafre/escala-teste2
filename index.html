@@ -45,15 +45,52 @@
 
 <script>
 // ---------- Parâmetros do modelo (ajuste conforme calibrar com pesagens) ----------
-// Quanto da quantidade preparada foi, de fato, consumido (estimativa), conforme o resultado.
 const FATOR = { sobrou_muito: 0.75, sobrou_pouco: 0.92, medida: 1.0, faltou: 1.12 };
 const ROTULO = { sobrou_muito: 'Sobrou muito', sobrou_pouco: 'Sobrou pouco', medida: 'Na medida', faltou: 'Faltou' };
-const MAX_COMPARAVEIS = 6;   // quantos dias comparáveis entram na conta
-const MIN_COMPARAVEIS = 2;   // mínimo para sugerir
+const MAX_COMPARAVEIS = 6;
+const MIN_COMPARAVEIS = 2;
 const DIAS = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
 
+// ---------- Dados da simulação (4 semanas) ----------
+// Primeira segunda-feira da simulação: 16/11/2026 (o dia 15/11 cai num domingo).
+// Para mudar o início, altere a linha abaixo (ano, mês começando em 0, dia).
+const DATA_INICIO_SIMULACAO = Date.UTC(2026, 10, 16);
+
+// Clientes por dia, de segunda a domingo, em cada semana.
+const SIM_CLIENTES = [
+  [80, 90, 95, 95, 110, 130, 120],   // semana 1
+  [85, 95, 100, 100, 115, 135, 125], // semana 2
+  [75, 85, 90, 95, 105, 125, 115],   // semana 3
+  [90, 100, 105, 105, 120, 140, 130] // semana 4
+];
+// Quilos preparados por cliente (0,5 kg no total), conforme a tabela da simulação.
+const SIM_KG_POR_CLIENTE = { i1: 0.15, i2: 0.18, i3: 0.10, i4: 0.07 };
+
+const ITENS_PADRAO = [
+  { id: 'i1', nome: 'Arroz',  unidade: 'kg', margem: 10, passo: 0.1 },
+  { id: 'i2', nome: 'Feijão', unidade: 'kg', margem: 10, passo: 0.1 },
+  { id: 'i3', nome: 'Carne',  unidade: 'kg', margem: 10, passo: 0.1 },
+  { id: 'i4', nome: 'Salada', unidade: 'kg', margem: 10, passo: 0.1 }
+];
+
+function gerarSimulacao() {
+  const regs = [];
+  SIM_CLIENTES.forEach((semana, s) => {
+    semana.forEach((clientes, d) => {
+      const data = new Date(DATA_INICIO_SIMULACAO + (s * 7 + d) * 86400000).toISOString().slice(0, 10);
+      const itens = {};
+      Object.keys(SIM_KG_POR_CLIENTE).forEach(id => {
+        // O arquivo da simulação só traz o que foi preparado; o resultado foi assumido como "Na medida".
+        itens[id] = { qtd: Math.round(clientes * SIM_KG_POR_CLIENTE[id] * 100) / 100, res: 'medida', kg: null };
+      });
+      regs.push({ id: 'sim_' + data, data, servico: 'Almoço', refeicoes: clientes, obs: 'Dados de simulação', atipico: false, simulado: true, itens });
+    });
+  });
+  return regs;
+}
+
 // ---------- Estado ----------
-const CHAVE = 'assistente_producao_v1';
+const CHAVE = 'assistente_producao_v2';
 let estado = carregar();
 let aba = 'fechamento';
 
@@ -62,14 +99,7 @@ function carregar() {
     const s = JSON.parse(localStorage.getItem(CHAVE));
     if (s && s.itens && s.registros) return s;
   } catch (e) {}
-  return {
-    itens: [
-      { id: 'i1', nome: 'Arroz',  unidade: 'panela',  margem: 10, passo: 0.5 },
-      { id: 'i2', nome: 'Feijão', unidade: 'panela',  margem: 10, passo: 0.5 },
-      { id: 'i3', nome: 'Frango', unidade: 'porção',  margem: 10, passo: 1 }
-    ],
-    registros: []
-  };
+  return { itens: JSON.parse(JSON.stringify(ITENS_PADRAO)), registros: gerarSimulacao() };
 }
 function salvar() { localStorage.setItem(CHAVE, JSON.stringify(estado)); }
 
@@ -83,9 +113,22 @@ const media = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
 const arredonda = (v, passo) => Math.max(0, Math.round(v / (passo || 1)) * (passo || 1));
 const num = (v) => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? 0 : n; };
 const fmtNum = (n) => (Math.round(n * 100) / 100).toString().replace('.', ',');
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+function segundaDe(data) {
+  const d = new Date(data + 'T12:00:00');
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+// Soma, em kg, das preparações cuja unidade é "kg".
+function kgDoRegistro(r) {
+  return Object.entries(r.itens).reduce((soma, [id, v]) => {
+    const it = estado.itens.find(i => i.id === id);
+    return soma + (it && String(it.unidade).trim().toLowerCase() === 'kg' ? v.qtd : 0);
+  }, 0);
+}
 
 // ---------- Navegação ----------
-const ABAS = [['fechamento','Fechamento'], ['planejar','Planejar'], ['historico','Histórico'], ['config','Configurar']];
+const ABAS = [['fechamento','Fechamento'], ['planejar','Planejar'], ['comparativo','Comparativo'], ['historico','Histórico'], ['config','Configurar']];
 function desenhaNav() {
   $('nav').innerHTML = ABAS.map(([k, n]) => `<button class="${aba === k ? 'on' : ''}" onclick="ir('${k}')">${n}</button>`).join('');
 }
@@ -94,6 +137,7 @@ function render() {
   desenhaNav();
   if (aba === 'fechamento') viewFechamento();
   else if (aba === 'planejar') viewPlanejar();
+  else if (aba === 'comparativo') viewComparativo();
   else if (aba === 'historico') viewHistorico();
   else viewConfig();
 }
@@ -242,15 +286,73 @@ function atualizaPlano(recalculaEsperadas) {
     }).join('');
 }
 
+// ---------- Comparativo ----------
+function viewComparativo() {
+  const regs = estado.registros.filter(r => !r.atipico);
+  if (!regs.length) {
+    $('view').innerHTML = '<div class="card"><p class="mut">Ainda não há registros para comparar.</p></div>';
+    return;
+  }
+  const cabItens = estado.itens.map(it => `<th>${esc(it.nome)} (${esc(it.unidade)})</th>`).join('');
+
+  const porDia = [1, 2, 3, 4, 5, 6, 0].map(d => {
+    const rs = regs.filter(r => diaSemana(r.data) === d);
+    if (!rs.length) return `<tr><td>${cap(DIAS[d])}</td><td colspan="${estado.itens.length + 4}" class="mut">sem registros</td></tr>`;
+    const refMed = media(rs.map(r => r.refeicoes));
+    const kgMed = media(rs.map(kgDoRegistro));
+    const cols = estado.itens.map(it => {
+      const v = rs.filter(r => r.itens[it.id]).map(r => r.itens[it.id].qtd);
+      return `<td>${v.length ? fmtNum(media(v)) : '—'}</td>`;
+    }).join('');
+    return `<tr><td>${cap(DIAS[d])}</td><td>${rs.length}</td><td>${fmtNum(refMed)}</td>${cols}<td>${kgMed > 0 ? fmtNum(kgMed) : '—'}</td><td>${kgMed > 0 ? fmtNum(kgMed / refMed) : '—'}</td></tr>`;
+  }).join('');
+
+  const grupos = {};
+  regs.forEach(r => { (grupos[segundaDe(r.data)] = grupos[segundaDe(r.data)] || []).push(r); });
+  const semanas = Object.keys(grupos).sort();
+  let anterior = null;
+  const porSemana = semanas.map(seg => {
+    const rs = grupos[seg];
+    const ref = rs.reduce((a, r) => a + r.refeicoes, 0);
+    const kg = rs.reduce((a, r) => a + kgDoRegistro(r), 0);
+    let variacao = '—';
+    if (anterior && anterior.dias === rs.length && anterior.ref > 0) {
+      const v = ((ref - anterior.ref) / anterior.ref) * 100;
+      variacao = `<span class="${v >= 0 ? 'ok' : 'warn'}">${v >= 0 ? '+' : ''}${fmtNum(v)}%</span>`;
+    }
+    anterior = { ref, dias: rs.length };
+    return `<tr><td>${fmtData(seg)}</td><td>${rs.length}</td><td>${ref}</td><td>${kg > 0 ? fmtNum(kg) : '—'}</td><td>${kg > 0 ? fmtNum(kg / ref) : '—'}</td><td>${variacao}</td></tr>`;
+  }).join('');
+
+  $('view').innerHTML = `
+    <div class="card">
+      <h3>Média por dia da semana</h3>
+      <p class="mut">Quanto se prepara, em média, em cada dia. Dias atípicos ficam de fora.</p>
+      <div style="overflow-x:auto"><table>
+        <tr><th>Dia</th><th>Registros</th><th>Média de refeições</th>${cabItens}<th>Total em kg</th><th>kg por refeição</th></tr>
+        ${porDia}
+      </table></div>
+    </div>
+    <div class="card">
+      <h3>Semana a semana</h3>
+      <p class="mut">A variação de refeições só aparece quando a semana tem o mesmo número de dias da anterior.</p>
+      <div style="overflow-x:auto"><table>
+        <tr><th>Semana (início)</th><th>Dias</th><th>Refeições</th><th>Total em kg</th><th>kg por refeição</th><th>Variação de refeições</th></tr>
+        ${porSemana}
+      </table></div>
+    </div>`;
+}
+
 // ---------- Histórico ----------
 function viewHistorico() {
   const nome = (id) => (estado.itens.find(i => i.id === id) || { nome: '(removido)' }).nome;
+  const temSim = estado.registros.some(r => r.simulado);
   const linhas = [...estado.registros].reverse().map(r => `
     <tr>
       <td>${fmtData(r.data)}<br><span class="mut">${DIAS[diaSemana(r.data)]}, ${esc(r.servico)}</span></td>
       <td>${r.refeicoes}</td>
       <td>${Object.entries(r.itens).map(([id, v]) => `${esc(nome(id))}: ${fmtNum(v.qtd)} — ${ROTULO[v.res]}${v.kg !== null ? ` (${fmtNum(v.kg)} kg)` : ''}`).join('<br>')}</td>
-      <td>${r.atipico ? '<span class="tag warn">atípico</span>' : ''}${esc(r.obs)}</td>
+      <td>${r.simulado ? '<span class="tag">simulação</span>' : ''}${r.atipico ? '<span class="tag warn">atípico</span>' : ''}${r.simulado ? '' : esc(r.obs)}</td>
       <td><button class="del" onclick="apagar('${r.id}')">Apagar</button></td>
     </tr>`).join('');
 
@@ -259,6 +361,12 @@ function viewHistorico() {
       <h3>Histórico (${estado.registros.length} fechamentos)</h3>
       ${estado.registros.length ? `<div style="overflow-x:auto"><table>
         <tr><th>Data</th><th>Refeições</th><th>Preparações</th><th>Obs.</th><th></th></tr>${linhas}</table></div>` : '<p class="mut">Nenhum registro ainda.</p>'}
+    </div>
+    <div class="card">
+      <h3>Dados de simulação</h3>
+      <p class="mut">Os registros marcados como simulação são de teste. Remova antes de começar a usar com dados reais.</p>
+      ${temSim ? '<button class="sec" onclick="removerSimulacao()">Remover dados de simulação</button>' : ''}
+      <button class="sec" onclick="recarregarSimulacao()">Recarregar simulação de 4 semanas</button>
     </div>
     <div class="card">
       <h3>Backup e exportação</h3>
@@ -276,16 +384,34 @@ function apagar(id) {
   salvar(); viewHistorico();
 }
 
+function removerSimulacao() {
+  if (!confirm('Remover todos os registros de simulação? Os fechamentos reais são mantidos.')) return;
+  estado.registros = estado.registros.filter(r => !r.simulado);
+  salvar(); viewHistorico();
+}
+
+function recarregarSimulacao() {
+  if (!confirm('Carregar a simulação de 4 semanas? Registros reais na mesma data e serviço são mantidos.')) return;
+  // garante que as preparações usadas pela simulação existam
+  ITENS_PADRAO.forEach(p => { if (!estado.itens.some(i => i.id === p.id)) estado.itens.push({ ...p }); });
+  estado.registros = estado.registros.filter(r => !r.simulado);
+  gerarSimulacao().forEach(s => {
+    if (!estado.registros.some(r => r.data === s.data && r.servico === s.servico)) estado.registros.push(s);
+  });
+  estado.registros.sort((a, b) => a.data.localeCompare(b.data));
+  salvar(); viewHistorico();
+}
+
 function baixar(nome, conteudo, tipo) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([conteudo], { type: tipo }));
   a.download = nome; a.click();
 }
 function exportarCSV() {
-  const linhas = [['data','dia_semana','servico','refeicoes','preparacao','unidade','qtd_preparada','resultado','sobra_kg','atipico','observacao']];
+  const linhas = [['data','dia_semana','servico','refeicoes','preparacao','unidade','qtd_preparada','resultado','sobra_kg','atipico','simulacao','observacao']];
   estado.registros.forEach(r => Object.entries(r.itens).forEach(([id, v]) => {
     const it = estado.itens.find(i => i.id === id) || { nome: id, unidade: '' };
-    linhas.push([r.data, DIAS[diaSemana(r.data)], r.servico, r.refeicoes, it.nome, it.unidade, v.qtd, ROTULO[v.res], v.kg ?? '', r.atipico ? 'sim' : 'nao', r.obs]);
+    linhas.push([r.data, DIAS[diaSemana(r.data)], r.servico, r.refeicoes, it.nome, it.unidade, v.qtd, ROTULO[v.res], v.kg ?? '', r.atipico ? 'sim' : 'nao', r.simulado ? 'sim' : 'nao', r.obs]);
   }));
   const csv = linhas.map(l => l.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n');
   baixar('producao.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
