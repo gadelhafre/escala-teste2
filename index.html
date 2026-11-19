@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Escala 5x2 · Quintal do Carmo</title>
 <style>
-:root{--bg:#0e1110;--card:#161b19;--borda:#2b3330;--borda2:#222a27;--acc:#5ad2aa;--acc-esc:#07120e;--txt:#f4f7f5;--mut:#9aa8a2;--erro:#ff8a7a;--aviso:#ffc15c;--sup:#1b211f}
+:root{--bg:#0e1110;--card:#161b19;--borda:#2b3330;--borda2:#222a27;--acc:#5ad2aa;--acc-esc:#07120e;--txt:#f4f7f5;--mut:#9aa8a2;--erro:#ff8a7a;--aviso:#ffc15c;--sup:#1b211f;--azul:#7cc4ff;--lilas:#d9a6ff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.45 system-ui,Segoe UI,Roboto,sans-serif;min-height:100vh}
 .topo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 20px;border-bottom:3px solid var(--acc);background:#080a09;position:sticky;top:0;z-index:5}
@@ -24,12 +24,12 @@ button.aviso{border-color:var(--aviso);color:var(--aviso)}
 button.pq{padding:3px 9px;font-size:.85rem}
 button:disabled{opacity:.4;cursor:not-allowed}
 input,select,textarea{font:inherit;background:#0b0e0d;color:var(--txt);border:1px solid var(--borda);border-radius:10px;padding:10px 12px;width:100%}
-input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+input:focus,select:focus,textarea:focus,button:focus-visible,td.clic:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 input[type=checkbox]{width:auto}
 label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .sutil{color:var(--mut);font-size:.9rem}
 .pequeno{font-size:.9rem}
-.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;border:1px solid var(--mut);color:var(--mut);white-space:nowrap}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;border:1px solid var(--mut);color:var(--mut);white-space:nowrap;margin-left:4px}
 .badge.ok{border-color:var(--acc);color:var(--acc)}
 .badge.warn{border-color:var(--aviso);color:var(--aviso)}
 .badge.bad{border-color:var(--erro);color:var(--erro)}
@@ -39,6 +39,8 @@ label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .msg{border-left:3px solid var(--aviso);padding:6px 10px;margin:8px 0;background:var(--sup);border-radius:0 8px 8px 0}
 .msg.erro{border-color:var(--erro)}
+.msg.info{border-color:var(--azul)}
+.msg.proj{border-color:var(--lilas)}
 .msg ul{margin:4px 0;padding-left:20px}
 .semana{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
 .dia{border:1px solid var(--borda2);border-radius:12px;padding:8px 2px;text-align:center;background:var(--sup);min-width:0;overflow:hidden;font-size:.9rem}
@@ -53,36 +55,63 @@ label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .cal-dia{min-width:0;min-height:62px;border:1px solid var(--borda2);border-radius:10px;padding:5px 3px;background:var(--sup);display:flex;flex-direction:column;align-items:center;gap:2px;overflow:hidden}
 .cal-dia .t{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--acc)}
 .cal-dia .fer{font-size:.6rem;color:var(--aviso);text-align:center;line-height:1.1}
-.cal-dia.folga{border-color:var(--acc);background:rgba(90,210,170,.15)}
+.cal-dia.st-F{border-color:var(--acc);background:rgba(90,210,170,.15)}
+.cal-dia.st-FJ{border-color:var(--azul);background:rgba(124,196,255,.12)}.cal-dia.st-FJ .t{color:var(--azul)}
+.cal-dia.st-FI{border-color:var(--erro);background:rgba(255,138,122,.12)}.cal-dia.st-FI .t{color:var(--erro)}
+.cal-dia.st-EX{border-color:var(--lilas);background:rgba(217,166,255,.12)}.cal-dia.st-EX .t{color:var(--lilas)}
 .cal-dia.prev{border-style:dashed}
-.cal-dia.prev.folga{background:rgba(90,210,170,.06)}
+.cal-dia.prev.st-F{background:rgba(90,210,170,.06)}
 .cal-dia.hoje{outline:2px dashed var(--aviso);outline-offset:-1px}
 .cal-dia.fora{opacity:.2;background:transparent}
 .nav-mes{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 10px}
 .nav-mes h3{margin:0;color:var(--txt)}
+.nav-sem{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.nav-sem input{width:auto}
 .legenda{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;color:var(--mut);margin-bottom:10px}
 .legenda i{display:inline-block;width:16px;height:16px;border-radius:5px;margin-right:6px;vertical-align:middle}
 .l-folga{background:rgba(90,210,170,.15);border:1px solid var(--acc)}
 .l-prev{border:1px dashed var(--acc)}
 .l-hoje{border:2px dashed var(--aviso)}
+.l-fj{background:rgba(124,196,255,.2);border:1px solid var(--azul)}
+.l-fi{background:rgba(255,138,122,.2);border:1px solid var(--erro)}
+.l-ex{background:rgba(217,166,255,.2);border:1px solid var(--lilas)}
+.l-alt{border:2px solid var(--aviso)}
 .linha-semana{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--borda2)}
 table{width:100%;border-collapse:collapse;font-size:.88rem}
 th,td{padding:6px 5px;border-bottom:1px solid var(--borda2);text-align:center;vertical-align:top}
 th:first-child,td:first-child{text-align:left}
+td.clic{cursor:pointer;user-select:none}
+td.clic:hover{background:rgba(255,255,255,.08)}
 td.f{background:rgba(90,210,170,.17);color:var(--acc);font-weight:700}
 td.w{color:#c9d3cf;font-size:.8rem}
+td.fj{background:rgba(124,196,255,.15);color:var(--azul);font-weight:700}
+td.fi{background:rgba(255,138,122,.18);color:var(--erro);font-weight:700}
+td.ex{background:rgba(217,166,255,.16);color:var(--lilas);font-weight:700}
 td.alt{box-shadow:inset 0 0 0 2px var(--aviso)}
 td.def{color:var(--erro);font-weight:700}
 td.grupo{color:var(--acc);text-align:left;font-weight:600}
+.hor{display:block;font-size:.7rem;font-weight:400;color:var(--txt)}
+.sem-reg{display:block;font-size:.65rem;font-weight:400;color:var(--aviso)}
+.obs-m{color:var(--aviso);font-size:.65rem;margin-left:3px}
 .rolagem{overflow-x:auto}
 .pedido{border:1px solid var(--borda2);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--sup)}
 .pedido.urg{border-color:var(--erro)}
 .alerta{border:2px solid var(--erro);background:rgba(255,122,107,.08);border-radius:14px;padding:14px;margin-bottom:16px}
 .grade2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.grade3{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
 ul.limpa{list-style:none;margin:0;padding:0}ul.limpa li{padding:5px 0;border-bottom:1px solid var(--borda2)}
+.status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin:10px 0}
+.sbtn{padding:10px 6px;border:1px solid var(--borda);color:var(--txt);text-align:center}
+.sbtn b{display:block}.sbtn small{display:block;color:var(--mut);font-size:.7rem}
+.sbtn.on{font-weight:700}
+.sbtn.on.s-T{border-color:#c9d3cf;background:rgba(255,255,255,.1)}
+.sbtn.on.s-F{border-color:var(--acc);background:rgba(90,210,170,.2);color:var(--acc)}
+.sbtn.on.s-FJ{border-color:var(--azul);background:rgba(124,196,255,.2);color:var(--azul)}
+.sbtn.on.s-FI{border-color:var(--erro);background:rgba(255,138,122,.2);color:var(--erro)}
+.sbtn.on.s-EX{border-color:var(--lilas);background:rgba(217,166,255,.2);color:var(--lilas)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:20;padding:14px}
 .modal[hidden]{display:none}
-.modal-box{background:var(--card);border:1px solid var(--borda);border-radius:16px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+.modal-box{background:var(--card);border:1px solid var(--borda);border-radius:16px;padding:18px;max-width:600px;width:100%;max-height:90vh;overflow:auto}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#080a09;border:1px solid var(--acc);color:var(--acc);padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
 #toast.show{opacity:1}#toast.erro{background:var(--erro);border-color:var(--erro);color:#0e1110}
 .entra{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 0}
@@ -107,6 +136,25 @@ const DIAS_L = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const FUNCOES = { cozinha:'Cozinha', salao:'Salão', caixa:'Caixa', bar:'Bar e chopeira' };
 const CATEGORIAS = ['Saúde / consulta','Família','Estudo','Transporte','Compromisso pessoal','Outro'];
+const ST_REGRA = { lei:'lei', cct:'CCT', sistema:'regra do sistema', confirmar:'confirmar' };
+
+// Tipos de dia. "trabalha" = conta na cobertura e na carga semanal.
+const STATUS = {
+  T:  { sigla:'trabalho', desc:'dia normal',          nome:'Trabalho',             cls:'w'  },
+  F:  { sigla:'folga',    desc:'repouso',             nome:'Folga',                cls:'f'  },
+  FJ: { sigla:'F.J',      desc:'falta justificada',   nome:'Falta justificada',    cls:'fj' },
+  FI: { sigla:'F.INJ',    desc:'falta injustificada', nome:'Falta injustificada',  cls:'fi' },
+  EX: { sigla:'EXTRA',    desc:'dia extra',           nome:'Dia extra',            cls:'ex' }
+};
+const ROT_CAL = { F:'folga', FJ:'F.J', FI:'F.INJ', EX:'extra' };
+const MOTIVOS_FJ = [
+  'Atestado médico ou odontológico (cl. 45)', 'Falecimento de familiar (cl. 46, a)', 'Casamento (cl. 46, b)',
+  'Nascimento de filho (cl. 46, c)', 'Doação de sangue (cl. 46, d)', 'Alistamento ou serviço militar (cl. 46, e)',
+  'Internação de cônjuge ou filho (cl. 46, f)', 'Acompanhar filho menor de 12 anos ao médico (cl. 46, g)',
+  'Prova escolar, vestibular ou ENEM (cl. 44)', 'Outro motivo abonado'
+];
+const trabalha = s => s === 'T' || s === 'EX';
+
 const app = document.getElementById('app');
 const usuario = document.getElementById('usuario');
 
@@ -114,6 +162,8 @@ let estado = null;
 let semanaGestor = '';
 let abaGestor = 'pedidos';
 let mesFunc = 0;
+let projAtiva = '';
+let mesResumo = '';
 
 // ---------- utilidades ----------
 function h(tag, attrs, ...kids) {
@@ -155,7 +205,44 @@ async function hashCPF(cpf) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 function salvar() { localStorage.setItem(CHAVE, JSON.stringify(estado)); }
-function logar(txt) { estado.log.unshift({ t: stamp(), texto: txt }); estado.log = estado.log.slice(0, 150); }
+function logar(txt) { estado.log.unshift({ t: stamp(), texto: txt }); estado.log = estado.log.slice(0, 300); }
+const quemSou = () => { const f = funcionario(sessionStorage.getItem('quintal_sessao')); return f ? f.nome : ''; };
+
+// ---------- horários (ponto) ----------
+const minDe = t => (typeof t === 'string' && /^\d{2}:\d{2}$/.test(t)) ? (+t.slice(0, 2)) * 60 + (+t.slice(3)) : null;
+function minBruto(e) {
+  if (!e) return null;
+  const a = minDe(e.ent), b = minDe(e.sai);
+  if (a == null || b == null) return null;
+  let d = b - a; if (d < 0) d += 1440;
+  return d;
+}
+function minTrab(e) { const b = minBruto(e); return b == null ? null : Math.max(0, b - (+e.int || 0)); }
+const fmtH = m => m == null ? '—' : Math.floor(m / 60) + 'h' + (m % 60 ? pad(m % 60) : '');
+const fmtSaldo = m => m === 0 ? '0h' : (m > 0 ? '+' : '−') + fmtH(Math.abs(m));
+const horarioTurno = turno => turno === 'Manhã/Tarde' ? ['08:00', '17:00', 60] : turno === 'Tarde/Noite' ? ['15:00', '00:00', 60] : ['09:00', '18:00', 60];
+const horarioPadrao = f => (f.hEnt || '—') + '–' + (f.hSai || '—');
+// minutos entre a saída de um dia e a entrada do dia seguinte
+function gapJornadas(pe, ne) {
+  const a = minDe(pe && pe.ent), b = minDe(pe && pe.sai), c = minDe(ne && ne.ent);
+  if (a == null || b == null || c == null) return null;
+  return 1440 + c - (b < a ? b + 1440 : b);
+}
+function avisosHorario(f, data, hv, L) {
+  const av = [];
+  if (!hv.ent && !hv.sai) return av;
+  if (!hv.ent || !hv.sai) { av.push('Falta preencher ' + (hv.ent ? 'a saída' : 'a entrada') + '.'); return av; }
+  const bruto = minBruto(hv), m = minTrab(hv), it = +hv.int || 0;
+  if (bruto === 0) av.push('Entrada e saída iguais.');
+  if (m != null && m > 600) av.push('Jornada de ' + fmtH(m) + ' no dia: acima de 10 h (regra geral da CLT, art. 59, admite no máximo 2 h extras por dia; conferir a CCT).');
+  if (bruto > 360 && it < 60) av.push('Jornada acima de 6 h normalmente pede intervalo de ao menos 1 h (regra geral da CLT, art. 71; conferir se a CCT prevê outra regra).');
+  else if (bruto > 240 && bruto <= 360 && it < 15) av.push('Jornada entre 4 h e 6 h normalmente pede intervalo de ao menos 15 min (CLT, art. 71).');
+  const prev = L[addDias(data, -1) + '|' + f.id], next = L[addDias(data, 1) + '|' + f.id];
+  const g1 = gapJornadas(prev, hv), g2 = gapJornadas(hv, next);
+  if (g1 != null && g1 < 660) av.push('Só ' + fmtH(g1) + ' entre a saída de ontem e a entrada de hoje (descanso entre jornadas: 11 h, CLT art. 66; conferir a CCT).');
+  if (g2 != null && g2 < 660) av.push('Só ' + fmtH(g2) + ' entre a saída de hoje e a entrada de amanhã (descanso entre jornadas: 11 h, CLT art. 66; conferir a CCT).');
+  return av;
+}
 
 function toast(msg, erro) {
   const t = document.getElementById('toast');
@@ -164,15 +251,20 @@ function toast(msg, erro) {
 }
 function abrirModal(...c) {
   const box = document.getElementById('modalBox');
-  box.replaceChildren(...c.flat().filter(x => x != null && x !== false));
+  box.replaceChildren(...c.flat(Infinity).filter(x => x != null && x !== false));
   document.getElementById('modal').hidden = false;
 }
 function fecharModal() { document.getElementById('modal').hidden = true; }
 document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') fecharModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal(); });
+function baixar(nome, texto, tipo) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([texto], { type: tipo }));
+  a.download = nome; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
 
 // ---------- dados iniciais (equipe fictícia) ----------
-// base = dois dias de folga (0 = segunda ... 6 = domingo); off = deslocamento do rodízio de domingo
 const DEMO = [
   { nome: 'Marina Gestora', cpf: '900.000.000-01', funcao: 'cozinha', gestor: true },
   { nome: 'Carlos Souza', cpf: '100.000.000-01', funcao: 'cozinha', base: [0, 1], off: 0, turno: 'Manhã/Tarde' },
@@ -190,26 +282,34 @@ const DEMO = [
   { nome: 'Larissa Gomes', cpf: '400.000.000-02', funcao: 'bar', base: [0, 3], off: 3, turno: 'Tarde/Noite' }
 ];
 
+const REGRAS_V2 = [
+  { titulo: 'Faltas justificadas (F.J)', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusulas 44, 45 e 46',
+    descricao: 'Ausências abonadas, sem desconto de salário nem de repousos: falecimento de familiar (2 dias consecutivos; 4 se o funeral for em outra cidade, conforme a cláusula), casamento (3 dias), nascimento de filho (5 dias), doação de sangue (1 dia a cada 12 meses), alistamento militar (até 2 dias), internação de cônjuge ou filho (até 6 dias), acompanhar filho menor de 12 anos ao médico, provas escolares, vestibular e ENEM (cl. 44) e atestados (cl. 45). Atestado de telemedicina além do período do atendimento exige atestado presencial (cl. 24, §10).' },
+  { titulo: 'Falta injustificada (F.INJ)', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cl. 21 §2 (Vale Compra) e regra geral da CLT',
+    descricao: 'Quem tiver qualquer falta injustificada no mês perde o Vale Compra Alimentação daquele mês (cl. 21, §2). O desconto do dia e a possível perda do repouso semanal remunerado da semana seguem a regra geral (Lei 605/49): confirmar com o contador.' },
+  { titulo: 'Dias extras (folga ou feriado trabalhado)', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cl. 42 §1, §3 e §4, e cl. 17',
+    descricao: 'Folga dominical trabalhada é paga em dobro e não entra em banco de horas (cl. 42, §1 e §4). Feriado trabalhado: compensar em até 15 dias antes ou depois, senão pagar em dobro (cl. 42, §3). Folga semanal trabalhada: confirmar com sindicato ou contador. Horas acima da jornada têm adicional de 80% (50% no REPIS), cl. 17.' }
+];
 const REGRAS_INICIAIS = [
-  { titulo: 'Repouso semanal de 2 dias (EC 141/2026)', status: 'lei', ativo: true, fonte: 'EC 141, de 16/10/2026: art. 7º, XV, e art. 10, I',
-    descricao: 'O repouso semanal remunerado passa a ser de 2 dias, um deles preferencialmente aos domingos. Entra em vigor 2 meses após a publicação (cerca de 16/12/2026). Antes disso, a escala 5x2 é uma política da casa.' },
-  { titulo: 'Jornada: 8 h por dia e limite semanal gradual', status: 'lei', ativo: true, fonte: 'EC 141: art. 6º, I e II, e art. 7º, XIII',
-    descricao: 'Limite semanal de 42 h a partir de 2 meses após a publicação e de 40 h um ano depois, sem redução de salário. Cinco dias de 8 horas somam 40 h por semana.' },
-  { titulo: 'Cláusulas de CCT incompatíveis perdem efeito', status: 'confirmar', ativo: true, fonte: 'EC 141, art. 3º',
-    descricao: 'Passados 2 meses da publicação, cláusulas de convenção sobre jornada e repouso incompatíveis com a emenda ficam sem efeito. Conferir com o sindicato quais cláusulas da CCT são atingidas (por exemplo 12x36, banco de horas e intervalos).' },
+  { titulo: 'Repouso semanal de 2 dias (EC 141/2026)', status: 'confirmar', ativo: true, fonte: 'Conferir número, texto e vigência da emenda na publicação oficial',
+    descricao: 'Segundo a análise do PDF enviado, o repouso semanal remunerado passaria a ser de 2 dias, um deles preferencialmente aos domingos, com vigência cerca de 2 meses após a publicação (por volta de 16/12/2026). Antes disso, a escala 5x2 é uma política da casa. Confirme a emenda e as datas na publicação oficial antes de depender desta regra.' },
+  { titulo: 'Jornada: 8 h por dia e limite semanal gradual', status: 'confirmar', ativo: true, fonte: 'Conferir no texto oficial da emenda',
+    descricao: 'Segundo a análise do PDF enviado: limite semanal de 42 h a partir de 2 meses após a publicação e de 40 h um ano depois, sem redução de salário. Cinco dias de 8 horas somam 40 h por semana. Os limites e as datas são parâmetros editáveis acima.' },
+  { titulo: 'Cláusulas de CCT incompatíveis perdem efeito', status: 'confirmar', ativo: true, fonte: 'Conferir no texto oficial da emenda',
+    descricao: 'Segundo a análise do PDF enviado, cláusulas de convenção sobre jornada e repouso incompatíveis com a emenda ficariam sem efeito após o prazo de transição. Conferir com o sindicato quais cláusulas da CCT são atingidas (por exemplo 12x36, banco de horas e intervalos).' },
   { titulo: 'Folga extra mensal em domingo', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cláusula 42 e §§',
     descricao: 'Quem trabalha em estabelecimento que abre aos domingos recebe uma folga extra por mês, obrigatoriamente em domingo, para ambos os gêneros. Se for trabalhada, é paga em dobro; não entra em compensação de horário e deve constar de escala predefinida. O sistema usa o parâmetro "folga em domingo ao menos a cada X dias" para alertar. Interpretação a confirmar com o sindicato.' },
   { titulo: 'Feriado trabalhado', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusula 42, §3º e §4º',
     descricao: 'Feriado trabalhado pode ser compensado até 15 dias antes ou depois, sem prejuízo da folga semanal; se não houver compensação, é pago em dobro. É vedado usar banco de horas em feriados e em folgas dominicais trabalhadas.' },
-  { titulo: 'Máximo de dias seguidos de trabalho', status: 'sistema', ativo: true, fonte: 'Trava do sistema (parâmetro editável)',
-    descricao: 'O sistema bloqueia mudanças que deixem mais dias seguidos de trabalho do que o limite configurado (padrão: 6).' },
+  { titulo: 'Máximo de dias seguidos de trabalho', status: 'sistema', ativo: true, fonte: 'Parâmetro do sistema (editável)',
+    descricao: 'O sistema avisa quando uma mudança deixa mais dias seguidos de trabalho do que o limite configurado (padrão: 6). Para o gestor é só aviso; o funcionário não consegue pedir mudança que passe do limite.' },
   { titulo: 'Controle de jornada', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusula 43',
-    descricao: 'É obrigatório controlar a jornada por livro ou ponto (mecânico, magnético ou digital), qualquer que seja o número de funcionários. Este sistema organiza a escala; não substitui o controle de ponto.' },
+    descricao: 'É obrigatório controlar a jornada por livro ou ponto (mecânico, magnético ou digital), qualquer que seja o número de funcionários. Este sistema organiza a escala e anota horários; não substitui o controle de ponto oficial.' },
   { titulo: 'Convenção vigente e CCT 2026/2027', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cláusula 59',
     descricao: 'A CCT 2025/2026 teve vigência até 31/07/2026 e a cláusula 59 mantém as condições até nova convenção ser assinada. A CCT 2026/2027 ainda não saiu. Quando sair, atualize os parâmetros e as regras desta aba.' },
-  { titulo: 'Medidas transitórias para micro e pequenas empresas', status: 'confirmar', ativo: true, fonte: 'EC 141, art. 5º',
-    descricao: 'Lei complementar poderá criar medidas transitórias, condicionadas à manutenção de empregos, para MEI, microempresas e empresas de pequeno porte. Acompanhar a regulamentação.' }
-];
+  { titulo: 'Avisos de horário diário (intervalo e descanso)', status: 'confirmar', ativo: true, fonte: 'Regra geral da CLT, arts. 59, 66 e 71',
+    descricao: 'O registro de horários avisa quando a jornada passa de 10 h, quando o intervalo é menor que 1 h (jornada acima de 6 h) ou 15 min (4 a 6 h), e quando o descanso entre duas jornadas é menor que 11 h. Esses avisos usam a regra geral; conferir se a CCT prevê regra própria.' }
+].concat(REGRAS_V2);
 
 const FERIADOS_INICIAIS = [
   ['2026-11-20', 'Consciência Negra'], ['2026-12-25', 'Natal'], ['2027-01-01', 'Confraternização Universal'],
@@ -221,19 +321,21 @@ const FERIADOS_INICIAIS = [
 async function criarEstadoInicial() {
   const funcionarios = [];
   for (const [i, d] of DEMO.entries()) {
+    const [he, hs, hi] = horarioTurno(d.turno);
     funcionarios.push({ id: 'f' + (i + 1), nome: d.nome, cpfHash: await hashCPF(d.cpf), cpfFim: d.cpf.slice(-2), funcao: d.funcao,
-      turno: d.turno || '', base: d.base || [], off: d.off || 0, horas: 8, gestor: !!d.gestor, demo: true });
+      turno: d.turno || '', base: d.base || [], off: d.off || 0, horas: 8, hEnt: he, hSai: hs, hInt: hi, gestor: !!d.gestor, demo: true });
   }
   estado = {
-    v: 1, demoAtivo: true,
+    v: 3, demoAtivo: true,
     params: { cctNome: 'CCT 2025/2026 (SP009729/2025); a de 2026/2027 ainda não saiu', folgasSemana: 2, maxSeguidos: 6, horasDia: 8,
       limiteAtual: 44, limiteApos1: 42, limiteApos2: 40, dataEmenda: '2026-12-16', dataLimite40: '2027-12-16',
       domingoACadaDias: 30, feriadoCompDias: 15 },
     minimos: { cozinha: [2, 2, 2, 2, 3, 3, 3], salao: [2, 2, 2, 2, 3, 4, 3], caixa: [1, 1, 1, 1, 1, 2, 1], bar: [1, 1, 1, 1, 1, 2, 1] },
-    funcionarios, escala: {}, pedidos: [], feriados: FERIADOS_INICIAIS,
+    funcionarios, dias: {}, projecoes: [], inicioRegistro: addDias(iniSemana(hojeISO()), -56), registradoAte: '',
+    pedidos: [], feriados: FERIADOS_INICIAIS,
     regras: REGRAS_INICIAIS.map((r, i) => Object.assign({ id: 'r' + (i + 1) }, r)), log: []
   };
-  // pedido urgente de demonstração (gera "furo" na segunda-feira da próxima semana)
+  estado.projecoes.push({ id: 'pj0', nome: 'Exemplo pelas regras', nota: 'Projeção de demonstração: começa igual ao padrão do sistema e pode ser alterada à vontade.', criadaEm: stamp(), dias: {} });
   const lucas = funcionarios.find(f => f.nome === 'Lucas Pereira');
   const prox = addDias(iniSemana(hojeISO()), 7);
   estado.pedidos.push({ id: 'p0', funcId: lucas.id, semana: prox, antigo: parDe(lucas, prox), novo: [0, 2],
@@ -242,24 +344,74 @@ async function criarEstadoInicial() {
   salvar();
 }
 
+// Converte dados de versões anteriores e garante os campos novos.
+function migrar(s) {
+  estado = s;
+  if (!s.dias) {
+    s.dias = {};
+    Object.keys(s.escala || {}).forEach(k => {
+      const i = k.indexOf('|'), ws = k.slice(0, i), f = funcionario(k.slice(i + 1));
+      if (f) Object.assign(s.dias, comPar(f, ws, s.escala[k], s.dias));
+    });
+    delete s.escala;
+  }
+  s.projecoes = s.projecoes || [];
+  s.log = s.log || [];
+  if (!s.inicioRegistro) s.inicioRegistro = addDias(iniSemana(hojeISO()), -56);
+  if (s.registradoAte == null) s.registradoAte = '';
+  s.funcionarios.forEach(f => {
+    if (f.hEnt == null) { const [a, b, c] = horarioTurno(f.turno); f.hEnt = a; f.hSai = b; f.hInt = c; }
+  });
+  REGRAS_V2.forEach((r, i) => { if (!s.regras.some(x => x.titulo === r.titulo)) s.regras.push(Object.assign({ id: 'r' + Date.now() + i }, r)); });
+  s.v = 3; salvar(); return s;
+}
+
 // ---------- motor de escala ----------
-// Folgas da semana: usa alteração manual, se houver; senão, a folga-base com rodízio de domingo (a cada 4 semanas).
-function parDe(f, ws, ov) {
-  const o = ov || estado.escala; const k = ws + '|' + f.id;
-  if (o[k]) return o[k];
+// Padrão do sistema: folgas-base com rodízio de domingo (a cada 4 semanas).
+function padraoPar(f, ws) {
+  if (!f.base || !f.base.length) return [];
   if (estado.params.domingoACadaDias > 0 && (((idxSemana(ws) + f.off) % 4) + 4) % 4 === 0 && !f.base.includes(6))
     return [f.base[0], 6].sort((a, b) => a - b);
   return f.base.slice();
 }
-const diaFolga = (f, data, ov) => parDe(f, iniSemana(data), ov).includes(dowM(data));
+const padrao = (f, data) => padraoPar(f, iniSemana(data)).includes(dowM(data)) ? 'F' : 'T';
+// Cada dia pode ter uma entrada própria: { s, obs, motivo, ent, sai, int, auto, por, em }
+const entrada = (f, data, ov) => (ov || estado.dias)[data + '|' + f.id];
+function statusDia(f, data, ov) { const e = entrada(f, data, ov); return e ? e.s : padrao(f, data); }
+function parDe(f, ws, ov) { const r = []; for (let d = 0; d < 7; d++) if (statusDia(f, addDias(ws, d), ov) === 'F') r.push(d); return r; }
+// Devolve cópia da camada com as folgas da semana trocadas para "par".
+function comPar(f, ws, par, ov) {
+  const base = ov || estado.dias, r = Object.assign({}, base);
+  for (let d = 0; d < 7; d++) {
+    const data = addDias(ws, d), k = data + '|' + f.id, cur = statusDia(f, data, base), old = base[k];
+    if (par.includes(d)) { if (cur !== 'F') r[k] = { s: 'F', obs: (old && old.obs) || '' }; }
+    else if (cur === 'F') r[k] = { s: 'T', obs: (old && old.obs) || '' };
+  }
+  return r;
+}
+// Registra (congela) as semanas que já passaram, para que mudanças futuras nas regras não reescrevam o histórico.
+function registrarPassado() {
+  const hoje = iniSemana(hojeISO());
+  let ws = estado.registradoAte ? addDias(estado.registradoAte, 7) : estado.inicioRegistro, mudou = false;
+  while (ws < hoje) {
+    estado.funcionarios.filter(f => !f.gestor).forEach(f => {
+      for (let d = 0; d < 7; d++) {
+        const data = addDias(ws, d), k = data + '|' + f.id;
+        if (!estado.dias[k]) estado.dias[k] = { s: padrao(f, data), obs: '', auto: true };
+      }
+    });
+    estado.registradoAte = ws; ws = addDias(ws, 7); mudou = true;
+  }
+  if (mudou) salvar();
+}
 function maxSeguidos(f, ws, ov) {
   let max = 0, run = 0;
-  for (let n = -7; n < 21; n++) { if (diaFolga(f, addDias(ws, n), ov)) run = 0; else { run++; if (run > max) max = run; } }
+  for (let n = -7; n < 21; n++) { if (trabalha(statusDia(f, addDias(ws, n), ov))) { run++; if (run > max) max = run; } else run = 0; }
   return max;
 }
 function diasSemDomingo(f, ref, ov) {
   let d = addDias(iniSemana(ref), 6); if (d > ref) d = addDias(d, -7);
-  for (let k = 0; k < 12; k++) { if (diaFolga(f, d, ov)) return diffDias(ref, d); d = addDias(d, -7); }
+  for (let k = 0; k < 12; k++) { if (statusDia(f, d, ov) === 'F') return diffDias(ref, d); d = addDias(d, -7); }
   return 999;
 }
 function limiteEm(ws) {
@@ -270,7 +422,7 @@ function limiteEm(ws) {
 }
 function cobertura(funcao, ws, ov) {
   const eq = equipeDe(funcao);
-  return DIAS.map((_, d) => eq.filter(f => !parDe(f, ws, ov).includes(d)).length);
+  return DIAS.map((_, d) => eq.filter(f => trabalha(statusDia(f, addDias(ws, d), ov))).length);
 }
 function furos(funcao, ws, ov) {
   const c = cobertura(funcao, ws, ov), m = estado.minimos[funcao] || [];
@@ -279,34 +431,32 @@ function furos(funcao, ws, ov) {
 }
 const totalFalta = arr => arr.reduce((a, x) => a + x.falta, 0);
 
-// Erros bloqueantes de uma mudança de folga
+// Erros que bloqueiam o PEDIDO DO FUNCIONÁRIO (o gestor só recebe avisos)
 function validar(f, ws, par, ov) {
-  const p = estado.params, o = ov || estado.escala, m = [];
+  const p = estado.params, m = [];
   if (par.length !== p.folgasSemana) m.push('A semana precisa ter exatamente ' + p.folgasSemana + ' folgas.');
-  const antigo = parDe(f, ws, o), hoje = hojeISO();
-  for (let d = 0; d < 7; d++) if (addDias(ws, d) < hoje && par.includes(d) !== antigo.includes(d)) { m.push('Dias que já passaram não podem mudar.'); break; }
-  const tmp = Object.assign({}, o, { [ws + '|' + f.id]: par });
-  const ms = maxSeguidos(f, ws, tmp);
+  const ms = maxSeguidos(f, ws, comPar(f, ws, par, ov));
   if (ms > p.maxSeguidos) m.push('Isso deixaria ' + ms + ' dias seguidos de trabalho (máximo ' + p.maxSeguidos + ').');
   return m;
 }
-// Avisos que não bloqueiam
 function avisosDe(f, ws, tmp) {
-  const p = estado.params, par = parDe(f, ws, tmp), a = [];
+  const p = estado.params, a = [];
+  const sts = DIAS.map((_, d) => statusDia(f, addDias(ws, d), tmp));
   if (p.domingoACadaDias > 0) {
     const sd = diasSemDomingo(f, addDias(ws, 6), tmp);
     if (sd > p.domingoACadaDias) a.push('Ficaria ' + (sd >= 999 ? 'muito tempo' : sd + ' dias') + ' sem folga em domingo (referência: 1 a cada ' + p.domingoACadaDias + ' dias; regra a confirmar).');
   }
-  const horas = (7 - par.length) * (f.horas || p.horasDia), lim = limiteEm(ws);
+  const horas = sts.filter(trabalha).length * (f.horas || p.horasDia), lim = limiteEm(ws);
   if (horas > lim) a.push('A carga seria de ' + horas + ' h na semana, acima do limite de ' + lim + ' h.');
-  for (let d = 0; d < 7; d++) {
+  sts.forEach((s, d) => {
     const data = addDias(ws, d), fer = feriadoDe(data);
-    if (fer && !par.includes(d)) a.push('Trabalha no feriado "' + fer + '" (' + dataBR(data) + '): compensar em até ' + p.feriadoCompDias + ' dias ou pagar em dobro.');
-  }
+    if (fer && trabalha(s)) a.push('Trabalha no feriado "' + fer + '" (' + dataBR(data) + '): compensar em até ' + p.feriadoCompDias + ' dias ou pagar em dobro.');
+  });
   return a;
 }
-// Sugestão de remanejamento: troca folgas de colegas da mesma função para tapar furos, sem quebrar as travas.
+// Sugestão de remanejamento: troca folgas de colegas da mesma função para tapar furos.
 function sugerir(funcao, ws, ov, ignorarId) {
+  ov = ov || estado.dias;
   const hoje = hojeISO(); let trabalho = Object.assign({}, ov); const sug = [];
   const antes = furos(funcao, ws, ov);
   for (let guard = 0; guard < 12; guard++) {
@@ -318,10 +468,11 @@ function sugerir(funcao, ws, ov, ignorarId) {
       const par = parDe(f, ws, trabalho);
       if (!par.includes(fur.dia) || addDias(ws, fur.dia) < hoje) continue;
       for (let d2 = 0; d2 < 7; d2++) {
-        if (par.includes(d2) || addDias(ws, d2) < hoje) continue;
+        const dt2 = addDias(ws, d2);
+        if (dt2 < hoje || statusDia(f, dt2, trabalho) !== 'T') continue;
         const novo = par.filter(x => x !== fur.dia).concat(d2).sort((a, b) => a - b);
         if (validar(f, ws, novo, trabalho).length) continue;
-        const t2 = Object.assign({}, trabalho, { [ws + '|' + f.id]: novo });
+        const t2 = comPar(f, ws, novo, trabalho);
         if (totalFalta(furos(funcao, ws, t2)) >= totalFalta(fs)) continue;
         trabalho = t2; achou = true;
         sug.push({ id: f.id, nome: f.nome, de: par, para: novo, texto: f.nome + ': folga ' + parTxt(par) + ' passa para ' + parTxt(novo) });
@@ -333,23 +484,84 @@ function sugerir(funcao, ws, ov, ignorarId) {
   const restantes = furos(funcao, ws, trabalho);
   return { ws, furosAntes: antes, sugestoes: sug, restantes, resolve: restantes.length === 0 };
 }
-function aplicarMudanca(f, ws, par, remanejo, motivo) {
-  estado.escala[ws + '|' + f.id] = par;
-  (remanejo || []).forEach(s => { estado.escala[ws + '|' + s.id] = s.para; });
-  logar(motivo + ': ' + f.nome + ', semana de ' + dataBR(ws) + ' (' + parTxt(par) + ')' + ((remanejo || []).length ? ' com ' + remanejo.length + ' troca(s) de colegas' : ''));
+function aplicarMudanca(f, ws, par, remanejo, motivo, ov) {
+  const L = ov || estado.dias;
+  Object.assign(L, comPar(f, ws, par, L));
+  (remanejo || []).forEach(s => { const g = funcionario(s.id); if (g) Object.assign(L, comPar(g, ws, s.para, L)); });
+  logar(ctxLog() + motivo + ': ' + f.nome + ', semana de ' + dataBR(ws) + ' (' + parTxt(par) + ')' + ((remanejo || []).length ? ' com ' + remanejo.length + ' troca(s) de colegas' : ''));
   salvar();
 }
-function auditar(f, ws) {
-  const p = estado.params, par = parDe(f, ws), motivos = [];
-  const ms = maxSeguidos(f, ws), sd = diasSemDomingo(f, addDias(ws, 6));
-  const horas = (7 - par.length) * (f.horas || p.horasDia), lim = limiteEm(ws), fers = [];
-  for (let d = 0; d < 7; d++) { const dt = addDias(ws, d), fer = feriadoDe(dt); if (fer && !par.includes(d)) fers.push(fer + ' (' + dataBR(dt) + ')'); }
-  if (par.length < p.folgasSemana) motivos.push('menos de ' + p.folgasSemana + ' folgas');
+function auditar(f, ws, ov) {
+  const p = estado.params, motivos = [];
+  const sts = DIAS.map((_, d) => statusDia(f, addDias(ws, d), ov));
+  const cont = s => sts.filter(x => x === s).length;
+  const folgas = cont('F'), fj = cont('FJ'), fi = cont('FI'), ex = cont('EX');
+  const ms = maxSeguidos(f, ws, ov), sd = diasSemDomingo(f, addDias(ws, 6), ov);
+  const horas = sts.filter(trabalha).length * (f.horas || p.horasDia), lim = limiteEm(ws), fers = [];
+  let reg = 0, temReg = false;
+  DIAS.forEach((_, d) => { const m = minTrab((ov || estado.dias)[addDias(ws, d) + '|' + f.id]); if (m != null) { reg += m; temReg = true; } });
+  sts.forEach((s, d) => { const dt = addDias(ws, d), fer = feriadoDe(dt); if (fer && trabalha(s)) fers.push(fer + ' (' + dataBR(dt) + ')'); });
+  if (folgas < p.folgasSemana) motivos.push(folgas + ' folga(s) na semana (regra: ' + p.folgasSemana + ')');
   if (ms > p.maxSeguidos) motivos.push(ms + ' dias seguidos');
   if (p.domingoACadaDias > 0 && sd > p.domingoACadaDias) motivos.push('sem folga em domingo há mais de ' + p.domingoACadaDias + ' dias (a confirmar)');
-  if (horas > lim) motivos.push(horas + ' h acima do limite de ' + lim + ' h');
-  return { f, folgas: par.length, ms, sd, horas, lim, fers, motivos };
+  if (horas > lim) motivos.push(horas + ' h previstas, acima do limite de ' + lim + ' h');
+  if (temReg && reg > lim * 60) motivos.push(fmtH(reg) + ' registradas, acima do limite de ' + lim + ' h');
+  if (fi) motivos.push('falta injustificada: Vale Compra do mês em risco');
+  if (ex) motivos.push('dia(s) extra(s): conferir pagamento ou compensação');
+  return { f, folgas, fj, fi, ex, ms, sd, horas, lim, fers, reg: temReg ? reg : null, motivos };
 }
+function resumoMes(f, ym, L) {
+  const r = { T: 0, F: 0, FJ: 0, FI: 0, EX: 0, exDom: 0, exFer: 0, min: 0 };
+  const ult = new Date(+ym.slice(0, 4), +ym.slice(5, 7), 0).getDate();
+  for (let d = 1; d <= ult; d++) {
+    const data = ym + '-' + pad(d), s = statusDia(f, data, L); r[s]++;
+    if (s === 'EX') { if (dowM(data) === 6) r.exDom++; if (feriadoDe(data)) r.exFer++; }
+    r.min += minTrab(L[data + '|' + f.id]) || 0;
+  }
+  return r;
+}
+
+// Análise de um dia: tudo é aviso, nada bloqueia o gestor.
+function analisarDia(f, data, s, L) {
+  const p = estado.params, ws = iniSemana(data), dow = dowM(data);
+  const atual = statusDia(f, data, L), pd = padrao(f, data);
+  const tmp = Object.assign({}, L, { [data + '|' + f.id]: { s } });
+  const avisos = [], infos = [];
+  if (s !== atual) {
+    if (s === 'F' || atual === 'F') {
+      const n = parDe(f, ws, tmp).length;
+      if (n !== p.folgasSemana) avisos.push('A semana ficaria com ' + n + ' folga(s); a regra é ' + p.folgasSemana + ' (a confirmar na emenda).' + (n === 1 ? ' Pode haver exceção por convenção ou acordo coletivo: confirmar.' : ''));
+    }
+    const ms = maxSeguidos(f, ws, tmp);
+    if (ms > p.maxSeguidos) avisos.push('Isso deixaria ' + ms + ' dias seguidos de trabalho (máximo ' + p.maxSeguidos + ').');
+    const c = cobertura(f.funcao, ws, tmp)[dow], mn = (estado.minimos[f.funcao] || [])[dow] || 0;
+    if (c < mn) avisos.push('Cobertura de ' + FUNCOES[f.funcao] + ' em ' + DIAS_L[dow] + ' ficaria em ' + c + '/' + mn + '.');
+    avisosDe(f, ws, tmp).forEach(x => { if (!avisos.includes(x)) avisos.push(x); });
+  }
+  if (s === 'FJ') {
+    infos.push('Falta justificada: dia abonado, sem desconto de salário nem de repouso (CCT cl. 44 a 46). Guarde o comprovante.');
+    infos.push('Não conta na cobertura nem na carga semanal. Atestado de telemedicina além do período do atendimento exige atestado presencial (cl. 24, §10).');
+  }
+  if (s === 'FI') {
+    avisos.push('Falta injustificada: perde o Vale Compra Alimentação do mês (CCT cl. 21, §2).');
+    avisos.push('O dia pode ser descontado, e o repouso semanal remunerado da semana pode ser perdido pela regra geral (Lei 605/49): confirmar com o contador.');
+    infos.push('Não conta na cobertura nem na carga semanal.');
+  }
+  if (s === 'EX') {
+    if (pd === 'F' && dow === 6) avisos.push('Domingo de folga trabalhado: pago em dobro e fora do banco de horas (CCT cl. 42, §1 e §4).');
+    else if (pd === 'F') avisos.push('Folga semanal trabalhada: pagar em dobro ou dar outra folga na mesma semana (confirmar com o sindicato ou contador).');
+    if (pd === 'T') infos.push('Este dia já era de trabalho na escala. Use Extra para dias além da escala; horas acima da jornada seguem a regra de hora extra (adicional de 80%, ou 50% no REPIS, cl. 17).');
+    infos.push('Conta na cobertura e na carga semanal.');
+  }
+  if (s === 'T' && pd === 'F') infos.push('Trabalho no lugar da folga: a folga deste dia é perdida. Se for um dia a mais, e não uma troca, use Extra.');
+  if (s === 'F' && pd === 'T') infos.push('Folga em um dia que era de trabalho.');
+  return { avisos, infos };
+}
+
+// ---------- camadas: escala oficial e projeções ----------
+const projAtual = () => estado.projecoes.find(p => p.id === projAtiva) || null;
+function camada() { const p = projAtual(); return p ? p.dias : estado.dias; }
+const ctxLog = () => { const p = projAtual(); return p && abaGestor !== 'pedidos' ? '[Projeção ' + p.nome + '] ' : ''; };
 
 // ---------- sessão e entrada ----------
 function barra(nome, papel) {
@@ -387,17 +599,19 @@ function telaEntrada() {
 function iniciar() {
   const f = funcionario(sessionStorage.getItem('quintal_sessao'));
   if (!f) return telaEntrada();
+  registrarPassado();
   if (f.gestor) { semanaGestor = semanaGestor || iniSemana(hojeISO()); return painelGestor(); }
   painelFuncionario(f);
 }
 
 // ---------- componentes ----------
 function listaMsg(arr, erro) { return h('div', { class: 'msg' + (erro ? ' erro' : '') }, h('ul', {}, arr.map(x => h('li', {}, x)))); }
-function seletorDias(ws, parInicial, aoMudar) {
+function seletorDias(f, ws, parInicial, aoMudar) {
   const hoje = hojeISO(), sel = new Set(parInicial), max = estado.params.folgasSemana;
   const box = h('div', { class: 'semana' });
   const els = DIAS.map((nome, d) => {
-    const data = addDias(ws, d), travado = data < hoje, fer = feriadoDe(data);
+    const data = addDias(ws, d), st = statusDia(f, data), fer = feriadoDe(data);
+    const travado = data < hoje || (st !== 'T' && st !== 'F');
     const el = h('div', { class: 'dia escolha' + (travado ? ' travado' : ''), tabindex: travado ? '-1' : '0', role: 'button' },
       h('b', {}, nome), h('small', {}, dataBR(data)), h('span', { class: 't' }, ''), fer ? h('span', { class: 'fer' }, fer) : null);
     const alterna = () => {
@@ -409,11 +623,17 @@ function seletorDias(ws, parInicial, aoMudar) {
     };
     el.addEventListener('click', alterna);
     el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alterna(); } });
-    box.append(el); return { el, d, travado };
+    box.append(el); return { el, d, travado, st };
   });
   function pinta() {
-    els.forEach(x => { const on = sel.has(x.d); x.el.classList.toggle('sel', on);
-      x.el.querySelector('.t').textContent = x.travado ? (on ? 'folga (passou)' : 'passou') : (on ? 'FOLGA' : 'trabalho'); });
+    els.forEach(x => {
+      const on = sel.has(x.d); x.el.classList.toggle('sel', on);
+      let t;
+      if (x.st === 'FJ' || x.st === 'FI' || x.st === 'EX') t = STATUS[x.st].sigla;
+      else if (x.travado) t = on ? 'folga (passou)' : 'passou';
+      else t = on ? 'FOLGA' : 'trabalho';
+      x.el.querySelector('.t').textContent = t;
+    });
     aoMudar(sel);
   }
   pinta();
@@ -423,7 +643,7 @@ function blocoPlano(pl, titulo) {
   return h('div', { class: 'msg' + (pl.resolve ? '' : ' erro') }, h('b', {}, titulo),
     h('ul', {}, pl.furosAntes.map(x => h('li', {}, DIAS_L[x.dia] + ' (' + dataBR(addDias(pl.ws, x.dia)) + '): falta ' + x.falta + (x.falta > 1 ? ' pessoas' : ' pessoa')))),
     pl.sugestoes.length ? h('div', {}, h('b', {}, 'Quem pode trocar (só muda se você aprovar):'), h('ul', {}, pl.sugestoes.map(s => h('li', {}, s.texto)))) : null,
-    pl.resolve ? null : h('p', {}, 'Não achei como cobrir tudo sem quebrar as travas. Ajuste outras folgas na aba Escala ou recuse.'));
+    pl.resolve ? null : h('p', {}, 'Não achei como cobrir tudo sem quebrar as travas. Clique nos dias da tabela para ajustar à mão.'));
 }
 
 // ---------- funcionário ----------
@@ -442,9 +662,9 @@ function painelFuncionario(f) {
   const ult = iso(new Date(+mes.slice(0, 4), +mes.slice(5, 7), 0));
   const ini = iniSemana(mes + '-01'), fim = addDias(iniSemana(ult), 6), celulas = [];
   for (let d = ini; d <= fim; d = addDias(d, 1)) {
-    const fora = d.slice(0, 7) !== mes, folga = !fora && diaFolga(f, d), fer = feriadoDe(d);
-    celulas.push(h('div', { class: 'cal-dia' + (fora ? ' fora' : '') + (folga ? ' folga' : '') + (d > limite ? ' prev' : '') + (d === hoje ? ' hoje' : ''), title: fer },
-      h('b', {}, String(+d.slice(8))), folga ? h('span', { class: 't' }, 'folga') : null, !fora && fer ? h('span', { class: 'fer' }, fer) : null));
+    const fora = d.slice(0, 7) !== mes, st = fora ? 'T' : statusDia(f, d), fer = feriadoDe(d);
+    celulas.push(h('div', { class: 'cal-dia' + (fora ? ' fora' : '') + (st !== 'T' ? ' st-' + st : '') + (d > limite ? ' prev' : '') + (d === hoje ? ' hoje' : ''), title: fer },
+      h('b', {}, String(+d.slice(8))), st !== 'T' ? h('span', { class: 't' }, ROT_CAL[st]) : null, !fora && fer ? h('span', { class: 'fer' }, fer) : null));
   }
   const linhas = [0, 7].map(n => {
     const ws = addDias(iniSemana(hoje), n), par = parDe(f, ws);
@@ -461,7 +681,8 @@ function painelFuncionario(f) {
   });
   app.replaceChildren(
     h('div', { class: 'card' }, h('h2', {}, f.nome + ' · ' + FUNCOES[f.funcao]), navMes, h('div', { class: 'cal' }, DIAS.map(d => h('div', { class: 'cal-cab' }, d)), celulas),
-      h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-prev' }), 'Previsão'), h('span', {}, h('i', { class: 'l-hoje' }), 'Hoje')),
+      h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-fj' }), 'F.J'), h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ'),
+        h('span', {}, h('i', { class: 'l-ex' }), 'Extra'), h('span', {}, h('i', { class: 'l-prev' }), 'Previsão'), h('span', {}, h('i', { class: 'l-hoje' }), 'Hoje')),
       h('p', { class: 'sutil pequeno' }, 'Depois da próxima semana a escala é uma previsão e pode mudar. Dias com nome embaixo são feriados.')),
     h('div', { class: 'card' }, h('h2', {}, 'Mudar uma folga'),
       h('p', { class: 'sutil pequeno' }, 'Dá para pedir mudança na semana atual e na próxima. O gestor valida ou recusa.'), linhas));
@@ -469,14 +690,14 @@ function painelFuncionario(f) {
 function modalPedido(f, ws) {
   const msg = h('div'), enviar = h('button', { class: 'cheio', disabled: true }, 'Enviar pedido ao gestor');
   const atual = parDe(f, ws);
-  const { box, sel } = seletorDias(ws, atual, s => {
+  const { box, sel } = seletorDias(f, ws, atual, s => {
     msg.replaceChildren(); enviar.disabled = true;
     if (s.size !== estado.params.folgasSemana) return;
     const par = [...s].sort((a, b) => a - b);
     if (par.join() === atual.join()) return;
     const erros = validar(f, ws, par);
     if (erros.length) { msg.append(listaMsg(erros, true)); return; }
-    const av = avisosDe(f, ws, Object.assign({}, estado.escala, { [ws + '|' + f.id]: par }));
+    const av = avisosDe(f, ws, comPar(f, ws, par));
     if (av.length) msg.append(listaMsg(av, false));
     enviar.disabled = false;
   });
@@ -497,27 +718,33 @@ function modalPedido(f, ws) {
 
 // ---------- gestor ----------
 function painelGestor() {
+  const y = window.scrollY;
   const eu = funcionario(sessionStorage.getItem('quintal_sessao'));
   barra(eu.nome, 'gestor(a)');
   const pend = estado.pedidos.filter(p => p.status === 'pendente').length;
-  const abas = [['pedidos', 'Pedidos' + (pend ? ' (' + pend + ')' : '')], ['escala', 'Escala'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria'], ['log', 'Registro e backup']];
+  const abas = [['pedidos', 'Pedidos' + (pend ? ' (' + pend + ')' : '')], ['escala', 'Escala e projeções'], ['ponto', 'Horários (ponto)'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['log', 'Registro e backup']];
   const nav = h('div', { class: 'abas' }, abas.map(([k, t]) => h('button', { class: abaGestor === k ? 'ativa' : '', onclick: () => { abaGestor = k; painelGestor(); } }, t)));
-  app.replaceChildren(nav, { pedidos: gPedidos, escala: gEscala, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, log: gLog }[abaGestor]());
+  const telas = { pedidos: gPedidos, escala: gEscala, ponto: gPonto, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, log: gLog };
+  app.replaceChildren(nav, telas[abaGestor]());
+  window.scrollTo(0, y);
 }
 function seletorSemana() {
-  const base = iniSemana(hojeISO()), ops = [];
-  for (let n = -2; n <= 9; n++) {
-    const ws = addDias(base, n * 7);
-    const rot = n < 0 ? 'passada' : n === 0 ? 'atual' : n === 1 ? 'próxima' : 'previsão';
-    ops.push(h('option', { value: ws, selected: ws === semanaGestor }, 'Semana de ' + dataBR(ws) + ' a ' + dataBR(addDias(ws, 6)) + ' (' + rot + ')'));
-  }
-  return h('select', { onchange: e => { semanaGestor = e.target.value; painelGestor(); } }, ops);
+  const ws = semanaGestor, hoje = iniSemana(hojeISO());
+  const rot = ws < hoje ? 'passada' : ws === hoje ? 'atual' : ws === addDias(hoje, 7) ? 'próxima' : 'previsão';
+  const ir = d => { semanaGestor = d; painelGestor(); };
+  return h('div', { class: 'nav-sem' },
+    h('button', { class: 'pq', onclick: () => ir(addDias(ws, -7)) }, '‹ Anterior'),
+    h('input', { type: 'date', value: ws, 'aria-label': 'Ir para a semana que contém a data', onchange: e => { if (e.target.value) ir(iniSemana(e.target.value)); } }),
+    h('button', { class: 'pq', onclick: () => ir(addDias(ws, 7)) }, 'Próxima ›'),
+    h('button', { class: 'pq', onclick: () => ir(hoje) }, 'Hoje'),
+    h('span', { class: 'sutil' }, 'Semana de ' + dataBR(ws) + ' a ' + dataBR(addDias(ws, 6)) + ' (' + rot + ')'),
+    estado.registradoAte && ws <= estado.registradoAte ? h('span', { class: 'badge ok' }, 'registrada') : null);
 }
 
 function cartaoPedido(p) {
   const f = funcionario(p.funcId); if (!f) return null;
-  const ws = p.semana, ov2 = Object.assign({}, estado.escala, { [ws + '|' + f.id]: p.novo });
-  const erros = validar(f, ws, p.novo, estado.escala);
+  const ws = p.semana, ov2 = comPar(f, ws, p.novo, estado.dias);
+  const erros = validar(f, ws, p.novo, estado.dias);
   const fs = furos(f.funcao, ws, ov2), pl = fs.length ? sugerir(f.funcao, ws, ov2, f.id) : null;
   const av = avisosDe(f, ws, ov2);
   const ok = !erros.length && (!pl || pl.resolve);
@@ -542,7 +769,7 @@ function gPedidos() {
   const resto = estado.pedidos.filter(p => p.status !== 'pendente').slice(-8).reverse();
   const rot = { aprovada: 'validado', recusada: 'recusado', cancelada: 'cancelado pelo funcionário' };
   return h('div', {},
-    pend.length ? h('div', { class: 'alerta', role: 'alert' }, h('h2', { style: 'color:var(--erro)' }, pend.length + ' pedido(s) aguardando você'), pend.map(cartaoPedido))
+    pend.length ? h('div', { class: 'alerta', role: 'alert' }, h('h2', { style: 'color:var(--erro)' }, pend.length + ' pedido(s) aguardando você'), h('p', { class: 'sutil pequeno' }, 'Pedidos valem sempre para a escala oficial.'), pend.map(cartaoPedido))
       : h('div', { class: 'card' }, h('h2', {}, 'Sem pedidos pendentes'), h('p', { class: 'sutil' }, 'Quando alguém pedir mudança de folga, aparece aqui.')),
     resto.length ? h('div', { class: 'card' }, h('h3', {}, 'Últimas decisões'), h('ul', { class: 'limpa' }, resto.map(p => {
       const f = funcionario(p.funcId);
@@ -550,195 +777,459 @@ function gPedidos() {
     }))) : null);
 }
 
+// ----- escala e projeções -----
+function diferencas(ws, p) {
+  let n = 0;
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
+    for (let d = 0; d < 7; d++) { const dt = addDias(ws, d); if (statusDia(f, dt, p.dias) !== statusDia(f, dt, estado.dias)) n++; }
+  });
+  return n;
+}
+function barraCamada() {
+  const p = projAtual();
+  const sel = h('select', { 'aria-label': 'Escala exibida', onchange: e => { projAtiva = e.target.value; painelGestor(); } },
+    h('option', { value: '' }, 'Escala oficial (a que os funcionários veem)'),
+    estado.projecoes.map(x => h('option', { value: x.id, selected: x.id === projAtiva }, 'Projeção: ' + x.nome)));
+  return h('div', { class: 'card' }, h('h3', {}, 'Qual escala você está vendo e editando?'), sel,
+    p ? h('div', { class: 'msg proj' }, h('b', {}, 'Você está numa PROJEÇÃO. '), 'Tudo o que você alterar aqui fica salvo na projeção e não muda a escala oficial até você usar "Aplicar na escala oficial".',
+      p.nota ? h('div', { class: 'sutil pequeno' }, 'Nota: ' + p.nota) : null,
+      h('div', { class: 'sutil pequeno' }, diferencas(semanaGestor, p) + ' dia(s) desta semana diferem da escala oficial.'))
+      : h('div', { class: 'sutil pequeno' }, 'Alterações aqui valem para a escala oficial. Para testar cenários sem mexer nela, crie uma projeção.'),
+    h('div', { class: 'acoes' },
+      h('button', { class: 'pq', onclick: () => modalNovaProjecao(false) }, '+ Nova projeção'),
+      p ? h('button', { class: 'pq', onclick: () => modalNovaProjecao(true) }, 'Duplicar esta') : null,
+      p ? h('button', { class: 'pq', onclick: () => modalEditarProjecao(p) }, 'Renomear / nota') : null,
+      p ? h('button', { class: 'pq aviso', onclick: () => modalAplicar(p) }, 'Aplicar na escala oficial') : null,
+      p ? h('button', { class: 'pq perigo', onclick: () => modalExcluirProjecao(p) }, 'Excluir') : null));
+}
+function modalNovaProjecao(duplicar) {
+  const p0 = projAtual();
+  const nome = h('input', { placeholder: 'Ex.: Dezembro com Natal', value: duplicar && p0 ? p0.nome + ' (cópia)' : '' });
+  const nota = h('textarea', { rows: '2', maxlength: '200', placeholder: 'Para que serve esta projeção? (opcional)' });
+  const origem = h('select', {},
+    h('option', { value: 'regras' }, 'Pelas regras (padrão do sistema, sem alterações)'),
+    h('option', { value: 'oficial' }, 'Cópia da escala oficial, com todas as alterações'),
+    p0 ? h('option', { value: 'atual', selected: !!duplicar }, 'Cópia da projeção "' + p0.nome + '"') : null);
+  abrirModal(h('h2', {}, duplicar ? 'Duplicar projeção' : 'Nova projeção'),
+    h('p', { class: 'sutil' }, 'A projeção mostra como a escala ficaria seguindo as regras, e você pode alterar qualquer dia dela, em qualquer semana. Ela é salva automaticamente.'),
+    h('label', {}, 'Nome'), nome, h('label', {}, 'Nota'), nota, h('label', {}, 'Começar a partir de'), origem,
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => {
+      const base = origem.value === 'regras' ? {} : origem.value === 'oficial' ? estado.dias : (p0 ? p0.dias : {});
+      const nova = { id: 'pj' + Date.now(), nome: nome.value.trim() || 'Projeção ' + (estado.projecoes.length + 1), nota: nota.value.trim(), criadaEm: stamp(), dias: JSON.parse(JSON.stringify(base)) };
+      estado.projecoes.push(nova); projAtiva = nova.id; logar('Projeção criada: ' + nova.nome); salvar(); fecharModal(); toast('Projeção criada.'); painelGestor();
+    } }, 'Criar'), h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+function modalEditarProjecao(p) {
+  const nome = h('input', { value: p.nome }), nota = h('textarea', { rows: '2', maxlength: '200', value: p.nota || '' });
+  abrirModal(h('h2', {}, 'Renomear projeção'), h('label', {}, 'Nome'), nome, h('label', {}, 'Nota'), nota,
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => { p.nome = nome.value.trim() || p.nome; p.nota = nota.value.trim(); salvar(); fecharModal(); painelGestor(); } }, 'Salvar'), h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+function modalExcluirProjecao(p) {
+  abrirModal(h('h2', {}, 'Excluir a projeção "' + p.nome + '"?'), h('p', {}, 'A escala oficial não é afetada. Não dá para desfazer.'),
+    h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: () => { estado.projecoes = estado.projecoes.filter(x => x.id !== p.id); projAtiva = ''; logar('Projeção excluída: ' + p.nome); salvar(); fecharModal(); painelGestor(); } }, 'Excluir'), h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+function modalAplicar(p) {
+  const ws = semanaGestor;
+  const modo = h('select', {},
+    h('option', { value: 'semana' }, 'Só a semana na tela (' + dataBR(ws) + ' a ' + dataBR(addDias(ws, 6)) + ')'),
+    h('option', { value: 'adiante' }, 'Desta semana em diante'),
+    h('option', { value: 'tudo' }, 'Todas as semanas da projeção (inclusive o passado)'));
+  abrirModal(h('h2', {}, 'Aplicar projeção na escala oficial'),
+    h('p', { class: 'sutil' }, 'Os dias do período escolhido ficam iguais aos da projeção "' + p.nome + '". Alterações oficiais desse período que não estão na projeção (inclusive horários registrados) serão desfeitas. A projeção continua salva.'),
+    modo, h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => {
+      if (!confirm('Substituir a escala oficial (' + modo.options[modo.selectedIndex].text + ') pela projeção?')) return;
+      const fim = addDias(ws, 6);
+      const dentro = d => modo.value === 'tudo' ? true : modo.value === 'semana' ? (d >= ws && d <= fim) : d >= ws;
+      Object.keys(estado.dias).forEach(k => { if (dentro(k.slice(0, 10)) && !p.dias[k]) delete estado.dias[k]; });
+      Object.keys(p.dias).forEach(k => { if (dentro(k.slice(0, 10))) estado.dias[k] = Object.assign({}, p.dias[k], { auto: false }); });
+      logar('Projeção "' + p.nome + '" aplicada na escala oficial (' + modo.options[modo.selectedIndex].text + ')');
+      salvar(); fecharModal(); toast('Projeção aplicada na escala oficial.'); painelGestor();
+    } }, 'Aplicar'), h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+
+// Quadradinho de um dia. Em modo "ponto" mostra também os horários.
+function celula(f, data, L, ponto) {
+  const st = statusDia(f, data, L), ent = L[data + '|' + f.id];
+  const temObs = !!(ent && (ent.obs || ent.motivo));
+  const alt = !!ent && !ent.auto && (st !== padrao(f, data) || temObs);
+  const abrir = () => modalDia(f, data);
+  const m = minTrab(ent), temHor = !!(ent && (ent.ent || ent.sai));
+  const tip = [temHor ? (ent.ent || '?') + '–' + (ent.sai || '?') : '', ent && ent.motivo, ent && ent.obs].filter(Boolean).join(' · ') || 'Clique para alterar';
+  let extra = null;
+  if (ponto) {
+    if (temHor) extra = [h('small', { class: 'hor' }, (ent.ent || '?') + '–' + (ent.sai || '?')), m != null ? h('small', { class: 'hor' }, fmtH(m)) : null];
+    else if (trabalha(st) && data <= hojeISO()) extra = h('small', { class: 'sem-reg' }, 'sem horário');
+  }
+  const td = h('td', { class: 'clic ' + STATUS[st].cls + (alt ? ' alt' : ''), tabindex: '0', role: 'button', title: tip,
+    'aria-label': f.nome + ', ' + dataBR(data) + ': ' + STATUS[st].nome + '. Clique para alterar.', onclick: abrir },
+    STATUS[st].sigla, temObs ? h('span', { class: 'obs-m' }, '●') : null, extra);
+  td.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } });
+  return td;
+}
 function gEscala() {
-  const ws = semanaGestor, hoje = hojeISO(), passada = addDias(ws, 6) < hoje;
+  const L = camada(), ws = semanaGestor, hoje = hojeISO(), passada = addDias(ws, 6) < hoje;
   const cab = h('tr', {}, h('th', {}, 'Colaborador'), DIAS.map((d, i) => { const dt = addDias(ws, i), fer = feriadoDe(dt);
-    return h('th', {}, d, h('br'), h('small', { class: 'sutil' }, dataBR(dt)), fer ? h('br') : null, fer ? h('small', { class: 'badge warn' }, 'feriado') : null); }), h('th', {}, ''));
+    return h('th', {}, d, h('br'), h('small', { class: 'sutil' }, dataBR(dt)), fer ? h('br') : null, fer ? h('small', { class: 'badge warn' }, 'feriado') : null); }));
   const linhas = []; let totalFuros = 0;
+  Object.keys(FUNCOES).forEach(fn => {
+    const eq = equipeDe(fn); if (!eq.length) return;
+    linhas.push(h('tr', {}, h('td', { colspan: '8', class: 'grupo' }, FUNCOES[fn])));
+    eq.forEach(f => linhas.push(h('tr', {}, h('td', {}, f.nome), DIAS.map((_, d) => celula(f, addDias(ws, d), L, false)))));
+    const cb = cobertura(fn, ws, L), mn = estado.minimos[fn]; totalFuros += furos(fn, ws, L).length;
+    linhas.push(h('tr', {}, h('td', { class: 'sutil' }, 'Trabalhando / mínimo'), DIAS.map((_, d) => h('td', { class: cb[d] < mn[d] ? 'def' : 'sutil' }, cb[d] + '/' + mn[d]))));
+  });
+  return h('div', {}, barraCamada(),
+    h('div', { class: 'card' }, h('h2', {}, 'Escala completa · ' + (projAtual() ? 'projeção "' + projAtual().nome + '"' : 'oficial')), seletorSemana(),
+      h('p', { class: 'sutil pequeno' }, 'Clique em qualquer quadradinho para mudar o tipo do dia (trabalho, folga, F.J, F.INJ ou extra), anotar horários e escrever uma observação. Vale para qualquer semana, passada ou futura.'),
+      ws > addDias(iniSemana(hoje), 7) ? h('div', { class: 'msg' }, 'Previsão: semana calculada a partir das folgas-base e do rodízio de domingo. Alterações que você fizer ficam salvas.') : null,
+      passada ? h('div', { class: 'msg' }, 'Semana que já passou: está registrada, mas pode ser corrigida clicando nos dias.') : null,
+      totalFuros ? h('div', { class: 'msg erro' }, h('b', { style: 'color:var(--erro)' }, 'Furo: ' + totalFuros + ' ponto(s) abaixo da cobertura mínima. '),
+        passada ? null : h('button', { class: 'pq', onclick: () => sugerirCobertura(ws) }, 'Sugerir como cobrir')) : null,
+      h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-fj' }), 'F.J (falta justificada)'),
+        h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ (falta injustificada)'), h('span', {}, h('i', { class: 'l-ex' }), 'Extra (dia extra)'),
+        h('span', {}, h('i', { class: 'l-alt' }), 'Alterado à mão'), h('span', {}, h('span', { class: 'obs-m' }, '●'), ' Tem observação')),
+      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas)))));
+}
+function sugerirCobertura(ws) {
+  const L = camada(); let todas = []; const blocos = [];
+  Object.keys(FUNCOES).forEach(fn => {
+    if (!furos(fn, ws, L).length) return;
+    const pl = sugerir(fn, ws, L); todas = todas.concat(pl.sugestoes);
+    blocos.push(h('h3', {}, FUNCOES[fn]), blocoPlano(pl, 'Furos:'));
+  });
+  abrirModal(h('h2', {}, 'Cobrir furos da semana de ' + dataBR(ws)), blocos.length ? blocos : h('p', {}, 'Sem furos nesta semana.'),
+    h('div', { class: 'acoes' }, todas.length ? h('button', { class: 'cheio', onclick: () => {
+      todas.forEach(s => { const g = funcionario(s.id); if (g) Object.assign(L, comPar(g, ws, s.para, L)); });
+      logar(ctxLog() + 'Sugestão de cobertura aplicada na semana de ' + dataBR(ws) + ' (' + todas.length + ' troca(s))');
+      salvar(); fecharModal(); toast('Trocas aplicadas.'); painelGestor();
+    } }, 'Aplicar estas trocas') : null, h('button', { onclick: fecharModal }, 'Fechar')));
+}
+
+// ----- janela de um dia: tipo, horários e observação -----
+function modalDia(f, data) {
+  const L = camada(), k = data + '|' + f.id, e0 = L[k] || {}, pd = padrao(f, data), fer = feriadoDe(data), proj = projAtual();
+  let s = statusDia(f, data, L);
+  const grade = h('div', { class: 'status-grid' }), analise = h('div'), resumoH = h('div', { class: 'sutil pequeno' });
+  const motivoSel = h('select', {}, h('option', { value: '' }, 'Selecione o motivo'),
+    MOTIVOS_FJ.map(m => h('option', { value: m, selected: e0.motivo === m }, m)));
+  const motivoBox = h('div', {}, h('label', {}, 'Motivo da falta justificada'), motivoSel);
+  const tEnt = h('input', { type: 'time', value: e0.ent || '', 'aria-label': 'Entrada' });
+  const tSai = h('input', { type: 'time', value: e0.sai || '', 'aria-label': 'Saída' });
+  const tInt = h('input', { type: 'number', min: '0', max: '480', step: '5', inputmode: 'numeric', placeholder: 'minutos', value: e0.int != null ? String(e0.int) : '', 'aria-label': 'Intervalo em minutos' });
+  const obs = h('textarea', { rows: '3', maxlength: '300', placeholder: 'Observação (opcional): o que aconteceu, quem autorizou, troca combinada...', value: e0.obs || '' });
+  const lerHor = () => ({ ent: tEnt.value, sai: tSai.value, int: tInt.value === '' ? 0 : Math.max(0, parseInt(tInt.value, 10) || 0) });
+  const usarPadrao = h('button', { type: 'button', class: 'pq', onclick: () => {
+    tEnt.value = f.hEnt || ''; tSai.value = f.hSai || ''; tInt.value = f.hInt != null ? String(f.hInt) : ''; atualizaAnalise();
+  } }, 'Usar horário padrão (' + horarioPadrao(f) + ')');
+  const tempoBox = h('div', {}, h('h3', { style: 'margin-top:14px' }, 'Horário trabalhado'),
+    h('div', { class: 'grade3' }, h('div', {}, h('label', {}, 'Entrada'), tEnt), h('div', {}, h('label', {}, 'Saída'), tSai), h('div', {}, h('label', {}, 'Intervalo (min)'), tInt)),
+    resumoH, h('div', { class: 'acoes' }, usarPadrao));
+  [tEnt, tSai, tInt].forEach(x => { x.addEventListener('input', atualizaAnalise); x.addEventListener('change', atualizaAnalise); });
+
+  function atualizaAnalise() {
+    const a = analisarDia(f, data, s, L), avisos = a.avisos.slice();
+    resumoH.textContent = '';
+    if (trabalha(s)) {
+      const hv = lerHor(), m = minTrab(hv), prev = (f.horas || estado.params.horasDia) * 60;
+      if (m != null) resumoH.textContent = 'Trabalhado: ' + fmtH(m) + ' · previsto: ' + fmtH(prev) + ' · saldo do dia: ' + fmtSaldo(m - prev);
+      avisosHorario(f, data, hv, L).forEach(x => avisos.push(x));
+    }
+    analise.replaceChildren(...[
+      avisos.length ? listaMsg(avisos, false) : null,
+      a.infos.length ? h('div', { class: 'msg info' }, h('ul', {}, a.infos.map(x => h('li', {}, x)))) : null
+    ].filter(Boolean));
+  }
+  function atualizaStatus() {
+    grade.replaceChildren(...Object.keys(STATUS).map(c => h('button', { class: 'sbtn s-' + c + (c === s ? ' on' : ''), type: 'button',
+      onclick: () => { s = c; atualizaStatus(); } }, h('b', {}, STATUS[c].sigla), h('small', {}, STATUS[c].desc))));
+    motivoBox.hidden = s !== 'FJ';
+    tempoBox.hidden = !trabalha(s);
+    atualizaAnalise();
+  }
+  atualizaStatus();
+
+  const salvarFn = () => {
+    const novo = { s, obs: obs.value.trim(), auto: false, por: quemSou(), em: stamp() };
+    if (s === 'FJ' && motivoSel.value) novo.motivo = motivoSel.value;
+    if (trabalha(s)) {
+      const hv = lerHor();
+      if (hv.ent) novo.ent = hv.ent;
+      if (hv.sai) novo.sai = hv.sai;
+      if ((hv.ent || hv.sai) && tInt.value !== '') novo.int = hv.int;
+    }
+    L[k] = novo;
+    const hTxt = novo.ent || novo.sai ? ' · ' + (novo.ent || '?') + '–' + (novo.sai || '?') : '';
+    logar(ctxLog() + f.nome + ', ' + dataBRfull(data) + ': ' + STATUS[s].nome + hTxt + (novo.obs ? ' (com observação)' : ''));
+    salvar(); fecharModal(); toast('Dia salvo.'); painelGestor();
+  };
+  const voltarPadrao = () => {
+    if (!confirm('Voltar este dia ao padrão do sistema? Horários e observação serão apagados.')) return;
+    const passado = data < iniSemana(hojeISO());
+    if (passado && L === estado.dias) L[k] = { s: pd, obs: '', auto: true }; else delete L[k];
+    logar(ctxLog() + f.nome + ', ' + dataBRfull(data) + ': voltou ao padrão do sistema');
+    salvar(); fecharModal(); toast('Dia voltou ao padrão.'); painelGestor();
+  };
+
+  abrirModal(h('h2', {}, f.nome),
+    h('p', { class: 'sutil' }, DIAS_L[dowM(data)] + ', ' + dataBRfull(data) + (fer ? ' · feriado: ' + fer : '') + ' · padrão do sistema: ' + (pd === 'F' ? 'folga' : 'trabalho')),
+    proj ? h('div', { class: 'msg proj' }, 'Editando a projeção "' + proj.nome + '"'.replace('"', '"')) : null,
+    e0.por ? h('p', { class: 'sutil pequeno' }, 'Última alteração: ' + e0.por + ' em ' + e0.em) : null,
+    h('h3', {}, 'Tipo do dia'), grade, motivoBox, tempoBox,
+    h('label', {}, 'Observações'), obs, analise,
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: salvarFn }, 'Salvar'), h('button', { onclick: fecharModal }, 'Cancelar'),
+      h('button', { class: 'perigo', onclick: voltarPadrao }, 'Voltar ao padrão')));
+}
+
+// ----- aba de horários (ponto) -----
+function preencherPadrao(ws) {
+  const L = camada(), hoje = hojeISO(); let n = 0;
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
+    for (let d = 0; d < 7; d++) {
+      const data = addDias(ws, d); if (data > hoje) continue;
+      const k = data + '|' + f.id, e = L[k], st = statusDia(f, data, L);
+      if (!trabalha(st) || (e && (e.ent || e.sai))) continue;
+      L[k] = Object.assign({}, e || { s: st, obs: '' }, { ent: f.hEnt, sai: f.hSai, int: f.hInt, por: quemSou(), em: stamp() });
+      n++;
+    }
+  });
+  if (!n) { toast('Nenhum dia sem horário para preencher.'); return; }
+  logar(ctxLog() + 'Horário padrão preenchido em ' + n + ' dia(s) da semana de ' + dataBR(ws));
+  salvar(); toast(n + ' dia(s) preenchido(s) com o horário padrão.'); painelGestor();
+}
+function csvHorarios(prefixo) {
+  const L = camada(), lista = [];
+  Object.keys(L).forEach(k => {
+    const data = k.slice(0, 10); if (prefixo && !data.startsWith(prefixo)) return;
+    const e = L[k]; if (!e || (!e.ent && !e.sai)) return;
+    const f = funcionario(k.slice(11)); if (!f) return;
+    const m = minTrab(e);
+    lista.push({ data, nome: f.nome, row: [dataBRfull(data), f.nome, FUNCOES[f.funcao], STATUS[e.s] ? STATUS[e.s].nome : e.s, e.ent || '', e.sai || '',
+      e.int != null ? e.int : '', m != null ? (m / 60).toFixed(2).replace('.', ',') : '', e.obs || '', e.motivo || ''] });
+  });
+  if (!lista.length) { toast('Nenhum horário registrado neste período.', true); return; }
+  lista.sort((a, b) => a.data.localeCompare(b.data) || a.nome.localeCompare(b.nome));
+  const esc = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const cab = ['Data', 'Funcionário', 'Função', 'Tipo do dia', 'Entrada', 'Saída', 'Intervalo (min)', 'Horas trabalhadas', 'Observação', 'Motivo'];
+  const txt = '\uFEFF' + [cab].concat(lista.map(x => x.row)).map(r => r.map(esc).join(';')).join('\r\n');
+  baixar('horarios_' + (prefixo || 'todos') + '.csv', txt, 'text/csv;charset=utf-8');
+  toast('Arquivo CSV gerado.');
+}
+function gPonto() {
+  const L = camada(), ws = semanaGestor, lim = limiteEm(ws) * 60;
+  const cab = h('tr', {}, h('th', {}, 'Colaborador'), DIAS.map((d, i) => { const dt = addDias(ws, i), fer = feriadoDe(dt);
+    return h('th', {}, d, h('br'), h('small', { class: 'sutil' }, dataBR(dt)), fer ? h('br') : null, fer ? h('small', { class: 'badge warn' }, 'feriado') : null); }), h('th', {}, 'Semana'));
+  const linhas = [];
   Object.keys(FUNCOES).forEach(fn => {
     const eq = equipeDe(fn); if (!eq.length) return;
     linhas.push(h('tr', {}, h('td', { colspan: '9', class: 'grupo' }, FUNCOES[fn])));
     eq.forEach(f => {
-      const par = parDe(f, ws), alt = !!estado.escala[ws + '|' + f.id];
-      linhas.push(h('tr', {}, h('td', {}, f.nome), DIAS.map((_, d) => h('td', { class: (par.includes(d) ? 'f' : 'w') + (alt ? ' alt' : '') }, par.includes(d) ? 'folga' : 'trabalho')),
-        h('td', {}, passada ? null : h('button', { class: 'pq', onclick: () => modalAlterar(f, ws) }, 'Alterar'))));
+      let tot = 0, prev = 0;
+      const tds = DIAS.map((_, d) => {
+        const data = addDias(ws, d), m = minTrab(L[data + '|' + f.id]);
+        if (m != null) tot += m;
+        if (trabalha(statusDia(f, data, L))) prev += (f.horas || estado.params.horasDia) * 60;
+        return celula(f, data, L, true);
+      });
+      linhas.push(h('tr', {}, h('td', {}, f.nome, h('br'), h('small', { class: 'sutil' }, 'padrão ' + horarioPadrao(f))), tds,
+        h('td', { class: tot > lim ? 'def' : '' }, fmtH(tot), h('br'), h('small', { class: 'sutil' }, 'previsto ' + fmtH(prev)))));
     });
-    const cb = cobertura(fn, ws), mn = estado.minimos[fn]; totalFuros += furos(fn, ws).length;
-    linhas.push(h('tr', {}, h('td', { class: 'sutil' }, 'Trabalhando / mínimo'), DIAS.map((_, d) => h('td', { class: cb[d] < mn[d] ? 'def' : 'sutil' }, cb[d] + '/' + mn[d])), h('td', {})));
   });
-  return h('div', { class: 'card' }, h('h2', {}, 'Escala completa'), seletorSemana(),
-    ws > addDias(iniSemana(hoje), 7) ? h('div', { class: 'msg' }, 'Previsão: semana calculada a partir das folgas-base e do rodízio de domingo. Pode mudar.') : null,
-    passada ? h('div', { class: 'msg' }, 'Semana que já passou: só para consulta.') : null,
-    totalFuros ? h('div', { class: 'msg erro' }, h('b', { style: 'color:var(--erro)' }, 'Furo: ' + totalFuros + ' ponto(s) abaixo da cobertura mínima. '),
-      passada ? null : h('button', { class: 'pq', onclick: () => sugerirCobertura(ws) }, 'Sugerir como cobrir')) : null,
-    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))),
-    h('p', { class: 'sutil pequeno' }, 'Contorno amarelo: semana com alteração manual.'));
-}
-function sugerirCobertura(ws) {
-  let todas = [], resolve = true; const blocos = [];
-  Object.keys(FUNCOES).forEach(fn => {
-    if (!furos(fn, ws).length) return;
-    const pl = sugerir(fn, ws, estado.escala); todas = todas.concat(pl.sugestoes); if (!pl.resolve) resolve = false;
-    blocos.push(h('h3', {}, FUNCOES[fn]), blocoPlano(pl, 'Furos:'));
-  });
-  abrirModal(h('h2', {}, 'Cobrir furos da semana de ' + dataBR(ws)), blocos,
-    h('div', { class: 'acoes' }, todas.length ? h('button', { class: 'cheio', onclick: () => {
-      todas.forEach(s => { estado.escala[ws + '|' + s.id] = s.para; });
-      logar('Remanejamento aprovado na semana de ' + dataBR(ws) + ': ' + todas.map(s => s.texto).join('; ')); salvar(); fecharModal(); toast('Trocas aplicadas.'); painelGestor();
-    } }, 'Aprovar estas trocas' + (resolve ? '' : ' (cobre só parte)')) : null, h('button', { onclick: fecharModal }, 'Fechar')));
-}
-function modalAlterar(f, ws) {
-  const msg = h('div'), salvarBtn = h('button', { class: 'cheio', disabled: true }, 'Salvar folgas');
-  const forcar = h('button', { class: 'perigo', style: 'display:none' }, 'Salvar mesmo deixando furo');
-  const atual = parDe(f, ws); let plano = null, parSel = null;
-  const { box } = seletorDias(ws, atual, s => {
-    msg.replaceChildren(); salvarBtn.disabled = true; salvarBtn.textContent = 'Salvar folgas'; forcar.style.display = 'none'; plano = null;
-    if (s.size !== estado.params.folgasSemana) return;
-    parSel = [...s].sort((a, b) => a - b);
-    if (parSel.join() === atual.join()) return;
-    const erros = validar(f, ws, parSel);
-    if (erros.length) { msg.append(listaMsg(erros, true)); return; }
-    const tmp = Object.assign({}, estado.escala, { [ws + '|' + f.id]: parSel });
-    const av = avisosDe(f, ws, tmp); if (av.length) msg.append(listaMsg(av, false));
-    if (!furos(f.funcao, ws, tmp).length) { salvarBtn.disabled = false; return; }
-    plano = sugerir(f.funcao, ws, tmp, f.id);
-    msg.append(blocoPlano(plano, 'Esta mudança deixaria furo:'));
-    if (plano.resolve) { salvarBtn.textContent = 'Salvar com este remanejamento'; salvarBtn.disabled = false; }
-    forcar.style.display = '';
-  });
-  salvarBtn.addEventListener('click', () => { aplicarMudanca(f, ws, parSel, plano && plano.resolve ? plano.sugestoes : [], 'Folgas alteradas pelo gestor'); fecharModal(); toast('Folgas alteradas.'); painelGestor(); });
-  forcar.addEventListener('click', () => { aplicarMudanca(f, ws, parSel, [], 'Folgas alteradas pelo gestor (com furo)'); fecharModal(); toast('Salvo. Há furo de cobertura nesta semana.', true); painelGestor(); });
-  abrirModal(h('h2', {}, 'Alterar folgas de ' + f.nome), h('p', { class: 'sutil' }, 'Semana de ' + dataBR(ws) + '. Atuais: ' + parTxt(atual) + '. O sistema barra o que passar do máximo de dias seguidos.'),
-    box, msg, h('div', { class: 'acoes' }, salvarBtn, forcar, h('button', { onclick: fecharModal }, 'Cancelar')));
+  return h('div', {}, barraCamada(),
+    h('div', { class: 'card' }, h('h2', {}, 'Horários trabalhados · ' + (projAtual() ? 'projeção "' + projAtual().nome + '"' : 'oficial')), seletorSemana(),
+      h('p', { class: 'sutil pequeno' }, 'Clique em um dia para anotar entrada, saída e intervalo. "sem horário" indica dia de trabalho já passado sem registro. A última coluna soma as horas registradas e mostra a carga prevista (limite semanal: ' + limiteEm(ws) + ' h).'),
+      h('div', { class: 'acoes' },
+        h('button', { class: 'pq', onclick: () => { if (confirm('Preencher o horário padrão de cada funcionário nos dias de trabalho já passados desta semana que estão sem horário?')) preencherPadrao(ws); } }, 'Preencher horário padrão nos dias sem horário'),
+        h('button', { class: 'pq', onclick: () => csvHorarios(ws.slice(0, 7)) }, 'Baixar horários do mês (CSV)')),
+      h('div', { class: 'rolagem', style: 'margin-top:10px' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas)))));
 }
 
+// ----- equipe -----
 function gEquipe() {
-  const nome = h('input', { placeholder: 'Nome completo' });
-  const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: '000.000.000-00', autocomplete: 'off' });
-  const fn = h('select', {}, Object.entries(FUNCOES).map(([k, v]) => h('option', { value: k }, v)));
-  const d1 = h('select', {}, DIAS_L.map((d, i) => h('option', { value: i }, d))), d2 = h('select', {}, DIAS_L.map((d, i) => h('option', { value: i, selected: i === 1 }, d)));
-  const turno = h('input', { placeholder: 'Turno (ex.: Tarde/Noite)' });
-  const horas = h('input', { type: 'number', min: '1', max: '12', value: String(estado.params.horasDia) });
-  const msg = h('div');
-  const cadastrar = async () => {
-    try {
-      const dig = cpf.value.replace(/\D/g, '');
-      if (!nome.value.trim()) throw new Error('Informe o nome completo.');
-      if (dig.length !== 11) throw new Error('O CPF precisa ter 11 dígitos.');
-      if (d1.value === d2.value) throw new Error('Escolha dois dias de folga diferentes.');
-      const hs = await hashCPF(cpf.value);
-      if (estado.funcionarios.some(x => x.cpfHash === hs)) throw new Error('Este CPF já está cadastrado.');
-      const base = [+d1.value, +d2.value].sort((a, b) => a - b);
-      estado.funcionarios.push({ id: 'f' + Date.now(), nome: nome.value.trim(), cpfHash: hs, cpfFim: dig.slice(-2), funcao: fn.value, turno: turno.value.trim(), base, off: equipeDe(fn.value).length % 4, horas: num(horas.value) || estado.params.horasDia, gestor: false, demo: false });
-      logar('Cadastrado: ' + nome.value.trim()); salvar(); painelGestor(); toast('Cadastrado. Entra com nome completo e CPF.');
-    } catch (e) { msg.replaceChildren(h('div', { class: 'msg erro' }, e.message)); }
-  };
-  const remover = f => abrirModal(h('h2', {}, 'Remover ' + f.nome + '?'), h('p', {}, 'Sai da escala e perde o acesso. Se faltar gente, a aba Escala mostra o furo e sugere trocas.'),
-    h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: () => { removerFunc(f.id); fecharModal(); toast('Removido.'); painelGestor(); } }, 'Remover'), h('button', { onclick: fecharModal }, 'Cancelar')));
-  const temDemo = estado.funcionarios.some(f => f.demo);
-  const removerDemo = () => abrirModal(h('h2', {}, 'Remover equipe de demonstração?'), h('p', {}, 'Remove os colaboradores fictícios (inclusive a gestora de demonstração). Cadastre antes a sua própria gestão, ou você ficará sem acesso de gestor.'),
-    h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: () => {
-      if (!estado.funcionarios.some(f => f.gestor && !f.demo)) { toast('Cadastre antes um gestor real.', true); return; }
-      estado.funcionarios.filter(f => f.demo).forEach(f => removerFunc(f.id, true)); estado.demoAtivo = false; salvar(); fecharModal(); painelGestor();
-    } }, 'Remover'), h('button', { onclick: fecharModal }, 'Cancelar')));
-  return h('div', {},
-    h('div', { class: 'card' }, h('h2', {}, 'Cadastrar colaborador'),
-      h('div', { class: 'grade2' }, h('div', {}, h('label', {}, 'Nome'), nome), h('div', {}, h('label', {}, 'CPF (é o login)'), cpf), h('div', {}, h('label', {}, 'Função'), fn),
-        h('div', {}, h('label', {}, 'Folga-base 1'), d1), h('div', {}, h('label', {}, 'Folga-base 2'), d2), h('div', {}, h('label', {}, 'Turno'), turno), h('div', {}, h('label', {}, 'Horas por dia'), horas)),
-      msg, h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: cadastrar }, 'Cadastrar')),
-      h('p', { class: 'sutil pequeno' }, 'O sistema guarda só um código irreversível do CPF e os 2 últimos dígitos. Mesmo assim, é um protótipo: os dados ficam no navegador deste aparelho.')),
-    h('div', { class: 'card' }, h('h2', {}, 'Equipe (' + estado.funcionarios.length + ')'),
-      temDemo ? h('div', { class: 'msg' }, 'Há colaboradores fictícios de demonstração. ', h('button', { class: 'pq perigo', onclick: removerDemo }, 'Remover demonstração')) : null,
-      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Nome', 'Função', 'CPF', 'Turno', 'Folga-base', 'Horas/dia', ''].map(t => h('th', {}, t)))),
-        h('tbody', {}, estado.funcionarios.map(f => h('tr', {}, h('td', {}, f.nome, f.demo ? h('span', { class: 'badge' }, 'demo') : null, f.gestor ? h('span', { class: 'badge ok' }, 'gestão') : null),
-          h('td', {}, FUNCOES[f.funcao]), h('td', {}, '***.***.***-' + f.cpfFim), h('td', {}, f.turno || '—'), h('td', {}, f.gestor ? '—' : parTxt(f.base)), h('td', {}, f.gestor ? '—' : String(f.horas)),
-          h('td', {}, f.gestor ? null : h('button', { class: 'pq perigo', onclick: () => remover(f) }, 'Remover')))))))));
-}
-function removerFunc(id, silencioso) {
-  const f = funcionario(id); if (!f) return;
-  estado.funcionarios = estado.funcionarios.filter(x => x.id !== id);
-  estado.pedidos = estado.pedidos.filter(p => p.funcId !== id);
-  Object.keys(estado.escala).forEach(k => { if (k.endsWith('|' + id)) delete estado.escala[k]; });
-  if (!silencioso) logar('Removido: ' + f.nome);
-  salvar();
-}
-
-function gCobertura() {
-  const linhas = Object.entries(FUNCOES).map(([fn, nome]) => {
-    const ins = DIAS.map((_, d) => h('input', { type: 'number', min: '0', max: '30', value: String(estado.minimos[fn][d]), style: 'width:60px;text-align:center;padding:5px' }));
-    return h('tr', {}, h('td', {}, nome + ' (' + equipeDe(fn).length + ' pessoas)'), ins.map(i => h('td', {}, i)),
-      h('td', {}, h('button', { class: 'pq', onclick: () => { estado.minimos[fn] = ins.map(i => Math.max(0, Math.round(num(i.value)))); salvar(); toast('Cobertura salva.'); painelGestor(); } }, 'Salvar')));
+  const grupos = Object.keys(FUNCOES).map(fn => {
+    const eq = equipeDe(fn);
+    return h('div', { class: 'card' }, h('h3', {}, FUNCOES[fn] + ' (' + eq.length + ')'),
+      eq.length ? h('ul', { class: 'limpa' }, eq.map(f => h('li', {}, h('div', { class: 'linha-semana', style: 'border:0;padding:0' },
+        h('div', {}, h('b', {}, f.nome), h('div', { class: 'sutil pequeno' }, 'Folgas-base: ' + parTxt(f.base) + ' · ' + f.horas + ' h/dia · horário padrão ' + horarioPadrao(f) + ' (intervalo ' + (f.hInt || 0) + ' min) · CPF final ' + f.cpfFim)),
+        h('div', { class: 'acoes', style: 'margin:0' }, h('button', { class: 'pq', onclick: () => modalFunc(f) }, 'Editar'))))))
+        : h('p', { class: 'sutil' }, 'Ninguém nesta função.'));
   });
-  return h('div', { class: 'card' }, h('h2', {}, 'Cobertura mínima por dia'),
-    h('p', { class: 'sutil' }, 'Quantas pessoas de cada função precisam trabalhar em cada dia. A aba Escala mostra os furos e sugere trocas.'),
-    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Função'), DIAS.map(d => h('th', {}, d)), h('th', {}))), h('tbody', {}, linhas))));
+  return h('div', {}, h('div', { class: 'card' }, h('h2', {}, 'Equipe'),
+    h('p', { class: 'sutil pequeno' }, 'Folgas-base, carga diária e horário padrão de cada pessoa. Semanas já registradas não mudam quando você altera as folgas-base.'),
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => modalFunc(null) }, '+ Novo funcionário'))), grupos);
+}
+function modalFunc(f) {
+  const novo = !f, p = estado.params;
+  const nome = h('input', { value: f ? f.nome : '', placeholder: 'Nome completo' });
+  const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: novo ? 'CPF (só para entrar no sistema)' : 'Deixe em branco para manter o atual' });
+  const funcao = h('select', {}, Object.keys(FUNCOES).map(k => h('option', { value: k, selected: f ? f.funcao === k : k === 'salao' }, FUNCOES[k])));
+  const turno = h('input', { value: f ? f.turno : '', placeholder: 'Ex.: Tarde/Noite' });
+  const cbs = DIAS.map((d, i) => h('input', { type: 'checkbox', checked: !!(f && f.base.includes(i)) }));
+  const off = h('select', {}, [0, 1, 2, 3].map(i => h('option', { value: String(i), selected: f ? f.off === i : i === 0 }, 'Grupo ' + (i + 1))));
+  const horas = h('input', { type: 'number', min: '1', max: '12', step: '0.5', value: String(f ? f.horas : p.horasDia) });
+  const he = h('input', { type: 'time', value: f ? f.hEnt || '' : '15:00' });
+  const hs = h('input', { type: 'time', value: f ? f.hSai || '' : '00:00' });
+  const hi = h('input', { type: 'number', min: '0', max: '480', step: '5', value: String(f && f.hInt != null ? f.hInt : 60) });
+  cpf.addEventListener('input', () => { cpf.value = cpf.value.replace(/\D/g, '').slice(0, 11); });
+  const salvarFn = async () => {
+    const base = cbs.map((c, i) => c.checked ? i : -1).filter(i => i >= 0);
+    if (!nome.value.trim()) return toast('Informe o nome.', true);
+    if (base.length !== p.folgasSemana) return toast('Marque exatamente ' + p.folgasSemana + ' dias de folga-base.', true);
+    if (novo && cpf.value.length !== 11) return toast('Informe o CPF com 11 dígitos.', true);
+    const reg = f || { id: 'f' + Date.now(), gestor: false };
+    reg.nome = nome.value.trim(); reg.funcao = funcao.value; reg.turno = turno.value.trim(); reg.base = base; reg.off = +off.value;
+    reg.horas = num(horas.value) || p.horasDia; reg.hEnt = he.value; reg.hSai = hs.value; reg.hInt = Math.max(0, parseInt(hi.value, 10) || 0);
+    if (cpf.value.length === 11) { reg.cpfHash = await hashCPF(cpf.value); reg.cpfFim = cpf.value.slice(-2); }
+    if (novo) estado.funcionarios.push(reg);
+    logar((novo ? 'Funcionário adicionado: ' : 'Funcionário editado: ') + reg.nome);
+    salvar(); fecharModal(); toast('Salvo.'); painelGestor();
+  };
+  const remover = () => {
+    if (!confirm('Remover ' + f.nome + ' da equipe? Os pedidos dele(a) também serão apagados.')) return;
+    estado.funcionarios = estado.funcionarios.filter(x => x.id !== f.id);
+    estado.pedidos = estado.pedidos.filter(x => x.funcId !== f.id);
+    logar('Funcionário removido: ' + f.nome); salvar(); fecharModal(); painelGestor();
+  };
+  abrirModal(h('h2', {}, novo ? 'Novo funcionário' : 'Editar ' + f.nome),
+    h('label', {}, 'Nome'), nome, h('label', {}, 'CPF'), cpf, h('label', {}, 'Função'), funcao, h('label', {}, 'Turno (texto livre)'), turno,
+    h('label', {}, 'Folgas-base (marque ' + p.folgasSemana + ' dias)'),
+    h('div', {}, DIAS.map((d, i) => h('label', { style: 'display:inline-flex;gap:4px;align-items:center;margin:4px 12px 4px 0' }, cbs[i], d))),
+    h('label', {}, 'Grupo do rodízio de domingo'), off,
+    h('label', {}, 'Horas por dia (carga)'), horas,
+    h('h3', { style: 'margin-top:14px' }, 'Horário padrão'),
+    h('div', { class: 'grade3' }, h('div', {}, h('label', {}, 'Entrada'), he), h('div', {}, h('label', {}, 'Saída'), hs), h('div', {}, h('label', {}, 'Intervalo (min)'), hi)),
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: salvarFn }, 'Salvar'), h('button', { onclick: fecharModal }, 'Cancelar'),
+      novo ? null : h('button', { class: 'perigo', onclick: remover }, 'Remover')));
 }
 
-const PARAMS_DEF = [
-  ['cctNome', 'Convenção em uso (texto livre)', 'text'], ['folgasSemana', 'Folgas por semana (5x2 = 2)', 'number'], ['maxSeguidos', 'Máximo de dias seguidos de trabalho', 'number'],
-  ['horasDia', 'Horas por dia (padrão)', 'number'], ['limiteAtual', 'Limite semanal antes da emenda (h)', 'number'], ['limiteApos1', 'Limite semanal após a data da emenda (h)', 'number'],
-  ['dataEmenda', 'Início do repouso de 2 dias e do limite de 42 h', 'date'], ['limiteApos2', 'Limite semanal final (h)', 'number'], ['dataLimite40', 'Início do limite final', 'date'],
-  ['domingoACadaDias', 'Folga em domingo ao menos a cada (dias; 0 desliga)', 'number'], ['feriadoCompDias', 'Prazo para compensar feriado (dias antes ou depois)', 'number']
-];
-const ROT_STATUS = { lei: ['ok', 'lei'], cct: ['warn', 'CCT'], sistema: ['', 'regra do sistema'], confirmar: ['bad', 'confirmar'] };
+// ----- cobertura mínima -----
+function gCobertura() {
+  const cab = h('tr', {}, h('th', {}, 'Função'), DIAS.map(d => h('th', {}, d)), h('th', {}, 'Equipe'));
+  const linhas = Object.keys(FUNCOES).map(fn => h('tr', {}, h('td', {}, FUNCOES[fn]),
+    DIAS.map((_, d) => h('td', {}, h('input', { type: 'number', min: '0', max: '30', style: 'width:64px;text-align:center', 'aria-label': FUNCOES[fn] + ' ' + DIAS_L[d],
+      value: String((estado.minimos[fn] || [])[d] || 0), onchange: e => {
+        estado.minimos[fn] = estado.minimos[fn] || [0, 0, 0, 0, 0, 0, 0];
+        estado.minimos[fn][d] = Math.max(0, parseInt(e.target.value, 10) || 0);
+        salvar(); toast('Cobertura mínima salva.');
+      } }))),
+    h('td', { class: 'sutil' }, equipeDe(fn).length + ' pessoas')));
+  return h('div', { class: 'card' }, h('h2', {}, 'Cobertura mínima'),
+    h('p', { class: 'sutil pequeno' }, 'Quantas pessoas de cada função precisam estar trabalhando em cada dia da semana. Quando a escala fica abaixo disso, aparece "furo". Valores iniciais são exemplos: ajuste para a realidade do restaurante.'),
+    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))));
+}
+
+// ----- regras e parâmetros -----
 function gRegras() {
   const p = estado.params;
-  const campos = PARAMS_DEF.map(([k, rot, tipo]) => h('div', {}, h('label', {}, rot),
-    h('input', { type: tipo, value: String(p[k]), onchange: e => { p[k] = tipo === 'number' ? num(e.target.value) : e.target.value; salvar(); toast('Parâmetro salvo.'); } })));
-  const edita = (r, campo, valor) => { r[campo] = valor; salvar(); };
-  const cartoes = estado.regras.map(r => h('div', { class: 'pedido' },
-    h('div', { class: 'grade2' }, h('div', {}, h('label', {}, 'Título'), h('input', { value: r.titulo, onchange: e => edita(r, 'titulo', e.target.value) })),
-      h('div', {}, h('label', {}, 'Fonte'), h('input', { value: r.fonte, onchange: e => edita(r, 'fonte', e.target.value) })),
-      h('div', {}, h('label', {}, 'Situação'), h('select', { onchange: e => edita(r, 'status', e.target.value) }, Object.entries(ROT_STATUS).map(([k, v]) => h('option', { value: k, selected: r.status === k }, v[1]))))),
-    h('label', {}, 'Descrição'), h('textarea', { rows: '3', value: r.descricao, onchange: e => edita(r, 'descricao', e.target.value) }),
-    h('label', {}, h('input', { type: 'checkbox', checked: r.ativo, onchange: e => edita(r, 'ativo', e.target.checked) }), ' Regra em vigor'),
-    h('div', { class: 'acoes' }, h('span', { class: 'badge ' + ROT_STATUS[r.status][0] }, ROT_STATUS[r.status][1]),
-      h('button', { class: 'pq perigo', onclick: () => { estado.regras = estado.regras.filter(x => x.id !== r.id); salvar(); painelGestor(); } }, 'Remover'))));
+  const CAMPOS = [
+    ['cctNome', 'Convenção coletiva em uso (texto)', 'text'],
+    ['folgasSemana', 'Folgas por semana', 'number'],
+    ['maxSeguidos', 'Máximo de dias seguidos de trabalho', 'number'],
+    ['horasDia', 'Horas por dia (padrão)', 'number'],
+    ['limiteAtual', 'Limite semanal atual (horas)', 'number'],
+    ['limiteApos1', 'Limite semanal na 2ª etapa (horas)', 'number'],
+    ['dataEmenda', 'Início da 2ª etapa (data a confirmar)', 'date'],
+    ['limiteApos2', 'Limite semanal na 3ª etapa (horas)', 'number'],
+    ['dataLimite40', 'Início da 3ª etapa (data a confirmar)', 'date'],
+    ['domingoACadaDias', 'Folga em domingo ao menos a cada X dias (0 = desligado)', 'number'],
+    ['feriadoCompDias', 'Prazo para compensar feriado (dias)', 'number']
+  ];
+  const campos = CAMPOS.map(([chave, rot, tipo]) => h('div', {}, h('label', {}, rot),
+    h('input', { type: tipo, value: String(p[chave] == null ? '' : p[chave]), onchange: e => {
+      p[chave] = tipo === 'number' ? num(e.target.value) : e.target.value; salvar(); toast('Parâmetro salvo.');
+    } })));
+  const regras = estado.regras.map(r => h('div', { class: 'pedido', style: r.ativo ? '' : 'opacity:.55' },
+    h('label', {}, 'Título'), h('input', { value: r.titulo, onchange: e => { r.titulo = e.target.value; salvar(); } }),
+    h('div', { class: 'grade2' },
+      h('div', {}, h('label', {}, 'Situação'), h('select', { onchange: e => { r.status = e.target.value; salvar(); toast('Salvo.'); } },
+        Object.keys(ST_REGRA).map(k => h('option', { value: k, selected: r.status === k }, ST_REGRA[k])))),
+      h('div', {}, h('label', {}, 'Fonte'), h('input', { value: r.fonte || '', onchange: e => { r.fonte = e.target.value; salvar(); } }))),
+    h('label', {}, 'Texto da regra'), h('textarea', { rows: '4', value: r.descricao || '', onchange: e => { r.descricao = e.target.value; salvar(); } }),
+    h('div', { class: 'acoes' },
+      h('label', { style: 'display:inline-flex;gap:6px;align-items:center;margin:0' }, h('input', { type: 'checkbox', checked: !!r.ativo, onchange: e => { r.ativo = e.target.checked; salvar(); painelGestor(); } }), 'Em vigor'),
+      h('button', { class: 'pq perigo', onclick: () => { if (confirm('Apagar esta regra?')) { estado.regras = estado.regras.filter(x => x.id !== r.id); salvar(); painelGestor(); } } }, 'Apagar'))));
+  const fers = estado.feriados.slice().sort((a, b) => a.data.localeCompare(b.data));
   const fData = h('input', { type: 'date' }), fNome = h('input', { placeholder: 'Nome do feriado' });
-  const feriados = [...estado.feriados].sort((a, b) => a.data.localeCompare(b.data));
   return h('div', {},
-    h('div', { class: 'msg' }, 'Não é parecer jurídico. Confira cada item com o sindicato ou o contador antes de usar como oficial. Quando a CCT 2026/2027 sair, edite os parâmetros e as regras abaixo.'),
-    h('div', { class: 'card' }, h('h2', {}, 'Parâmetros usados pelo sistema'), h('div', { class: 'grade2' }, campos),
-      h('p', { class: 'sutil pequeno' }, 'As mudanças valem na hora para validações, avisos e auditoria. As datas da emenda foram calculadas a partir de 16/10/2026: confirme no Diário Oficial.')),
-    h('div', { class: 'card' }, h('h2', {}, 'Feriados'), h('p', { class: 'sutil pequeno' }, 'Inclua os feriados municipais de Araraquara e os pontos facultativos que a casa adotar.'),
-      h('ul', { class: 'limpa' }, feriados.map(f => h('li', {}, dataBRfull(f.data) + ' · ' + f.nome + ' ', h('button', { class: 'pq perigo', onclick: () => { estado.feriados = estado.feriados.filter(x => x !== f && !(x.data === f.data && x.nome === f.nome)); salvar(); painelGestor(); } }, 'x')))),
-      h('div', { class: 'grade2' }, h('div', {}, fData), h('div', {}, fNome)),
-      h('div', { class: 'acoes' }, h('button', { onclick: () => { if (!fData.value || !fNome.value.trim()) return toast('Informe data e nome.', true); estado.feriados.push({ data: fData.value, nome: fNome.value.trim() }); salvar(); painelGestor(); } }, 'Adicionar feriado'))),
-    h('div', { class: 'card' }, h('h2', {}, 'Regras aplicadas e fonte'), cartoes,
-      h('div', { class: 'acoes' }, h('button', { onclick: () => { estado.regras.push({ id: 'r' + Date.now(), titulo: 'Nova regra', status: 'confirmar', ativo: true, fonte: '', descricao: '' }); salvar(); painelGestor(); } }, '+ Adicionar regra'))));
+    h('div', { class: 'card' }, h('h2', {}, 'Parâmetros'),
+      h('p', { class: 'sutil pequeno' }, 'São estes números que fazem o sistema avisar sobre folgas, dias seguidos, carga semanal e domingos. As datas das etapas da jornada foram calculadas por estimativa: confirme na publicação oficial. Quando sair a CCT 2026/2027, atualize aqui.'),
+      h('div', { class: 'grade2' }, campos)),
+    h('div', { class: 'card' }, h('h2', {}, 'Regras (texto de referência)'),
+      h('p', { class: 'sutil pequeno' }, 'Os textos abaixo documentam de onde vem cada regra e podem ser editados à vontade. O que muda os avisos do sistema são os parâmetros acima. Regras marcadas como "confirmar" precisam de validação com sindicato ou contador.'),
+      regras, h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => {
+        estado.regras.push({ id: 'r' + Date.now(), titulo: 'Nova regra', status: 'confirmar', ativo: true, fonte: '', descricao: '' }); salvar(); painelGestor();
+      } }, '+ Nova regra'))),
+    h('div', { class: 'card' }, h('h2', {}, 'Feriados'),
+      h('p', { class: 'sutil pequeno' }, 'Só estão cadastrados feriados nacionais de 2026 e 2027. Adicione os municipais de Araraquara e os que faltarem.'),
+      h('ul', { class: 'limpa' }, fers.map(x => h('li', {}, dataBRfull(x.data) + ' · ' + x.nome + ' ',
+        h('button', { class: 'pq perigo', onclick: () => { estado.feriados = estado.feriados.filter(y => y !== x); salvar(); painelGestor(); } }, 'remover')))),
+      h('div', { class: 'grade2', style: 'margin-top:10px' }, fData, fNome),
+      h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => {
+        if (!fData.value || !fNome.value.trim()) return toast('Informe a data e o nome.', true);
+        estado.feriados.push({ data: fData.value, nome: fNome.value.trim() }); salvar(); painelGestor();
+      } }, '+ Adicionar feriado'))));
 }
 
+// ----- auditoria e resumo -----
 function gAudit() {
-  const ws = semanaGestor, lin = [];
-  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
-    const a = auditar(f, ws);
-    lin.push(h('tr', {}, h('td', {}, f.nome), h('td', {}, String(a.folgas)), h('td', {}, String(a.ms)), h('td', {}, a.sd >= 999 ? 'mais de 84' : String(a.sd)),
-      h('td', {}, a.horas + ' h / ' + a.lim + ' h'), h('td', {}, a.fers.length ? a.fers.join(', ') : '—'),
-      h('td', {}, h('span', { class: 'badge ' + (a.motivos.length ? 'bad' : 'ok') }, a.motivos.length ? 'verificar' : 'em regra'), a.motivos.length ? h('div', { class: 'sutil pequeno' }, a.motivos.join('; ')) : null)));
+  const L = camada(), ws = semanaGestor, ym = mesResumo || hojeISO().slice(0, 7);
+  const eqs = estado.funcionarios.filter(f => !f.gestor);
+  const aud = eqs.map(f => auditar(f, ws, L));
+  const linhasSem = aud.map(a => h('tr', {}, h('td', {}, a.f.nome), h('td', {}, String(a.folgas)), h('td', {}, String(a.ms)),
+    h('td', {}, a.horas + ' h' + (a.reg != null ? ' / ' + fmtH(a.reg) + ' reg.' : '')),
+    h('td', { style: 'text-align:left' }, a.motivos.length ? h('ul', { style: 'margin:0;padding-left:16px' }, a.motivos.map(m => h('li', {}, m))) : h('span', { class: 'badge ok' }, 'ok'))));
+  const linhasMes = eqs.map(f => {
+    const r = resumoMes(f, ym, L);
+    return h('tr', {}, h('td', {}, f.nome), h('td', {}, String(r.T)), h('td', {}, String(r.F)), h('td', {}, String(r.FJ)),
+      h('td', { class: r.FI ? 'def' : '' }, String(r.FI)), h('td', {}, String(r.EX)), h('td', {}, r.exDom + ' / ' + r.exFer), h('td', {}, r.min ? fmtH(r.min) : '—'));
   });
-  return h('div', { class: 'card' }, h('h2', {}, 'Auditoria da semana'), seletorSemana(),
-    h('p', { class: 'sutil pequeno' }, 'Convenção em uso: ' + estado.params.cctNome + '. Feriado trabalhado pede compensação ou pagamento em dobro, e a coluna de domingo segue a regra marcada "confirmar".'),
-    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Colaborador', 'Folgas', 'Máx. dias seguidos', 'Dias desde folga em domingo', 'Carga / limite', 'Feriados trabalhados', 'Situação'].map(t => h('th', {}, t)))), h('tbody', {}, lin))));
+  return h('div', {}, barraCamada(),
+    h('div', { class: 'card' }, h('h2', {}, 'Auditoria da semana'), seletorSemana(),
+      h('p', { class: 'sutil pequeno' }, 'Confere folgas, dias seguidos, carga semanal e horas registradas. Colunas: folgas na semana, maior sequência de dias de trabalho, horas previstas / horas registradas.'),
+      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Colaborador', 'Folgas', 'Dias seguidos', 'Horas', 'Situação'].map(t => h('th', {}, t)))), h('tbody', {}, linhasSem)))),
+    h('div', { class: 'card' }, h('h2', {}, 'Resumo do mês'),
+      h('div', { class: 'nav-sem' }, h('input', { type: 'month', value: ym, onchange: e => { if (e.target.value) { mesResumo = e.target.value; painelGestor(); } } }),
+        h('button', { class: 'pq', onclick: () => csvHorarios(ym) }, 'Baixar horários do mês (CSV)')),
+      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Colaborador', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Extra', 'Extra dom. / fer.', 'Horas registradas'].map(t => h('th', {}, t)))), h('tbody', {}, linhasMes)))));
 }
 
+// ----- registro e backup -----
 function gLog() {
-  const inp = h('input', { type: 'file', accept: '.json', style: 'display:none', onchange: ev => {
-    const file = ev.target.files[0]; if (!file) return; const rd = new FileReader();
-    rd.onload = () => { try { const s = JSON.parse(rd.result); if (!s.funcionarios || !s.params) throw new Error(); if (!confirm('Isso substitui os dados atuais. Continuar?')) return; estado = s; salvar(); sair(); } catch (e) { toast('Arquivo inválido.', true); } };
-    rd.readAsText(file); } });
+  const arq = h('input', { type: 'file', accept: 'application/json,.json', 'aria-label': 'Restaurar backup', onchange: e => {
+    const fl = e.target.files[0]; if (!fl) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const o = JSON.parse(r.result);
+        if (!o.funcionarios || !o.params) throw new Error('inválido');
+        if (!confirm('Substituir todos os dados atuais pelo backup?')) return;
+        migrar(o); logar('Backup restaurado'); salvar(); toast('Backup restaurado.'); iniciar();
+      } catch (er) { toast('Arquivo de backup inválido.', true); }
+    };
+    r.readAsText(fl);
+  } });
   return h('div', {},
-    h('div', { class: 'card' }, h('h2', {}, 'Registro de eventos'), h('ul', { class: 'limpa' }, estado.log.map(l => h('li', {}, h('span', { class: 'sutil' }, l.t + ' '), l.texto)))),
-    h('div', { class: 'card' }, h('h2', {}, 'Backup'), h('p', { class: 'sutil' }, 'Os dados ficam só neste navegador. Baixe um backup de vez em quando.'),
-      h('div', { class: 'acoes' }, h('button', { onclick: () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(estado, null, 2)], { type: 'application/json' })); a.download = 'backup_escala.json'; a.click(); } }, 'Baixar backup'),
-        h('button', { onclick: () => inp.click() }, 'Restaurar backup'), inp,
-        h('button', { class: 'perigo', onclick: () => { if (confirm('Apagar tudo e voltar à demonstração inicial?')) { localStorage.removeItem(CHAVE); sessionStorage.clear(); location.reload(); } } }, 'Reiniciar demonstração'))));
+    h('div', { class: 'card' }, h('h2', {}, 'Backup e exportação'),
+      h('p', { class: 'sutil pequeno' }, 'Os dados ficam só neste navegador e neste aparelho. Faça backup de vez em quando, principalmente antes de limpar o histórico do navegador.'),
+      h('div', { class: 'acoes' },
+        h('button', { class: 'cheio', onclick: () => baixar('backup_escala_' + hojeISO() + '.json', JSON.stringify(estado, null, 1), 'application/json') }, 'Baixar backup (JSON)'),
+        h('button', { onclick: () => csvHorarios('') }, 'Baixar todos os horários (CSV)')),
+      h('label', {}, 'Restaurar um backup'), arq,
+      h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: async () => {
+        if (!confirm('Apagar TODOS os dados e voltar à demonstração?')) return;
+        localStorage.removeItem(CHAVE); projAtiva = ''; await criarEstadoInicial(); sessionStorage.removeItem('quintal_sessao'); telaEntrada();
+      } }, 'Reiniciar demonstração'))),
+    h('div', { class: 'card' }, h('h2', {}, 'Registro de atividades'),
+      estado.log.length ? h('ul', { class: 'limpa' }, estado.log.slice(0, 80).map(x => h('li', {}, h('span', { class: 'sutil' }, x.t + ' · '), x.texto))) : h('p', { class: 'sutil' }, 'Nada registrado ainda.')));
 }
 
 // ---------- início ----------
 (async function () {
-  try { const s = JSON.parse(localStorage.getItem(CHAVE)); if (s && s.funcionarios && s.params) estado = s; } catch (e) {}
-  if (!estado) await criarEstadoInicial();
-  semanaGestor = iniSemana(hojeISO());
+  try {
+    const salvo = localStorage.getItem(CHAVE);
+    if (salvo) migrar(JSON.parse(salvo)); else await criarEstadoInicial();
+  } catch (e) {
+    console.error(e); await criarEstadoInicial();
+  }
   iniciar();
 })();
 </script>
