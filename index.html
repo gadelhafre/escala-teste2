@@ -3,467 +3,744 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Assistente de Produção</title>
+<title>Escala 5x2 · Quintal do Carmo</title>
 <style>
-  :root { --bg:#12151a; --card:#1b2028; --line:#2b3340; --txt:#e8ecf1; --mut:#8b96a5; --ok:#3ecf8e; --warn:#f5b84b; --bad:#ef6b6b; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,Arial,sans-serif; background:var(--bg); color:var(--txt); }
-  header { padding:16px 20px; border-bottom:1px solid var(--line); }
-  header h1 { margin:0; font-size:20px; }
-  header p { margin:4px 0 0; color:var(--mut); font-size:13px; }
-  nav { display:flex; gap:6px; padding:10px 20px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
-  nav button { background:transparent; color:var(--mut); border:1px solid var(--line); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:14px; }
-  nav button.on { background:var(--ok); color:#06210f; border-color:var(--ok); font-weight:600; }
-  main { padding:20px; max-width:900px; margin:0 auto; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; }
-  .card h3 { margin:0 0 10px; font-size:16px; }
-  label { display:block; font-size:12px; color:var(--mut); margin:8px 0 4px; }
-  input, select, textarea { width:100%; background:#10141a; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:9px; font-size:14px; }
-  .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
-  button.act { background:var(--ok); color:#06210f; border:0; padding:10px 18px; border-radius:8px; font-weight:600; cursor:pointer; margin-top:12px; }
-  button.sec { background:transparent; color:var(--txt); border:1px solid var(--line); padding:8px 14px; border-radius:8px; cursor:pointer; margin:6px 6px 0 0; }
-  button.del { background:transparent; color:var(--bad); border:1px solid var(--line); border-radius:6px; cursor:pointer; padding:4px 8px; }
-  .big { font-size:28px; font-weight:700; }
-  .mut { color:var(--mut); font-size:13px; }
-  .tag { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; margin-right:4px; border:1px solid var(--line); }
-  .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
-  th { color:var(--mut); font-weight:500; }
-  .aviso { background:#2a2414; border:1px solid #5b4a1c; color:#e9d9a6; border-radius:10px; padding:10px 12px; font-size:13px; margin-bottom:14px; }
-  .check { display:flex; align-items:center; gap:8px; margin-top:10px; }
-  .check input { width:auto; }
+:root{--bg:#0e1110;--card:#161b19;--borda:#2b3330;--borda2:#222a27;--acc:#5ad2aa;--acc-esc:#07120e;--txt:#f4f7f5;--mut:#9aa8a2;--erro:#ff8a7a;--aviso:#ffc15c;--sup:#1b211f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.45 system-ui,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.topo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 20px;border-bottom:3px solid var(--acc);background:#080a09;position:sticky;top:0;z-index:5}
+body.entrada .topo{display:none}
+.topo strong{color:var(--acc);font-size:1.1rem}
+#usuario{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+main{max-width:1100px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:16px}
+.card h2,.card h3{margin:0 0 10px;color:var(--acc);font-weight:600}
+.card h2{font-size:1.15rem}.card h3{font-size:1rem}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--acc);background:transparent;color:var(--acc);padding:8px 14px}
+button:hover:not(:disabled){background:rgba(90,210,170,.14)}
+button.cheio{background:var(--acc);color:var(--acc-esc);font-weight:700}
+button.perigo{border-color:var(--erro);color:var(--erro)}
+button.aviso{border-color:var(--aviso);color:var(--aviso)}
+button.pq{padding:3px 9px;font-size:.85rem}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,select,textarea{font:inherit;background:#0b0e0d;color:var(--txt);border:1px solid var(--borda);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+input[type=checkbox]{width:auto}
+label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
+.sutil{color:var(--mut);font-size:.9rem}
+.pequeno{font-size:.9rem}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;border:1px solid var(--mut);color:var(--mut);white-space:nowrap}
+.badge.ok{border-color:var(--acc);color:var(--acc)}
+.badge.warn{border-color:var(--aviso);color:var(--aviso)}
+.badge.bad{border-color:var(--erro);color:var(--erro)}
+.abas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.abas button{border-color:var(--borda);color:var(--txt)}
+.abas button.ativa{background:var(--acc);color:var(--acc-esc);border-color:var(--acc);font-weight:600}
+.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.msg{border-left:3px solid var(--aviso);padding:6px 10px;margin:8px 0;background:var(--sup);border-radius:0 8px 8px 0}
+.msg.erro{border-color:var(--erro)}
+.msg ul{margin:4px 0;padding-left:20px}
+.semana{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
+.dia{border:1px solid var(--borda2);border-radius:12px;padding:8px 2px;text-align:center;background:var(--sup);min-width:0;overflow:hidden;font-size:.9rem}
+.dia b,.dia small,.dia .t{display:block}.dia small{color:var(--mut)}
+.dia .fer{display:block;font-size:.65rem;color:var(--aviso)}
+.dia.escolha{cursor:pointer}
+.dia.sel{border-color:var(--acc);background:rgba(90,210,170,.25)}
+.dia.sel .t{color:var(--acc);font-weight:700}
+.dia.travado{opacity:.45;cursor:not-allowed}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px}
+.cal-cab{text-align:center;font-size:.78rem;color:var(--mut)}
+.cal-dia{min-width:0;min-height:62px;border:1px solid var(--borda2);border-radius:10px;padding:5px 3px;background:var(--sup);display:flex;flex-direction:column;align-items:center;gap:2px;overflow:hidden}
+.cal-dia .t{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--acc)}
+.cal-dia .fer{font-size:.6rem;color:var(--aviso);text-align:center;line-height:1.1}
+.cal-dia.folga{border-color:var(--acc);background:rgba(90,210,170,.15)}
+.cal-dia.prev{border-style:dashed}
+.cal-dia.prev.folga{background:rgba(90,210,170,.06)}
+.cal-dia.hoje{outline:2px dashed var(--aviso);outline-offset:-1px}
+.cal-dia.fora{opacity:.2;background:transparent}
+.nav-mes{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 10px}
+.nav-mes h3{margin:0;color:var(--txt)}
+.legenda{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;color:var(--mut);margin-bottom:10px}
+.legenda i{display:inline-block;width:16px;height:16px;border-radius:5px;margin-right:6px;vertical-align:middle}
+.l-folga{background:rgba(90,210,170,.15);border:1px solid var(--acc)}
+.l-prev{border:1px dashed var(--acc)}
+.l-hoje{border:2px dashed var(--aviso)}
+.linha-semana{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--borda2)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:6px 5px;border-bottom:1px solid var(--borda2);text-align:center;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+td.f{background:rgba(90,210,170,.17);color:var(--acc);font-weight:700}
+td.w{color:#c9d3cf;font-size:.8rem}
+td.alt{box-shadow:inset 0 0 0 2px var(--aviso)}
+td.def{color:var(--erro);font-weight:700}
+td.grupo{color:var(--acc);text-align:left;font-weight:600}
+.rolagem{overflow-x:auto}
+.pedido{border:1px solid var(--borda2);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--sup)}
+.pedido.urg{border-color:var(--erro)}
+.alerta{border:2px solid var(--erro);background:rgba(255,122,107,.08);border-radius:14px;padding:14px;margin-bottom:16px}
+.grade2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+ul.limpa{list-style:none;margin:0;padding:0}ul.limpa li{padding:5px 0;border-bottom:1px solid var(--borda2)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:20;padding:14px}
+.modal[hidden]{display:none}
+.modal-box{background:var(--card);border:1px solid var(--borda);border-radius:16px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#080a09;border:1px solid var(--acc);color:var(--acc);padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
+#toast.show{opacity:1}#toast.erro{background:var(--erro);border-color:var(--erro);color:#0e1110}
+.entra{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 0}
+.entra h1{margin:0;color:var(--acc);font-size:1.6rem;text-align:center}
+.entra-card{width:min(400px,100%);display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--borda);border-radius:20px;padding:24px}
+.demo{width:min(400px,100%)}
+.demo button{margin:3px 4px 0 0}
+@media (max-width:640px){main{padding:10px}.cal{gap:3px}.cal-dia{min-height:52px}.cal-dia .fer{display:none}.cal-dia .t{font-size:.58rem}.dia{font-size:.78rem}}
 </style>
 </head>
 <body>
-<header>
-  <h1>Assistente de Produção</h1>
-  <p>Registre o fechamento do serviço e receba uma sugestão de quanto preparar.</p>
-</header>
-<nav id="nav"></nav>
-<main id="view"></main>
+<header class="topo"><strong>Quintal do Carmo · Escala 5x2</strong><span id="usuario"></span></header>
+<main id="app"></main>
+<div id="modal" class="modal" hidden><div id="modalBox" class="modal-box"></div></div>
+<div id="toast"></div>
 
 <script>
-// ---------- Parâmetros do modelo (ajuste conforme calibrar com pesagens) ----------
-const FATOR = { sobrou_muito: 0.75, sobrou_pouco: 0.92, medida: 1.0, faltou: 1.12 };
-const ROTULO = { sobrou_muito: 'Sobrou muito', sobrou_pouco: 'Sobrou pouco', medida: 'Na medida', faltou: 'Faltou' };
-const MAX_COMPARAVEIS = 6;
-const MIN_COMPARAVEIS = 2;
-const DIAS = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+'use strict';
+const CHAVE = 'quintal_escala_v1';
+const DIAS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+const DIAS_L = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const FUNCOES = { cozinha:'Cozinha', salao:'Salão', caixa:'Caixa', bar:'Bar e chopeira' };
+const CATEGORIAS = ['Saúde / consulta','Família','Estudo','Transporte','Compromisso pessoal','Outro'];
+const app = document.getElementById('app');
+const usuario = document.getElementById('usuario');
 
-// ---------- Dados da simulação (4 semanas) ----------
-// Primeira segunda-feira da simulação: 16/11/2026 (o dia 15/11 cai num domingo).
-// Para mudar o início, altere a linha abaixo (ano, mês começando em 0, dia).
-const DATA_INICIO_SIMULACAO = Date.UTC(2026, 10, 16);
+let estado = null;
+let semanaGestor = '';
+let abaGestor = 'pedidos';
+let mesFunc = 0;
 
-// Clientes por dia, de segunda a domingo, em cada semana.
-const SIM_CLIENTES = [
-  [80, 90, 95, 95, 110, 130, 120],   // semana 1
-  [85, 95, 100, 100, 115, 135, 125], // semana 2
-  [75, 85, 90, 95, 105, 125, 115],   // semana 3
-  [90, 100, 105, 105, 120, 140, 130] // semana 4
-];
-// Quilos preparados por cliente (0,5 kg no total), conforme a tabela da simulação.
-const SIM_KG_POR_CLIENTE = { i1: 0.15, i2: 0.18, i3: 0.10, i4: 0.07 };
-
-const ITENS_PADRAO = [
-  { id: 'i1', nome: 'Arroz',  unidade: 'kg', margem: 10, passo: 0.1 },
-  { id: 'i2', nome: 'Feijão', unidade: 'kg', margem: 10, passo: 0.1 },
-  { id: 'i3', nome: 'Carne',  unidade: 'kg', margem: 10, passo: 0.1 },
-  { id: 'i4', nome: 'Salada', unidade: 'kg', margem: 10, passo: 0.1 }
-];
-
-function gerarSimulacao() {
-  const regs = [];
-  SIM_CLIENTES.forEach((semana, s) => {
-    semana.forEach((clientes, d) => {
-      const data = new Date(DATA_INICIO_SIMULACAO + (s * 7 + d) * 86400000).toISOString().slice(0, 10);
-      const itens = {};
-      Object.keys(SIM_KG_POR_CLIENTE).forEach(id => {
-        // O arquivo da simulação só traz o que foi preparado; o resultado foi assumido como "Na medida".
-        itens[id] = { qtd: Math.round(clientes * SIM_KG_POR_CLIENTE[id] * 100) / 100, res: 'medida', kg: null };
-      });
-      regs.push({ id: 'sim_' + data, data, servico: 'Almoço', refeicoes: clientes, obs: 'Dados de simulação', atipico: false, simulado: true, itens });
-    });
-  });
-  return regs;
+// ---------- utilidades ----------
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === false || v == null) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'value' || k === 'checked' || k === 'disabled' || k === 'selected') el[k] = v;
+    else el.setAttribute(k, v);
+  }
+  for (const c of kids.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  return el;
 }
-
-// ---------- Estado ----------
-const CHAVE = 'assistente_producao_v2';
-let estado = carregar();
-let aba = 'fechamento';
-
-function carregar() {
-  try {
-    const s = JSON.parse(localStorage.getItem(CHAVE));
-    if (s && s.itens && s.registros) return s;
-  } catch (e) {}
-  return { itens: JSON.parse(JSON.stringify(ITENS_PADRAO)), registros: gerarSimulacao() };
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parse = s => new Date(s + 'T12:00:00');
+const addDias = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const diffDias = (a, b) => Math.round((parse(a) - parse(b)) / 86400000);
+const dowM = s => (parse(s).getDay() + 6) % 7;            // 0 = segunda ... 6 = domingo
+const iniSemana = s => addDias(s, -dowM(s));
+const hojeISO = () => iso(new Date());
+const dataBR = s => s.slice(8, 10) + '/' + s.slice(5, 7);
+const dataBRfull = s => dataBR(s) + '/' + s.slice(0, 4);
+const idxSemana = ws => Math.round((parse(ws) - parse('2024-01-01')) / (7 * 86400000));
+const num = v => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? 0 : n; };
+const stamp = () => { const d = new Date(); return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const parTxt = p => (p && p.length) ? p.map(i => DIAS_L[i]).join(' e ') : '—';
+const funcionario = id => estado.funcionarios.find(f => f.id === id);
+const feriadoDe = data => { const x = estado.feriados.find(f => f.data === data); return x ? x.nome : ''; };
+const equipeDe = funcao => estado.funcionarios.filter(f => !f.gestor && f.funcao === funcao);
+const normNome = n => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+async function hashCPF(cpf) {
+  const d = cpf.replace(/\D/g, '');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('quintal-escala|' + d));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 function salvar() { localStorage.setItem(CHAVE, JSON.stringify(estado)); }
+function logar(txt) { estado.log.unshift({ t: stamp(), texto: txt }); estado.log = estado.log.slice(0, 150); }
 
-// ---------- Utilidades ----------
-const $ = (id) => document.getElementById(id);
-const hoje = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
-const diaSemana = (data) => new Date(data + 'T12:00:00').getDay();
-const fmtData = (d) => d.split('-').reverse().join('/');
-const esc = (t) => String(t ?? '').replace(/[&<>"']/g, c => ({ '&':'&', '<':'<', '>':'>', '"':'&quot;', "'":'&#39;' }[c]));
-const media = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
-const arredonda = (v, passo) => Math.max(0, Math.round(v / (passo || 1)) * (passo || 1));
-const num = (v) => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? 0 : n; };
-const fmtNum = (n) => (Math.round(n * 100) / 100).toString().replace('.', ',');
-const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-function segundaDe(data) {
-  const d = new Date(data + 'T12:00:00');
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function toast(msg, erro) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show' + (erro ? ' erro' : '');
+  clearTimeout(toast.t); toast.t = setTimeout(() => (t.className = ''), 4200);
 }
-// Soma, em kg, das preparações cuja unidade é "kg".
-function kgDoRegistro(r) {
-  return Object.entries(r.itens).reduce((soma, [id, v]) => {
-    const it = estado.itens.find(i => i.id === id);
-    return soma + (it && String(it.unidade).trim().toLowerCase() === 'kg' ? v.qtd : 0);
-  }, 0);
+function abrirModal(...c) {
+  const box = document.getElementById('modalBox');
+  box.replaceChildren(...c.flat().filter(x => x != null && x !== false));
+  document.getElementById('modal').hidden = false;
 }
+function fecharModal() { document.getElementById('modal').hidden = true; }
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') fecharModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal(); });
 
-// ---------- Navegação ----------
-const ABAS = [['fechamento','Fechamento'], ['planejar','Planejar'], ['comparativo','Comparativo'], ['historico','Histórico'], ['config','Configurar']];
-function desenhaNav() {
-  $('nav').innerHTML = ABAS.map(([k, n]) => `<button class="${aba === k ? 'on' : ''}" onclick="ir('${k}')">${n}</button>`).join('');
-}
-function ir(k) { aba = k; render(); }
-function render() {
-  desenhaNav();
-  if (aba === 'fechamento') viewFechamento();
-  else if (aba === 'planejar') viewPlanejar();
-  else if (aba === 'comparativo') viewComparativo();
-  else if (aba === 'historico') viewHistorico();
-  else viewConfig();
-}
+// ---------- dados iniciais (equipe fictícia) ----------
+// base = dois dias de folga (0 = segunda ... 6 = domingo); off = deslocamento do rodízio de domingo
+const DEMO = [
+  { nome: 'Marina Gestora', cpf: '900.000.000-01', funcao: 'cozinha', gestor: true },
+  { nome: 'Carlos Souza', cpf: '100.000.000-01', funcao: 'cozinha', base: [0, 1], off: 0, turno: 'Manhã/Tarde' },
+  { nome: 'Ana Beatriz Lima', cpf: '100.000.000-02', funcao: 'cozinha', base: [1, 2], off: 1, turno: 'Manhã/Tarde' },
+  { nome: 'Pedro Henrique Alves', cpf: '100.000.000-03', funcao: 'cozinha', base: [2, 3], off: 2, turno: 'Tarde/Noite' },
+  { nome: 'Joana Martins', cpf: '100.000.000-04', funcao: 'cozinha', base: [0, 3], off: 3, turno: 'Tarde/Noite' },
+  { nome: 'Rafael Costa', cpf: '100.000.000-05', funcao: 'cozinha', base: [1, 3], off: 0, turno: 'Tarde/Noite' },
+  { nome: 'Fernanda Rocha', cpf: '200.000.000-01', funcao: 'salao', base: [0, 1], off: 0, turno: 'Tarde/Noite' },
+  { nome: 'Lucas Pereira', cpf: '200.000.000-02', funcao: 'salao', base: [1, 2], off: 1, turno: 'Tarde/Noite' },
+  { nome: 'Camila Duarte', cpf: '200.000.000-03', funcao: 'salao', base: [2, 3], off: 2, turno: 'Tarde/Noite' },
+  { nome: 'Bruno Teixeira', cpf: '200.000.000-04', funcao: 'salao', base: [0, 3], off: 3, turno: 'Tarde/Noite' },
+  { nome: 'Patrícia Nogueira', cpf: '300.000.000-01', funcao: 'caixa', base: [0, 1], off: 0, turno: 'Tarde/Noite' },
+  { nome: 'Rodrigo Mendes', cpf: '300.000.000-02', funcao: 'caixa', base: [2, 3], off: 2, turno: 'Tarde/Noite' },
+  { nome: 'Tiago Ribeiro', cpf: '400.000.000-01', funcao: 'bar', base: [1, 2], off: 1, turno: 'Tarde/Noite' },
+  { nome: 'Larissa Gomes', cpf: '400.000.000-02', funcao: 'bar', base: [0, 3], off: 3, turno: 'Tarde/Noite' }
+];
 
-// ---------- Fechamento ----------
-function viewFechamento() {
-  const itens = estado.itens.map(it => `
-    <div class="card">
-      <h3>${esc(it.nome)}</h3>
-      <div class="row">
-        <div><label>Quantidade preparada (${esc(it.unidade)})</label><input type="number" step="any" min="0" id="q_${it.id}"></div>
-        <div><label>Como terminou o serviço</label>
-          <select id="r_${it.id}">
-            <option value="">— escolha —</option>
-            <option value="faltou">Faltou</option>
-            <option value="medida">Ficou na medida</option>
-            <option value="sobrou_pouco">Sobrou pouco</option>
-            <option value="sobrou_muito">Sobrou muito</option>
-          </select></div>
-        <div><label>Sobra pesada em kg (opcional)</label><input type="number" step="any" min="0" id="k_${it.id}" placeholder="só em pesagens pontuais"></div>
-      </div>
-    </div>`).join('');
+const REGRAS_INICIAIS = [
+  { titulo: 'Repouso semanal de 2 dias (EC 141/2026)', status: 'lei', ativo: true, fonte: 'EC 141, de 16/10/2026: art. 7º, XV, e art. 10, I',
+    descricao: 'O repouso semanal remunerado passa a ser de 2 dias, um deles preferencialmente aos domingos. Entra em vigor 2 meses após a publicação (cerca de 16/12/2026). Antes disso, a escala 5x2 é uma política da casa.' },
+  { titulo: 'Jornada: 8 h por dia e limite semanal gradual', status: 'lei', ativo: true, fonte: 'EC 141: art. 6º, I e II, e art. 7º, XIII',
+    descricao: 'Limite semanal de 42 h a partir de 2 meses após a publicação e de 40 h um ano depois, sem redução de salário. Cinco dias de 8 horas somam 40 h por semana.' },
+  { titulo: 'Cláusulas de CCT incompatíveis perdem efeito', status: 'confirmar', ativo: true, fonte: 'EC 141, art. 3º',
+    descricao: 'Passados 2 meses da publicação, cláusulas de convenção sobre jornada e repouso incompatíveis com a emenda ficam sem efeito. Conferir com o sindicato quais cláusulas da CCT são atingidas (por exemplo 12x36, banco de horas e intervalos).' },
+  { titulo: 'Folga extra mensal em domingo', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cláusula 42 e §§',
+    descricao: 'Quem trabalha em estabelecimento que abre aos domingos recebe uma folga extra por mês, obrigatoriamente em domingo, para ambos os gêneros. Se for trabalhada, é paga em dobro; não entra em compensação de horário e deve constar de escala predefinida. O sistema usa o parâmetro "folga em domingo ao menos a cada X dias" para alertar. Interpretação a confirmar com o sindicato.' },
+  { titulo: 'Feriado trabalhado', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusula 42, §3º e §4º',
+    descricao: 'Feriado trabalhado pode ser compensado até 15 dias antes ou depois, sem prejuízo da folga semanal; se não houver compensação, é pago em dobro. É vedado usar banco de horas em feriados e em folgas dominicais trabalhadas.' },
+  { titulo: 'Máximo de dias seguidos de trabalho', status: 'sistema', ativo: true, fonte: 'Trava do sistema (parâmetro editável)',
+    descricao: 'O sistema bloqueia mudanças que deixem mais dias seguidos de trabalho do que o limite configurado (padrão: 6).' },
+  { titulo: 'Controle de jornada', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusula 43',
+    descricao: 'É obrigatório controlar a jornada por livro ou ponto (mecânico, magnético ou digital), qualquer que seja o número de funcionários. Este sistema organiza a escala; não substitui o controle de ponto.' },
+  { titulo: 'Convenção vigente e CCT 2026/2027', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cláusula 59',
+    descricao: 'A CCT 2025/2026 teve vigência até 31/07/2026 e a cláusula 59 mantém as condições até nova convenção ser assinada. A CCT 2026/2027 ainda não saiu. Quando sair, atualize os parâmetros e as regras desta aba.' },
+  { titulo: 'Medidas transitórias para micro e pequenas empresas', status: 'confirmar', ativo: true, fonte: 'EC 141, art. 5º',
+    descricao: 'Lei complementar poderá criar medidas transitórias, condicionadas à manutenção de empregos, para MEI, microempresas e empresas de pequeno porte. Acompanhar a regulamentação.' }
+];
 
-  $('view').innerHTML = `
-    <div class="card">
-      <h3>Dados do serviço</h3>
-      <div class="row">
-        <div><label>Data</label><input type="date" id="f_data" value="${hoje()}"></div>
-        <div><label>Serviço</label><select id="f_serv"><option>Almoço</option><option>Jantar</option></select></div>
-        <div><label>Refeições servidas</label><input type="number" min="1" id="f_ref"></div>
-      </div>
-      <label>Observação excepcional (chuva, grupo grande, receita nova...)</label>
-      <input id="f_obs">
-      <div class="check"><input type="checkbox" id="f_atip"><span class="mut">Dia atípico: guardar, mas não usar nas médias</span></div>
-    </div>
-    <p class="mut">Informe só o que a cozinha já sabe. Não precisa pesar tudo: “meia panela” já serve para comparar dias.</p>
-    ${itens}
-    <button class="act" onclick="salvarFechamento()">Salvar fechamento</button>
-    <div id="f_msg" class="mut" style="margin-top:10px"></div>`;
-}
+const FERIADOS_INICIAIS = [
+  ['2026-11-20', 'Consciência Negra'], ['2026-12-25', 'Natal'], ['2027-01-01', 'Confraternização Universal'],
+  ['2027-03-26', 'Sexta-feira Santa'], ['2027-04-21', 'Tiradentes'], ['2027-05-01', 'Dia do Trabalho'],
+  ['2027-09-07', 'Independência'], ['2027-10-12', 'N. Sra. Aparecida'], ['2027-11-02', 'Finados'],
+  ['2027-11-15', 'Proclamação da República'], ['2027-11-20', 'Consciência Negra'], ['2027-12-25', 'Natal']
+].map(([data, nome]) => ({ data, nome }));
 
-function salvarFechamento() {
-  const data = $('f_data').value, servico = $('f_serv').value, refeicoes = num($('f_ref').value);
-  if (!data || refeicoes <= 0) { $('f_msg').innerHTML = '<span class="bad">Informe a data e o número de refeições servidas.</span>'; return; }
-
-  const itens = {};
-  estado.itens.forEach(it => {
-    const qtd = num($('q_' + it.id).value), res = $('r_' + it.id).value, kg = $('k_' + it.id).value;
-    if (qtd > 0 && res) itens[it.id] = { qtd, res, kg: kg === '' ? null : num(kg) };
-  });
-  if (!Object.keys(itens).length) { $('f_msg').innerHTML = '<span class="bad">Preencha quantidade e resultado de pelo menos uma preparação.</span>'; return; }
-
-  const existente = estado.registros.findIndex(r => r.data === data && r.servico === servico);
-  if (existente >= 0) {
-    if (!confirm('Já existe um fechamento para essa data e serviço. Substituir?')) return;
-    estado.registros.splice(existente, 1);
+async function criarEstadoInicial() {
+  const funcionarios = [];
+  for (const [i, d] of DEMO.entries()) {
+    funcionarios.push({ id: 'f' + (i + 1), nome: d.nome, cpfHash: await hashCPF(d.cpf), cpfFim: d.cpf.slice(-2), funcao: d.funcao,
+      turno: d.turno || '', base: d.base || [], off: d.off || 0, horas: 8, gestor: !!d.gestor, demo: true });
   }
-  estado.registros.push({ id: 'r' + Date.now(), data, servico, refeicoes, obs: $('f_obs').value.trim(), atipico: $('f_atip').checked, itens });
-  estado.registros.sort((a, b) => a.data.localeCompare(b.data));
-  salvar();
-  viewFechamento();
-  $('f_msg').innerHTML = '<span class="ok">Fechamento salvo.</span>';
-}
-
-// ---------- Cálculo ----------
-function comparaveis(data, servico) {
-  const dow = diaSemana(data);
-  return estado.registros
-    .filter(r => r.servico === servico && diaSemana(r.data) === dow && r.data !== data)
-    .sort((a, b) => b.data.localeCompare(a.data));
-}
-
-function calculaItem(it, comps, esperadas) {
-  const validos = comps.filter(r => r.itens[it.id]).slice(0, MAX_COMPARAVEIS);
-  if (validos.length < MIN_COMPARAVEIS) return { ok: false, n: validos.length };
-
-  const consumoPorRef = media(validos.map(r => (r.itens[it.id].qtd * FATOR[r.itens[it.id].res]) / r.refeicoes));
-  const preparadoPorRef = media(validos.map(r => r.itens[it.id].qtd / r.refeicoes));
-  const demanda = esperadas * consumoPorRef;
-  const sugerido = arredonda(demanda * (1 + it.margem / 100), it.passo);
-  const padrao = arredonda(esperadas * preparadoPorRef, it.passo);
-  const cont = { faltou: 0, medida: 0, sobrou_pouco: 0, sobrou_muito: 0 };
-  validos.forEach(r => cont[r.itens[it.id].res]++);
-  const kgs = validos.map(r => r.itens[it.id].kg).filter(k => k !== null);
-  return { ok: true, n: validos.length, demanda, sugerido, padrao, cont, kgMedio: kgs.length ? media(kgs) : null, kgN: kgs.length };
-}
-
-// ---------- Planejar ----------
-function viewPlanejar() {
-  $('view').innerHTML = `
-    <div class="card">
-      <h3>Quanto preparar?</h3>
-      <div class="row">
-        <div><label>Data do serviço</label><input type="date" id="p_data" value="${hoje()}" onchange="atualizaPlano(true)"></div>
-        <div><label>Serviço</label><select id="p_serv" onchange="atualizaPlano(true)"><option>Almoço</option><option>Jantar</option></select></div>
-        <div><label>Refeições esperadas</label><input type="number" min="1" id="p_ref" oninput="atualizaPlano(false)"></div>
-      </div>
-      <p class="mut" id="p_info"></p>
-    </div>
-    <div id="p_res"></div>`;
-  atualizaPlano(true);
-}
-
-function atualizaPlano(recalculaEsperadas) {
-  const data = $('p_data').value, servico = $('p_serv').value;
-  if (!data) return;
-  const comps = comparaveis(data, servico);
-  const usados = comps.filter(r => !r.atipico).slice(0, MAX_COMPARAVEIS);
-  const atipicos = comps.length - comps.filter(r => !r.atipico).length;
-
-  if (recalculaEsperadas) $('p_ref').value = usados.length ? Math.round(media(usados.map(r => r.refeicoes))) : '';
-  const esperadas = num($('p_ref').value);
-
-  $('p_info').innerHTML = usados.length
-    ? `Base: ${usados.length} ${DIAS[diaSemana(data)]}(s) comparável(is) de ${servico.toLowerCase()}, com média de ${Math.round(media(usados.map(r => r.refeicoes)))} refeições.${atipicos ? ` ${atipicos} dia(s) atípico(s) ficaram de fora.` : ''} Se houver reserva ou evento, ajuste o número de refeições.`
-    : `Ainda não há registros de ${DIAS[diaSemana(data)]} de ${servico.toLowerCase()}.`;
-
-  if (esperadas <= 0) { $('p_res').innerHTML = '<p class="mut">Informe as refeições esperadas para ver a sugestão.</p>'; return; }
-
-  $('p_res').innerHTML = `<div class="aviso">Estimativa baseada em histórico e em regras simples, não é medição exata. Teste ajustes pequenos e confirme com a cozinha.</div>` +
-    estado.itens.map(it => {
-      const c = calculaItem(it, usados, esperadas);
-      if (!c.ok) return `<div class="card"><h3>${esc(it.nome)}</h3><p class="mut">Dados insuficientes: ${c.n} registro(s) comparável(is). São necessários pelo menos ${MIN_COMPARAVEIS}.</p></div>`;
-
-      const diff = c.padrao > 0 ? ((c.sugerido - c.padrao) / c.padrao) * 100 : 0;
-      let recomend, cls;
-      if (c.cont.faltou > 0 && diff <= 0) { recomend = 'Já faltou em dias comparáveis. Não reduza a produção inicial; considere produzir em etapas.'; cls = 'warn'; }
-      else if (diff <= -5) { recomend = `Testar uma redução de cerca de ${Math.abs(Math.round(diff))}% na produção inicial e acompanhar se ocorre falta.`; cls = 'ok'; }
-      else if (diff >= 5) { recomend = `Histórico indica falta de margem: considere aumentar cerca de ${Math.round(diff)}%.`; cls = 'warn'; }
-      else { recomend = 'A produção atual está próxima do adequado. Manter e continuar acompanhando.'; cls = 'ok'; }
-
-      return `<div class="card">
-        <h3>${esc(it.nome)}</h3>
-        <div class="big">${fmtNum(c.sugerido)} <span class="mut">${esc(it.unidade)}(s)</span></div>
-        <p class="mut">Demanda estimada: ${fmtNum(c.demanda)} + margem de ${it.margem}%. Padrão atual: ${fmtNum(c.padrao)}.</p>
-        <p class="${cls}">${recomend}</p>
-        <p>
-          <span class="tag bad">Faltou: ${c.cont.faltou}</span>
-          <span class="tag">Na medida: ${c.cont.medida}</span>
-          <span class="tag">Sobrou pouco: ${c.cont.sobrou_pouco}</span>
-          <span class="tag warn">Sobrou muito: ${c.cont.sobrou_muito}</span>
-          <span class="mut">nos últimos ${c.n} dias comparáveis</span>
-        </p>
-        ${c.kgMedio !== null ? `<p class="mut">Sobra pesada média: ${fmtNum(c.kgMedio)} kg (${c.kgN} pesagem/ns).</p>` : ''}
-      </div>`;
-    }).join('');
-}
-
-// ---------- Comparativo ----------
-function viewComparativo() {
-  const regs = estado.registros.filter(r => !r.atipico);
-  if (!regs.length) {
-    $('view').innerHTML = '<div class="card"><p class="mut">Ainda não há registros para comparar.</p></div>';
-    return;
-  }
-  const cabItens = estado.itens.map(it => `<th>${esc(it.nome)} (${esc(it.unidade)})</th>`).join('');
-
-  const porDia = [1, 2, 3, 4, 5, 6, 0].map(d => {
-    const rs = regs.filter(r => diaSemana(r.data) === d);
-    if (!rs.length) return `<tr><td>${cap(DIAS[d])}</td><td colspan="${estado.itens.length + 4}" class="mut">sem registros</td></tr>`;
-    const refMed = media(rs.map(r => r.refeicoes));
-    const kgMed = media(rs.map(kgDoRegistro));
-    const cols = estado.itens.map(it => {
-      const v = rs.filter(r => r.itens[it.id]).map(r => r.itens[it.id].qtd);
-      return `<td>${v.length ? fmtNum(media(v)) : '—'}</td>`;
-    }).join('');
-    return `<tr><td>${cap(DIAS[d])}</td><td>${rs.length}</td><td>${fmtNum(refMed)}</td>${cols}<td>${kgMed > 0 ? fmtNum(kgMed) : '—'}</td><td>${kgMed > 0 ? fmtNum(kgMed / refMed) : '—'}</td></tr>`;
-  }).join('');
-
-  const grupos = {};
-  regs.forEach(r => { (grupos[segundaDe(r.data)] = grupos[segundaDe(r.data)] || []).push(r); });
-  const semanas = Object.keys(grupos).sort();
-  let anterior = null;
-  const porSemana = semanas.map(seg => {
-    const rs = grupos[seg];
-    const ref = rs.reduce((a, r) => a + r.refeicoes, 0);
-    const kg = rs.reduce((a, r) => a + kgDoRegistro(r), 0);
-    let variacao = '—';
-    if (anterior && anterior.dias === rs.length && anterior.ref > 0) {
-      const v = ((ref - anterior.ref) / anterior.ref) * 100;
-      variacao = `<span class="${v >= 0 ? 'ok' : 'warn'}">${v >= 0 ? '+' : ''}${fmtNum(v)}%</span>`;
-    }
-    anterior = { ref, dias: rs.length };
-    return `<tr><td>${fmtData(seg)}</td><td>${rs.length}</td><td>${ref}</td><td>${kg > 0 ? fmtNum(kg) : '—'}</td><td>${kg > 0 ? fmtNum(kg / ref) : '—'}</td><td>${variacao}</td></tr>`;
-  }).join('');
-
-  $('view').innerHTML = `
-    <div class="card">
-      <h3>Média por dia da semana</h3>
-      <p class="mut">Quanto se prepara, em média, em cada dia. Dias atípicos ficam de fora.</p>
-      <div style="overflow-x:auto"><table>
-        <tr><th>Dia</th><th>Registros</th><th>Média de refeições</th>${cabItens}<th>Total em kg</th><th>kg por refeição</th></tr>
-        ${porDia}
-      </table></div>
-    </div>
-    <div class="card">
-      <h3>Semana a semana</h3>
-      <p class="mut">A variação de refeições só aparece quando a semana tem o mesmo número de dias da anterior.</p>
-      <div style="overflow-x:auto"><table>
-        <tr><th>Semana (início)</th><th>Dias</th><th>Refeições</th><th>Total em kg</th><th>kg por refeição</th><th>Variação de refeições</th></tr>
-        ${porSemana}
-      </table></div>
-    </div>`;
-}
-
-// ---------- Histórico ----------
-function viewHistorico() {
-  const nome = (id) => (estado.itens.find(i => i.id === id) || { nome: '(removido)' }).nome;
-  const temSim = estado.registros.some(r => r.simulado);
-  const linhas = [...estado.registros].reverse().map(r => `
-    <tr>
-      <td>${fmtData(r.data)}<br><span class="mut">${DIAS[diaSemana(r.data)]}, ${esc(r.servico)}</span></td>
-      <td>${r.refeicoes}</td>
-      <td>${Object.entries(r.itens).map(([id, v]) => `${esc(nome(id))}: ${fmtNum(v.qtd)} — ${ROTULO[v.res]}${v.kg !== null ? ` (${fmtNum(v.kg)} kg)` : ''}`).join('<br>')}</td>
-      <td>${r.simulado ? '<span class="tag">simulação</span>' : ''}${r.atipico ? '<span class="tag warn">atípico</span>' : ''}${r.simulado ? '' : esc(r.obs)}</td>
-      <td><button class="del" onclick="apagar('${r.id}')">Apagar</button></td>
-    </tr>`).join('');
-
-  $('view').innerHTML = `
-    <div class="card">
-      <h3>Histórico (${estado.registros.length} fechamentos)</h3>
-      ${estado.registros.length ? `<div style="overflow-x:auto"><table>
-        <tr><th>Data</th><th>Refeições</th><th>Preparações</th><th>Obs.</th><th></th></tr>${linhas}</table></div>` : '<p class="mut">Nenhum registro ainda.</p>'}
-    </div>
-    <div class="card">
-      <h3>Dados de simulação</h3>
-      <p class="mut">Os registros marcados como simulação são de teste. Remova antes de começar a usar com dados reais.</p>
-      ${temSim ? '<button class="sec" onclick="removerSimulacao()">Remover dados de simulação</button>' : ''}
-      <button class="sec" onclick="recarregarSimulacao()">Recarregar simulação de 4 semanas</button>
-    </div>
-    <div class="card">
-      <h3>Backup e exportação</h3>
-      <p class="mut">Os dados ficam salvos só neste navegador. Faça backup de vez em quando.</p>
-      <button class="sec" onclick="exportarCSV()">Exportar CSV (planilha)</button>
-      <button class="sec" onclick="exportarJSON()">Baixar backup</button>
-      <button class="sec" onclick="$('imp').click()">Restaurar backup</button>
-      <input type="file" id="imp" accept=".json" style="display:none" onchange="importarJSON(event)">
-    </div>`;
-}
-
-function apagar(id) {
-  if (!confirm('Apagar este fechamento?')) return;
-  estado.registros = estado.registros.filter(r => r.id !== id);
-  salvar(); viewHistorico();
-}
-
-function removerSimulacao() {
-  if (!confirm('Remover todos os registros de simulação? Os fechamentos reais são mantidos.')) return;
-  estado.registros = estado.registros.filter(r => !r.simulado);
-  salvar(); viewHistorico();
-}
-
-function recarregarSimulacao() {
-  if (!confirm('Carregar a simulação de 4 semanas? Registros reais na mesma data e serviço são mantidos.')) return;
-  // garante que as preparações usadas pela simulação existam
-  ITENS_PADRAO.forEach(p => { if (!estado.itens.some(i => i.id === p.id)) estado.itens.push({ ...p }); });
-  estado.registros = estado.registros.filter(r => !r.simulado);
-  gerarSimulacao().forEach(s => {
-    if (!estado.registros.some(r => r.data === s.data && r.servico === s.servico)) estado.registros.push(s);
-  });
-  estado.registros.sort((a, b) => a.data.localeCompare(b.data));
-  salvar(); viewHistorico();
-}
-
-function baixar(nome, conteudo, tipo) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([conteudo], { type: tipo }));
-  a.download = nome; a.click();
-}
-function exportarCSV() {
-  const linhas = [['data','dia_semana','servico','refeicoes','preparacao','unidade','qtd_preparada','resultado','sobra_kg','atipico','simulacao','observacao']];
-  estado.registros.forEach(r => Object.entries(r.itens).forEach(([id, v]) => {
-    const it = estado.itens.find(i => i.id === id) || { nome: id, unidade: '' };
-    linhas.push([r.data, DIAS[diaSemana(r.data)], r.servico, r.refeicoes, it.nome, it.unidade, v.qtd, ROTULO[v.res], v.kg ?? '', r.atipico ? 'sim' : 'nao', r.simulado ? 'sim' : 'nao', r.obs]);
-  }));
-  const csv = linhas.map(l => l.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n');
-  baixar('producao.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
-}
-function exportarJSON() { baixar('backup_producao.json', JSON.stringify(estado, null, 2), 'application/json'); }
-function importarJSON(ev) {
-  const f = ev.target.files[0]; if (!f) return;
-  const rd = new FileReader();
-  rd.onload = () => {
-    try {
-      const s = JSON.parse(rd.result);
-      if (!s.itens || !s.registros) throw new Error();
-      if (!confirm('Isso substitui os dados atuais. Continuar?')) return;
-      estado = s; salvar(); render();
-    } catch (e) { alert('Arquivo inválido.'); }
+  estado = {
+    v: 1, demoAtivo: true,
+    params: { cctNome: 'CCT 2025/2026 (SP009729/2025); a de 2026/2027 ainda não saiu', folgasSemana: 2, maxSeguidos: 6, horasDia: 8,
+      limiteAtual: 44, limiteApos1: 42, limiteApos2: 40, dataEmenda: '2026-12-16', dataLimite40: '2027-12-16',
+      domingoACadaDias: 30, feriadoCompDias: 15 },
+    minimos: { cozinha: [2, 2, 2, 2, 3, 3, 3], salao: [2, 2, 2, 2, 3, 4, 3], caixa: [1, 1, 1, 1, 1, 2, 1], bar: [1, 1, 1, 1, 1, 2, 1] },
+    funcionarios, escala: {}, pedidos: [], feriados: FERIADOS_INICIAIS,
+    regras: REGRAS_INICIAIS.map((r, i) => Object.assign({ id: 'r' + (i + 1) }, r)), log: []
   };
-  rd.readAsText(f);
+  // pedido urgente de demonstração (gera "furo" na segunda-feira da próxima semana)
+  const lucas = funcionarios.find(f => f.nome === 'Lucas Pereira');
+  const prox = addDias(iniSemana(hojeISO()), 7);
+  estado.pedidos.push({ id: 'p0', funcId: lucas.id, semana: prox, antigo: parDe(lucas, prox), novo: [0, 2],
+    categoria: 'Estudo', motivo: 'Prova na segunda-feira (pedido de demonstração)', status: 'pendente', criadoEm: stamp() });
+  logar('Sistema iniciado com equipe fictícia de demonstração.');
+  salvar();
 }
 
-// ---------- Configurar ----------
-function viewConfig() {
-  $('view').innerHTML = `
-    <div class="aviso">Comece com 3 a 5 preparações: as que mais sobram, custam mais ou aparecem com frequência. Se você remover uma, o histórico dela deixa de aparecer.</div>
-    ${estado.itens.map(it => `
-      <div class="card">
-        <div class="row">
-          <div><label>Preparação</label><input value="${esc(it.nome)}" onchange="edita('${it.id}','nome',this.value)"></div>
-          <div><label>Unidade habitual</label><input value="${esc(it.unidade)}" onchange="edita('${it.id}','unidade',this.value)" placeholder="panela, bandeja, porção, kg"></div>
-          <div><label>Margem de segurança (%)</label><input type="number" min="0" value="${it.margem}" onchange="edita('${it.id}','margem',num(this.value))"></div>
-          <div><label>Arredondar para múltiplos de</label><input type="number" step="any" min="0.1" value="${it.passo}" onchange="edita('${it.id}','passo',num(this.value)||1)"></div>
-        </div>
-        <button class="del" style="margin-top:10px" onclick="removeItem('${it.id}')">Remover</button>
-      </div>`).join('')}
-    <button class="sec" onclick="addItem()">+ Adicionar preparação</button>
-    <p class="mut" style="margin-top:16px">A margem pode variar por item: use maior para o que não dá para repor rápido ou cuja falta pesa mais, e menor para o que é caro ou perecível.</p>`;
+// ---------- motor de escala ----------
+// Folgas da semana: usa alteração manual, se houver; senão, a folga-base com rodízio de domingo (a cada 4 semanas).
+function parDe(f, ws, ov) {
+  const o = ov || estado.escala; const k = ws + '|' + f.id;
+  if (o[k]) return o[k];
+  if (estado.params.domingoACadaDias > 0 && (((idxSemana(ws) + f.off) % 4) + 4) % 4 === 0 && !f.base.includes(6))
+    return [f.base[0], 6].sort((a, b) => a - b);
+  return f.base.slice();
 }
-function edita(id, campo, valor) {
-  const it = estado.itens.find(i => i.id === id);
-  if (it) { it[campo] = valor; salvar(); }
+const diaFolga = (f, data, ov) => parDe(f, iniSemana(data), ov).includes(dowM(data));
+function maxSeguidos(f, ws, ov) {
+  let max = 0, run = 0;
+  for (let n = -7; n < 21; n++) { if (diaFolga(f, addDias(ws, n), ov)) run = 0; else { run++; if (run > max) max = run; } }
+  return max;
 }
-function addItem() {
-  if (estado.itens.length >= 8) { alert('Para começar, mantenha poucas preparações (máximo de 8 aqui).'); return; }
-  estado.itens.push({ id: 'i' + Date.now(), nome: 'Nova preparação', unidade: 'porção', margem: 10, passo: 1 });
-  salvar(); viewConfig();
+function diasSemDomingo(f, ref, ov) {
+  let d = addDias(iniSemana(ref), 6); if (d > ref) d = addDias(d, -7);
+  for (let k = 0; k < 12; k++) { if (diaFolga(f, d, ov)) return diffDias(ref, d); d = addDias(d, -7); }
+  return 999;
 }
-function removeItem(id) {
-  if (!confirm('Remover esta preparação?')) return;
-  estado.itens = estado.itens.filter(i => i.id !== id);
-  salvar(); viewConfig();
+function limiteEm(ws) {
+  const p = estado.params;
+  if (ws >= p.dataLimite40) return p.limiteApos2;
+  if (ws >= p.dataEmenda) return p.limiteApos1;
+  return p.limiteAtual;
+}
+function cobertura(funcao, ws, ov) {
+  const eq = equipeDe(funcao);
+  return DIAS.map((_, d) => eq.filter(f => !parDe(f, ws, ov).includes(d)).length);
+}
+function furos(funcao, ws, ov) {
+  const c = cobertura(funcao, ws, ov), m = estado.minimos[funcao] || [];
+  const r = []; c.forEach((v, d) => { if (v < (m[d] || 0)) r.push({ dia: d, falta: m[d] - v }); });
+  return r;
+}
+const totalFalta = arr => arr.reduce((a, x) => a + x.falta, 0);
+
+// Erros bloqueantes de uma mudança de folga
+function validar(f, ws, par, ov) {
+  const p = estado.params, o = ov || estado.escala, m = [];
+  if (par.length !== p.folgasSemana) m.push('A semana precisa ter exatamente ' + p.folgasSemana + ' folgas.');
+  const antigo = parDe(f, ws, o), hoje = hojeISO();
+  for (let d = 0; d < 7; d++) if (addDias(ws, d) < hoje && par.includes(d) !== antigo.includes(d)) { m.push('Dias que já passaram não podem mudar.'); break; }
+  const tmp = Object.assign({}, o, { [ws + '|' + f.id]: par });
+  const ms = maxSeguidos(f, ws, tmp);
+  if (ms > p.maxSeguidos) m.push('Isso deixaria ' + ms + ' dias seguidos de trabalho (máximo ' + p.maxSeguidos + ').');
+  return m;
+}
+// Avisos que não bloqueiam
+function avisosDe(f, ws, tmp) {
+  const p = estado.params, par = parDe(f, ws, tmp), a = [];
+  if (p.domingoACadaDias > 0) {
+    const sd = diasSemDomingo(f, addDias(ws, 6), tmp);
+    if (sd > p.domingoACadaDias) a.push('Ficaria ' + (sd >= 999 ? 'muito tempo' : sd + ' dias') + ' sem folga em domingo (referência: 1 a cada ' + p.domingoACadaDias + ' dias; regra a confirmar).');
+  }
+  const horas = (7 - par.length) * (f.horas || p.horasDia), lim = limiteEm(ws);
+  if (horas > lim) a.push('A carga seria de ' + horas + ' h na semana, acima do limite de ' + lim + ' h.');
+  for (let d = 0; d < 7; d++) {
+    const data = addDias(ws, d), fer = feriadoDe(data);
+    if (fer && !par.includes(d)) a.push('Trabalha no feriado "' + fer + '" (' + dataBR(data) + '): compensar em até ' + p.feriadoCompDias + ' dias ou pagar em dobro.');
+  }
+  return a;
+}
+// Sugestão de remanejamento: troca folgas de colegas da mesma função para tapar furos, sem quebrar as travas.
+function sugerir(funcao, ws, ov, ignorarId) {
+  const hoje = hojeISO(); let trabalho = Object.assign({}, ov); const sug = [];
+  const antes = furos(funcao, ws, ov);
+  for (let guard = 0; guard < 12; guard++) {
+    const fs = furos(funcao, ws, trabalho); if (!fs.length) break;
+    const fur = fs[0]; let achou = false;
+    for (const f of equipeDe(funcao)) {
+      if (achou) break;
+      if (f.id === ignorarId) continue;
+      const par = parDe(f, ws, trabalho);
+      if (!par.includes(fur.dia) || addDias(ws, fur.dia) < hoje) continue;
+      for (let d2 = 0; d2 < 7; d2++) {
+        if (par.includes(d2) || addDias(ws, d2) < hoje) continue;
+        const novo = par.filter(x => x !== fur.dia).concat(d2).sort((a, b) => a - b);
+        if (validar(f, ws, novo, trabalho).length) continue;
+        const t2 = Object.assign({}, trabalho, { [ws + '|' + f.id]: novo });
+        if (totalFalta(furos(funcao, ws, t2)) >= totalFalta(fs)) continue;
+        trabalho = t2; achou = true;
+        sug.push({ id: f.id, nome: f.nome, de: par, para: novo, texto: f.nome + ': folga ' + parTxt(par) + ' passa para ' + parTxt(novo) });
+        break;
+      }
+    }
+    if (!achou) break;
+  }
+  const restantes = furos(funcao, ws, trabalho);
+  return { ws, furosAntes: antes, sugestoes: sug, restantes, resolve: restantes.length === 0 };
+}
+function aplicarMudanca(f, ws, par, remanejo, motivo) {
+  estado.escala[ws + '|' + f.id] = par;
+  (remanejo || []).forEach(s => { estado.escala[ws + '|' + s.id] = s.para; });
+  logar(motivo + ': ' + f.nome + ', semana de ' + dataBR(ws) + ' (' + parTxt(par) + ')' + ((remanejo || []).length ? ' com ' + remanejo.length + ' troca(s) de colegas' : ''));
+  salvar();
+}
+function auditar(f, ws) {
+  const p = estado.params, par = parDe(f, ws), motivos = [];
+  const ms = maxSeguidos(f, ws), sd = diasSemDomingo(f, addDias(ws, 6));
+  const horas = (7 - par.length) * (f.horas || p.horasDia), lim = limiteEm(ws), fers = [];
+  for (let d = 0; d < 7; d++) { const dt = addDias(ws, d), fer = feriadoDe(dt); if (fer && !par.includes(d)) fers.push(fer + ' (' + dataBR(dt) + ')'); }
+  if (par.length < p.folgasSemana) motivos.push('menos de ' + p.folgasSemana + ' folgas');
+  if (ms > p.maxSeguidos) motivos.push(ms + ' dias seguidos');
+  if (p.domingoACadaDias > 0 && sd > p.domingoACadaDias) motivos.push('sem folga em domingo há mais de ' + p.domingoACadaDias + ' dias (a confirmar)');
+  if (horas > lim) motivos.push(horas + ' h acima do limite de ' + lim + ' h');
+  return { f, folgas: par.length, ms, sd, horas, lim, fers, motivos };
 }
 
-render();
+// ---------- sessão e entrada ----------
+function barra(nome, papel) {
+  document.body.classList.remove('entrada');
+  usuario.replaceChildren(h('span', { class: 'sutil' }, nome + ' · ' + papel), h('button', { class: 'pq', onclick: sair }, 'Sair'));
+}
+function sair() { sessionStorage.removeItem('quintal_sessao'); telaEntrada(); }
+function telaEntrada() {
+  usuario.replaceChildren(); document.body.classList.add('entrada');
+  const nome = h('input', { placeholder: 'Nome completo', 'aria-label': 'Nome completo', autocomplete: 'off' });
+  const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: 'CPF', 'aria-label': 'CPF', autocomplete: 'off' });
+  cpf.addEventListener('input', () => {
+    const d = cpf.value.replace(/\D/g, '').slice(0, 11);
+    cpf.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+  });
+  const msg = h('div');
+  const botao = h('button', { class: 'cheio', type: 'submit' }, 'Entrar');
+  const form = h('form', { class: 'entra-card', novalidate: 'novalidate' }, nome, cpf, msg, botao);
+  form.addEventListener('submit', async ev => {
+    ev.preventDefault(); botao.disabled = true;
+    try {
+      const hs = await hashCPF(cpf.value), n = normNome(nome.value);
+      const f = estado.funcionarios.find(x => normNome(x.nome) === n && x.cpfHash === hs);
+      if (!f) throw new Error('Nome ou CPF não conferem.');
+      sessionStorage.setItem('quintal_sessao', f.id); iniciar();
+    } catch (e) { msg.replaceChildren(h('div', { class: 'msg erro' }, e.message)); }
+    finally { botao.disabled = false; }
+  });
+  const demo = estado.demoAtivo ? h('div', { class: 'card demo' }, h('h3', {}, 'Contas de demonstração (fictícias)'),
+    h('p', { class: 'sutil pequeno' }, 'Toque para preencher. Não use CPF real neste protótipo.'),
+    DEMO.map(d => h('button', { class: 'pq', type: 'button', onclick: () => { nome.value = d.nome; cpf.value = d.cpf; } }, d.nome + (d.gestor ? ' (gestora)' : '')))) : null;
+  app.replaceChildren(h('div', { class: 'entra' }, h('h1', {}, 'Quintal do Carmo'), h('p', { class: 'sutil' }, 'Escala de folgas 5x2'), form, demo));
+  nome.focus();
+}
+function iniciar() {
+  const f = funcionario(sessionStorage.getItem('quintal_sessao'));
+  if (!f) return telaEntrada();
+  if (f.gestor) { semanaGestor = semanaGestor || iniSemana(hojeISO()); return painelGestor(); }
+  painelFuncionario(f);
+}
+
+// ---------- componentes ----------
+function listaMsg(arr, erro) { return h('div', { class: 'msg' + (erro ? ' erro' : '') }, h('ul', {}, arr.map(x => h('li', {}, x)))); }
+function seletorDias(ws, parInicial, aoMudar) {
+  const hoje = hojeISO(), sel = new Set(parInicial), max = estado.params.folgasSemana;
+  const box = h('div', { class: 'semana' });
+  const els = DIAS.map((nome, d) => {
+    const data = addDias(ws, d), travado = data < hoje, fer = feriadoDe(data);
+    const el = h('div', { class: 'dia escolha' + (travado ? ' travado' : ''), tabindex: travado ? '-1' : '0', role: 'button' },
+      h('b', {}, nome), h('small', {}, dataBR(data)), h('span', { class: 't' }, ''), fer ? h('span', { class: 'fer' }, fer) : null);
+    const alterna = () => {
+      if (travado) return;
+      if (sel.has(d)) sel.delete(d);
+      else if (sel.size < max) sel.add(d);
+      else { toast('Desmarque um dia antes de escolher outro.', true); return; }
+      pinta();
+    };
+    el.addEventListener('click', alterna);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alterna(); } });
+    box.append(el); return { el, d, travado };
+  });
+  function pinta() {
+    els.forEach(x => { const on = sel.has(x.d); x.el.classList.toggle('sel', on);
+      x.el.querySelector('.t').textContent = x.travado ? (on ? 'folga (passou)' : 'passou') : (on ? 'FOLGA' : 'trabalho'); });
+    aoMudar(sel);
+  }
+  pinta();
+  return { box, sel };
+}
+function blocoPlano(pl, titulo) {
+  return h('div', { class: 'msg' + (pl.resolve ? '' : ' erro') }, h('b', {}, titulo),
+    h('ul', {}, pl.furosAntes.map(x => h('li', {}, DIAS_L[x.dia] + ' (' + dataBR(addDias(pl.ws, x.dia)) + '): falta ' + x.falta + (x.falta > 1 ? ' pessoas' : ' pessoa')))),
+    pl.sugestoes.length ? h('div', {}, h('b', {}, 'Quem pode trocar (só muda se você aprovar):'), h('ul', {}, pl.sugestoes.map(s => h('li', {}, s.texto)))) : null,
+    pl.resolve ? null : h('p', {}, 'Não achei como cobrir tudo sem quebrar as travas. Ajuste outras folgas na aba Escala ou recuse.'));
+}
+
+// ---------- funcionário ----------
+function painelFuncionario(f) {
+  barra(f.nome, 'funcionário(a)');
+  const hoje = hojeISO(), m0 = hoje.slice(0, 7);
+  const dt = new Date(+m0.slice(0, 4), +m0.slice(5, 7), 1);
+  const m1 = dt.getFullYear() + '-' + pad(dt.getMonth() + 1);
+  const mes = mesFunc ? m1 : m0;
+  const nomeMes = MESES[+mes.slice(5, 7) - 1] + ' de ' + mes.slice(0, 4);
+  const limite = addDias(iniSemana(hoje), 13);
+  const navMes = h('div', { class: 'nav-mes' },
+    h('button', { disabled: mesFunc === 0, 'aria-label': 'Mês anterior', onclick: () => { mesFunc = 0; painelFuncionario(f); } }, '‹'),
+    h('h3', {}, nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)),
+    h('button', { disabled: mesFunc === 1, 'aria-label': 'Próximo mês', onclick: () => { mesFunc = 1; painelFuncionario(f); } }, '›'));
+  const ult = iso(new Date(+mes.slice(0, 4), +mes.slice(5, 7), 0));
+  const ini = iniSemana(mes + '-01'), fim = addDias(iniSemana(ult), 6), celulas = [];
+  for (let d = ini; d <= fim; d = addDias(d, 1)) {
+    const fora = d.slice(0, 7) !== mes, folga = !fora && diaFolga(f, d), fer = feriadoDe(d);
+    celulas.push(h('div', { class: 'cal-dia' + (fora ? ' fora' : '') + (folga ? ' folga' : '') + (d > limite ? ' prev' : '') + (d === hoje ? ' hoje' : ''), title: fer },
+      h('b', {}, String(+d.slice(8))), folga ? h('span', { class: 't' }, 'folga') : null, !fora && fer ? h('span', { class: 'fer' }, fer) : null));
+  }
+  const linhas = [0, 7].map(n => {
+    const ws = addDias(iniSemana(hoje), n), par = parDe(f, ws);
+    const peds = estado.pedidos.filter(p => p.funcId === f.id && p.semana === ws), ped = peds[peds.length - 1];
+    const emAnalise = ped && ped.status === 'pendente';
+    const st = { pendente: 'em análise pelo gestor', aprovada: 'validado', recusada: 'recusado', cancelada: 'cancelado' };
+    const cancelar = () => { ped.status = 'cancelada'; logar(f.nome + ' cancelou o pedido da semana de ' + dataBR(ws)); salvar(); toast('Pedido cancelado.'); painelFuncionario(f); };
+    return h('div', { class: 'linha-semana' },
+      h('div', {}, h('b', {}, n === 0 ? 'Esta semana' : 'Próxima semana'), h('span', { class: 'sutil' }, ' (' + dataBR(ws) + ' a ' + dataBR(addDias(ws, 6)) + ')'),
+        h('div', {}, 'Folgas: ', h('b', {}, parTxt(par))),
+        ped ? h('div', { class: 'sutil pequeno' }, 'Pedido (' + parTxt(ped.novo) + '): ' + st[ped.status]) : null),
+      h('div', { class: 'acoes' }, emAnalise ? h('button', { class: 'pq perigo', onclick: cancelar }, 'Cancelar pedido') : null,
+        h('button', { class: 'pq aviso', onclick: () => modalPedido(f, ws) }, emAnalise ? 'Trocar pedido' : 'Pedir mudança')));
+  });
+  app.replaceChildren(
+    h('div', { class: 'card' }, h('h2', {}, f.nome + ' · ' + FUNCOES[f.funcao]), navMes, h('div', { class: 'cal' }, DIAS.map(d => h('div', { class: 'cal-cab' }, d)), celulas),
+      h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-prev' }), 'Previsão'), h('span', {}, h('i', { class: 'l-hoje' }), 'Hoje')),
+      h('p', { class: 'sutil pequeno' }, 'Depois da próxima semana a escala é uma previsão e pode mudar. Dias com nome embaixo são feriados.')),
+    h('div', { class: 'card' }, h('h2', {}, 'Mudar uma folga'),
+      h('p', { class: 'sutil pequeno' }, 'Dá para pedir mudança na semana atual e na próxima. O gestor valida ou recusa.'), linhas));
+}
+function modalPedido(f, ws) {
+  const msg = h('div'), enviar = h('button', { class: 'cheio', disabled: true }, 'Enviar pedido ao gestor');
+  const atual = parDe(f, ws);
+  const { box, sel } = seletorDias(ws, atual, s => {
+    msg.replaceChildren(); enviar.disabled = true;
+    if (s.size !== estado.params.folgasSemana) return;
+    const par = [...s].sort((a, b) => a - b);
+    if (par.join() === atual.join()) return;
+    const erros = validar(f, ws, par);
+    if (erros.length) { msg.append(listaMsg(erros, true)); return; }
+    const av = avisosDe(f, ws, Object.assign({}, estado.escala, { [ws + '|' + f.id]: par }));
+    if (av.length) msg.append(listaMsg(av, false));
+    enviar.disabled = false;
+  });
+  const cat = h('select', {}, CATEGORIAS.map(c => h('option', { value: c }, c)));
+  const motivo = h('textarea', { rows: '2', maxlength: '140', placeholder: 'Só o necessário. Evite detalhes de saúde.' });
+  enviar.addEventListener('click', () => {
+    const par = [...sel].sort((a, b) => a - b);
+    estado.pedidos.filter(p => p.funcId === f.id && p.semana === ws && p.status === 'pendente').forEach(p => (p.status = 'cancelada'));
+    estado.pedidos.push({ id: 'p' + Date.now(), funcId: f.id, semana: ws, antigo: atual, novo: par, categoria: cat.value, motivo: motivo.value.trim().slice(0, 140), status: 'pendente', criadoEm: stamp() });
+    logar(f.nome + ' pediu mudança de folga na semana de ' + dataBR(ws) + ' (' + parTxt(par) + ')');
+    salvar(); fecharModal(); toast('Gestor alertado. Aguarde a decisão.'); painelFuncionario(f);
+  });
+  abrirModal(h('h2', {}, 'Pedido de mudança'),
+    h('p', { class: 'sutil' }, 'Folgas atuais: ' + parTxt(atual) + '. Toque nos ' + estado.params.folgasSemana + ' dias da nova folga.'), box,
+    h('label', {}, 'Categoria'), cat, h('label', {}, 'Motivo (opcional)'), motivo, msg,
+    h('div', { class: 'acoes' }, enviar, h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+
+// ---------- gestor ----------
+function painelGestor() {
+  const eu = funcionario(sessionStorage.getItem('quintal_sessao'));
+  barra(eu.nome, 'gestor(a)');
+  const pend = estado.pedidos.filter(p => p.status === 'pendente').length;
+  const abas = [['pedidos', 'Pedidos' + (pend ? ' (' + pend + ')' : '')], ['escala', 'Escala'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria'], ['log', 'Registro e backup']];
+  const nav = h('div', { class: 'abas' }, abas.map(([k, t]) => h('button', { class: abaGestor === k ? 'ativa' : '', onclick: () => { abaGestor = k; painelGestor(); } }, t)));
+  app.replaceChildren(nav, { pedidos: gPedidos, escala: gEscala, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, log: gLog }[abaGestor]());
+}
+function seletorSemana() {
+  const base = iniSemana(hojeISO()), ops = [];
+  for (let n = -2; n <= 9; n++) {
+    const ws = addDias(base, n * 7);
+    const rot = n < 0 ? 'passada' : n === 0 ? 'atual' : n === 1 ? 'próxima' : 'previsão';
+    ops.push(h('option', { value: ws, selected: ws === semanaGestor }, 'Semana de ' + dataBR(ws) + ' a ' + dataBR(addDias(ws, 6)) + ' (' + rot + ')'));
+  }
+  return h('select', { onchange: e => { semanaGestor = e.target.value; painelGestor(); } }, ops);
+}
+
+function cartaoPedido(p) {
+  const f = funcionario(p.funcId); if (!f) return null;
+  const ws = p.semana, ov2 = Object.assign({}, estado.escala, { [ws + '|' + f.id]: p.novo });
+  const erros = validar(f, ws, p.novo, estado.escala);
+  const fs = furos(f.funcao, ws, ov2), pl = fs.length ? sugerir(f.funcao, ws, ov2, f.id) : null;
+  const av = avisosDe(f, ws, ov2);
+  const ok = !erros.length && (!pl || pl.resolve);
+  const validarFn = () => {
+    aplicarMudanca(f, ws, p.novo, pl ? pl.sugestoes : [], 'Pedido validado');
+    p.status = 'aprovada'; p.decididoEm = stamp(); salvar(); toast('Validado.'); painelGestor();
+  };
+  const recusarFn = () => { p.status = 'recusada'; p.decididoEm = stamp(); logar('Pedido de ' + f.nome + ' recusado'); salvar(); toast('Pedido recusado.'); painelGestor(); };
+  return h('div', { class: 'pedido urg' },
+    h('div', {}, h('b', {}, f.nome), ' ', h('span', { class: 'badge' }, FUNCOES[f.funcao])),
+    h('div', { class: 'sutil' }, 'Semana de ' + dataBR(ws) + ' · pedido em ' + p.criadoEm),
+    h('div', {}, parTxt(p.antigo) + '  →  ', h('b', {}, parTxt(p.novo))),
+    h('div', {}, 'Categoria: ' + p.categoria + (p.motivo ? ' · ' + p.motivo : '')),
+    erros.length ? listaMsg(erros, true) : null,
+    av.length ? listaMsg(av, false) : null,
+    pl ? blocoPlano(pl, 'Aprovar só esta troca deixaria furo:') : h('div', { class: 'sutil pequeno' }, 'Sem furo: só as folgas de ' + f.nome + ' mudam.'),
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', disabled: !ok, onclick: validarFn }, pl ? 'Validar com este remanejamento' : 'Validar'),
+      h('button', { class: 'perigo', onclick: recusarFn }, 'Recusar')));
+}
+function gPedidos() {
+  const pend = estado.pedidos.filter(p => p.status === 'pendente');
+  const resto = estado.pedidos.filter(p => p.status !== 'pendente').slice(-8).reverse();
+  const rot = { aprovada: 'validado', recusada: 'recusado', cancelada: 'cancelado pelo funcionário' };
+  return h('div', {},
+    pend.length ? h('div', { class: 'alerta', role: 'alert' }, h('h2', { style: 'color:var(--erro)' }, pend.length + ' pedido(s) aguardando você'), pend.map(cartaoPedido))
+      : h('div', { class: 'card' }, h('h2', {}, 'Sem pedidos pendentes'), h('p', { class: 'sutil' }, 'Quando alguém pedir mudança de folga, aparece aqui.')),
+    resto.length ? h('div', { class: 'card' }, h('h3', {}, 'Últimas decisões'), h('ul', { class: 'limpa' }, resto.map(p => {
+      const f = funcionario(p.funcId);
+      return h('li', {}, h('b', {}, f ? f.nome : '(removido)'), ' · semana de ' + dataBR(p.semana) + ' · ' + parTxt(p.antigo) + ' → ' + parTxt(p.novo) + ' · ', h('span', { class: 'badge ' + (p.status === 'aprovada' ? 'ok' : 'bad') }, rot[p.status]));
+    }))) : null);
+}
+
+function gEscala() {
+  const ws = semanaGestor, hoje = hojeISO(), passada = addDias(ws, 6) < hoje;
+  const cab = h('tr', {}, h('th', {}, 'Colaborador'), DIAS.map((d, i) => { const dt = addDias(ws, i), fer = feriadoDe(dt);
+    return h('th', {}, d, h('br'), h('small', { class: 'sutil' }, dataBR(dt)), fer ? h('br') : null, fer ? h('small', { class: 'badge warn' }, 'feriado') : null); }), h('th', {}, ''));
+  const linhas = []; let totalFuros = 0;
+  Object.keys(FUNCOES).forEach(fn => {
+    const eq = equipeDe(fn); if (!eq.length) return;
+    linhas.push(h('tr', {}, h('td', { colspan: '9', class: 'grupo' }, FUNCOES[fn])));
+    eq.forEach(f => {
+      const par = parDe(f, ws), alt = !!estado.escala[ws + '|' + f.id];
+      linhas.push(h('tr', {}, h('td', {}, f.nome), DIAS.map((_, d) => h('td', { class: (par.includes(d) ? 'f' : 'w') + (alt ? ' alt' : '') }, par.includes(d) ? 'folga' : 'trabalho')),
+        h('td', {}, passada ? null : h('button', { class: 'pq', onclick: () => modalAlterar(f, ws) }, 'Alterar'))));
+    });
+    const cb = cobertura(fn, ws), mn = estado.minimos[fn]; totalFuros += furos(fn, ws).length;
+    linhas.push(h('tr', {}, h('td', { class: 'sutil' }, 'Trabalhando / mínimo'), DIAS.map((_, d) => h('td', { class: cb[d] < mn[d] ? 'def' : 'sutil' }, cb[d] + '/' + mn[d])), h('td', {})));
+  });
+  return h('div', { class: 'card' }, h('h2', {}, 'Escala completa'), seletorSemana(),
+    ws > addDias(iniSemana(hoje), 7) ? h('div', { class: 'msg' }, 'Previsão: semana calculada a partir das folgas-base e do rodízio de domingo. Pode mudar.') : null,
+    passada ? h('div', { class: 'msg' }, 'Semana que já passou: só para consulta.') : null,
+    totalFuros ? h('div', { class: 'msg erro' }, h('b', { style: 'color:var(--erro)' }, 'Furo: ' + totalFuros + ' ponto(s) abaixo da cobertura mínima. '),
+      passada ? null : h('button', { class: 'pq', onclick: () => sugerirCobertura(ws) }, 'Sugerir como cobrir')) : null,
+    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))),
+    h('p', { class: 'sutil pequeno' }, 'Contorno amarelo: semana com alteração manual.'));
+}
+function sugerirCobertura(ws) {
+  let todas = [], resolve = true; const blocos = [];
+  Object.keys(FUNCOES).forEach(fn => {
+    if (!furos(fn, ws).length) return;
+    const pl = sugerir(fn, ws, estado.escala); todas = todas.concat(pl.sugestoes); if (!pl.resolve) resolve = false;
+    blocos.push(h('h3', {}, FUNCOES[fn]), blocoPlano(pl, 'Furos:'));
+  });
+  abrirModal(h('h2', {}, 'Cobrir furos da semana de ' + dataBR(ws)), blocos,
+    h('div', { class: 'acoes' }, todas.length ? h('button', { class: 'cheio', onclick: () => {
+      todas.forEach(s => { estado.escala[ws + '|' + s.id] = s.para; });
+      logar('Remanejamento aprovado na semana de ' + dataBR(ws) + ': ' + todas.map(s => s.texto).join('; ')); salvar(); fecharModal(); toast('Trocas aplicadas.'); painelGestor();
+    } }, 'Aprovar estas trocas' + (resolve ? '' : ' (cobre só parte)')) : null, h('button', { onclick: fecharModal }, 'Fechar')));
+}
+function modalAlterar(f, ws) {
+  const msg = h('div'), salvarBtn = h('button', { class: 'cheio', disabled: true }, 'Salvar folgas');
+  const forcar = h('button', { class: 'perigo', style: 'display:none' }, 'Salvar mesmo deixando furo');
+  const atual = parDe(f, ws); let plano = null, parSel = null;
+  const { box } = seletorDias(ws, atual, s => {
+    msg.replaceChildren(); salvarBtn.disabled = true; salvarBtn.textContent = 'Salvar folgas'; forcar.style.display = 'none'; plano = null;
+    if (s.size !== estado.params.folgasSemana) return;
+    parSel = [...s].sort((a, b) => a - b);
+    if (parSel.join() === atual.join()) return;
+    const erros = validar(f, ws, parSel);
+    if (erros.length) { msg.append(listaMsg(erros, true)); return; }
+    const tmp = Object.assign({}, estado.escala, { [ws + '|' + f.id]: parSel });
+    const av = avisosDe(f, ws, tmp); if (av.length) msg.append(listaMsg(av, false));
+    if (!furos(f.funcao, ws, tmp).length) { salvarBtn.disabled = false; return; }
+    plano = sugerir(f.funcao, ws, tmp, f.id);
+    msg.append(blocoPlano(plano, 'Esta mudança deixaria furo:'));
+    if (plano.resolve) { salvarBtn.textContent = 'Salvar com este remanejamento'; salvarBtn.disabled = false; }
+    forcar.style.display = '';
+  });
+  salvarBtn.addEventListener('click', () => { aplicarMudanca(f, ws, parSel, plano && plano.resolve ? plano.sugestoes : [], 'Folgas alteradas pelo gestor'); fecharModal(); toast('Folgas alteradas.'); painelGestor(); });
+  forcar.addEventListener('click', () => { aplicarMudanca(f, ws, parSel, [], 'Folgas alteradas pelo gestor (com furo)'); fecharModal(); toast('Salvo. Há furo de cobertura nesta semana.', true); painelGestor(); });
+  abrirModal(h('h2', {}, 'Alterar folgas de ' + f.nome), h('p', { class: 'sutil' }, 'Semana de ' + dataBR(ws) + '. Atuais: ' + parTxt(atual) + '. O sistema barra o que passar do máximo de dias seguidos.'),
+    box, msg, h('div', { class: 'acoes' }, salvarBtn, forcar, h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+
+function gEquipe() {
+  const nome = h('input', { placeholder: 'Nome completo' });
+  const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: '000.000.000-00', autocomplete: 'off' });
+  const fn = h('select', {}, Object.entries(FUNCOES).map(([k, v]) => h('option', { value: k }, v)));
+  const d1 = h('select', {}, DIAS_L.map((d, i) => h('option', { value: i }, d))), d2 = h('select', {}, DIAS_L.map((d, i) => h('option', { value: i, selected: i === 1 }, d)));
+  const turno = h('input', { placeholder: 'Turno (ex.: Tarde/Noite)' });
+  const horas = h('input', { type: 'number', min: '1', max: '12', value: String(estado.params.horasDia) });
+  const msg = h('div');
+  const cadastrar = async () => {
+    try {
+      const dig = cpf.value.replace(/\D/g, '');
+      if (!nome.value.trim()) throw new Error('Informe o nome completo.');
+      if (dig.length !== 11) throw new Error('O CPF precisa ter 11 dígitos.');
+      if (d1.value === d2.value) throw new Error('Escolha dois dias de folga diferentes.');
+      const hs = await hashCPF(cpf.value);
+      if (estado.funcionarios.some(x => x.cpfHash === hs)) throw new Error('Este CPF já está cadastrado.');
+      const base = [+d1.value, +d2.value].sort((a, b) => a - b);
+      estado.funcionarios.push({ id: 'f' + Date.now(), nome: nome.value.trim(), cpfHash: hs, cpfFim: dig.slice(-2), funcao: fn.value, turno: turno.value.trim(), base, off: equipeDe(fn.value).length % 4, horas: num(horas.value) || estado.params.horasDia, gestor: false, demo: false });
+      logar('Cadastrado: ' + nome.value.trim()); salvar(); painelGestor(); toast('Cadastrado. Entra com nome completo e CPF.');
+    } catch (e) { msg.replaceChildren(h('div', { class: 'msg erro' }, e.message)); }
+  };
+  const remover = f => abrirModal(h('h2', {}, 'Remover ' + f.nome + '?'), h('p', {}, 'Sai da escala e perde o acesso. Se faltar gente, a aba Escala mostra o furo e sugere trocas.'),
+    h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: () => { removerFunc(f.id); fecharModal(); toast('Removido.'); painelGestor(); } }, 'Remover'), h('button', { onclick: fecharModal }, 'Cancelar')));
+  const temDemo = estado.funcionarios.some(f => f.demo);
+  const removerDemo = () => abrirModal(h('h2', {}, 'Remover equipe de demonstração?'), h('p', {}, 'Remove os colaboradores fictícios (inclusive a gestora de demonstração). Cadastre antes a sua própria gestão, ou você ficará sem acesso de gestor.'),
+    h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: () => {
+      if (!estado.funcionarios.some(f => f.gestor && !f.demo)) { toast('Cadastre antes um gestor real.', true); return; }
+      estado.funcionarios.filter(f => f.demo).forEach(f => removerFunc(f.id, true)); estado.demoAtivo = false; salvar(); fecharModal(); painelGestor();
+    } }, 'Remover'), h('button', { onclick: fecharModal }, 'Cancelar')));
+  return h('div', {},
+    h('div', { class: 'card' }, h('h2', {}, 'Cadastrar colaborador'),
+      h('div', { class: 'grade2' }, h('div', {}, h('label', {}, 'Nome'), nome), h('div', {}, h('label', {}, 'CPF (é o login)'), cpf), h('div', {}, h('label', {}, 'Função'), fn),
+        h('div', {}, h('label', {}, 'Folga-base 1'), d1), h('div', {}, h('label', {}, 'Folga-base 2'), d2), h('div', {}, h('label', {}, 'Turno'), turno), h('div', {}, h('label', {}, 'Horas por dia'), horas)),
+      msg, h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: cadastrar }, 'Cadastrar')),
+      h('p', { class: 'sutil pequeno' }, 'O sistema guarda só um código irreversível do CPF e os 2 últimos dígitos. Mesmo assim, é um protótipo: os dados ficam no navegador deste aparelho.')),
+    h('div', { class: 'card' }, h('h2', {}, 'Equipe (' + estado.funcionarios.length + ')'),
+      temDemo ? h('div', { class: 'msg' }, 'Há colaboradores fictícios de demonstração. ', h('button', { class: 'pq perigo', onclick: removerDemo }, 'Remover demonstração')) : null,
+      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Nome', 'Função', 'CPF', 'Turno', 'Folga-base', 'Horas/dia', ''].map(t => h('th', {}, t)))),
+        h('tbody', {}, estado.funcionarios.map(f => h('tr', {}, h('td', {}, f.nome, f.demo ? h('span', { class: 'badge' }, 'demo') : null, f.gestor ? h('span', { class: 'badge ok' }, 'gestão') : null),
+          h('td', {}, FUNCOES[f.funcao]), h('td', {}, '***.***.***-' + f.cpfFim), h('td', {}, f.turno || '—'), h('td', {}, f.gestor ? '—' : parTxt(f.base)), h('td', {}, f.gestor ? '—' : String(f.horas)),
+          h('td', {}, f.gestor ? null : h('button', { class: 'pq perigo', onclick: () => remover(f) }, 'Remover')))))))));
+}
+function removerFunc(id, silencioso) {
+  const f = funcionario(id); if (!f) return;
+  estado.funcionarios = estado.funcionarios.filter(x => x.id !== id);
+  estado.pedidos = estado.pedidos.filter(p => p.funcId !== id);
+  Object.keys(estado.escala).forEach(k => { if (k.endsWith('|' + id)) delete estado.escala[k]; });
+  if (!silencioso) logar('Removido: ' + f.nome);
+  salvar();
+}
+
+function gCobertura() {
+  const linhas = Object.entries(FUNCOES).map(([fn, nome]) => {
+    const ins = DIAS.map((_, d) => h('input', { type: 'number', min: '0', max: '30', value: String(estado.minimos[fn][d]), style: 'width:60px;text-align:center;padding:5px' }));
+    return h('tr', {}, h('td', {}, nome + ' (' + equipeDe(fn).length + ' pessoas)'), ins.map(i => h('td', {}, i)),
+      h('td', {}, h('button', { class: 'pq', onclick: () => { estado.minimos[fn] = ins.map(i => Math.max(0, Math.round(num(i.value)))); salvar(); toast('Cobertura salva.'); painelGestor(); } }, 'Salvar')));
+  });
+  return h('div', { class: 'card' }, h('h2', {}, 'Cobertura mínima por dia'),
+    h('p', { class: 'sutil' }, 'Quantas pessoas de cada função precisam trabalhar em cada dia. A aba Escala mostra os furos e sugere trocas.'),
+    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Função'), DIAS.map(d => h('th', {}, d)), h('th', {}))), h('tbody', {}, linhas))));
+}
+
+const PARAMS_DEF = [
+  ['cctNome', 'Convenção em uso (texto livre)', 'text'], ['folgasSemana', 'Folgas por semana (5x2 = 2)', 'number'], ['maxSeguidos', 'Máximo de dias seguidos de trabalho', 'number'],
+  ['horasDia', 'Horas por dia (padrão)', 'number'], ['limiteAtual', 'Limite semanal antes da emenda (h)', 'number'], ['limiteApos1', 'Limite semanal após a data da emenda (h)', 'number'],
+  ['dataEmenda', 'Início do repouso de 2 dias e do limite de 42 h', 'date'], ['limiteApos2', 'Limite semanal final (h)', 'number'], ['dataLimite40', 'Início do limite final', 'date'],
+  ['domingoACadaDias', 'Folga em domingo ao menos a cada (dias; 0 desliga)', 'number'], ['feriadoCompDias', 'Prazo para compensar feriado (dias antes ou depois)', 'number']
+];
+const ROT_STATUS = { lei: ['ok', 'lei'], cct: ['warn', 'CCT'], sistema: ['', 'regra do sistema'], confirmar: ['bad', 'confirmar'] };
+function gRegras() {
+  const p = estado.params;
+  const campos = PARAMS_DEF.map(([k, rot, tipo]) => h('div', {}, h('label', {}, rot),
+    h('input', { type: tipo, value: String(p[k]), onchange: e => { p[k] = tipo === 'number' ? num(e.target.value) : e.target.value; salvar(); toast('Parâmetro salvo.'); } })));
+  const edita = (r, campo, valor) => { r[campo] = valor; salvar(); };
+  const cartoes = estado.regras.map(r => h('div', { class: 'pedido' },
+    h('div', { class: 'grade2' }, h('div', {}, h('label', {}, 'Título'), h('input', { value: r.titulo, onchange: e => edita(r, 'titulo', e.target.value) })),
+      h('div', {}, h('label', {}, 'Fonte'), h('input', { value: r.fonte, onchange: e => edita(r, 'fonte', e.target.value) })),
+      h('div', {}, h('label', {}, 'Situação'), h('select', { onchange: e => edita(r, 'status', e.target.value) }, Object.entries(ROT_STATUS).map(([k, v]) => h('option', { value: k, selected: r.status === k }, v[1]))))),
+    h('label', {}, 'Descrição'), h('textarea', { rows: '3', value: r.descricao, onchange: e => edita(r, 'descricao', e.target.value) }),
+    h('label', {}, h('input', { type: 'checkbox', checked: r.ativo, onchange: e => edita(r, 'ativo', e.target.checked) }), ' Regra em vigor'),
+    h('div', { class: 'acoes' }, h('span', { class: 'badge ' + ROT_STATUS[r.status][0] }, ROT_STATUS[r.status][1]),
+      h('button', { class: 'pq perigo', onclick: () => { estado.regras = estado.regras.filter(x => x.id !== r.id); salvar(); painelGestor(); } }, 'Remover'))));
+  const fData = h('input', { type: 'date' }), fNome = h('input', { placeholder: 'Nome do feriado' });
+  const feriados = [...estado.feriados].sort((a, b) => a.data.localeCompare(b.data));
+  return h('div', {},
+    h('div', { class: 'msg' }, 'Não é parecer jurídico. Confira cada item com o sindicato ou o contador antes de usar como oficial. Quando a CCT 2026/2027 sair, edite os parâmetros e as regras abaixo.'),
+    h('div', { class: 'card' }, h('h2', {}, 'Parâmetros usados pelo sistema'), h('div', { class: 'grade2' }, campos),
+      h('p', { class: 'sutil pequeno' }, 'As mudanças valem na hora para validações, avisos e auditoria. As datas da emenda foram calculadas a partir de 16/10/2026: confirme no Diário Oficial.')),
+    h('div', { class: 'card' }, h('h2', {}, 'Feriados'), h('p', { class: 'sutil pequeno' }, 'Inclua os feriados municipais de Araraquara e os pontos facultativos que a casa adotar.'),
+      h('ul', { class: 'limpa' }, feriados.map(f => h('li', {}, dataBRfull(f.data) + ' · ' + f.nome + ' ', h('button', { class: 'pq perigo', onclick: () => { estado.feriados = estado.feriados.filter(x => x !== f && !(x.data === f.data && x.nome === f.nome)); salvar(); painelGestor(); } }, 'x')))),
+      h('div', { class: 'grade2' }, h('div', {}, fData), h('div', {}, fNome)),
+      h('div', { class: 'acoes' }, h('button', { onclick: () => { if (!fData.value || !fNome.value.trim()) return toast('Informe data e nome.', true); estado.feriados.push({ data: fData.value, nome: fNome.value.trim() }); salvar(); painelGestor(); } }, 'Adicionar feriado'))),
+    h('div', { class: 'card' }, h('h2', {}, 'Regras aplicadas e fonte'), cartoes,
+      h('div', { class: 'acoes' }, h('button', { onclick: () => { estado.regras.push({ id: 'r' + Date.now(), titulo: 'Nova regra', status: 'confirmar', ativo: true, fonte: '', descricao: '' }); salvar(); painelGestor(); } }, '+ Adicionar regra'))));
+}
+
+function gAudit() {
+  const ws = semanaGestor, lin = [];
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
+    const a = auditar(f, ws);
+    lin.push(h('tr', {}, h('td', {}, f.nome), h('td', {}, String(a.folgas)), h('td', {}, String(a.ms)), h('td', {}, a.sd >= 999 ? 'mais de 84' : String(a.sd)),
+      h('td', {}, a.horas + ' h / ' + a.lim + ' h'), h('td', {}, a.fers.length ? a.fers.join(', ') : '—'),
+      h('td', {}, h('span', { class: 'badge ' + (a.motivos.length ? 'bad' : 'ok') }, a.motivos.length ? 'verificar' : 'em regra'), a.motivos.length ? h('div', { class: 'sutil pequeno' }, a.motivos.join('; ')) : null)));
+  });
+  return h('div', { class: 'card' }, h('h2', {}, 'Auditoria da semana'), seletorSemana(),
+    h('p', { class: 'sutil pequeno' }, 'Convenção em uso: ' + estado.params.cctNome + '. Feriado trabalhado pede compensação ou pagamento em dobro, e a coluna de domingo segue a regra marcada "confirmar".'),
+    h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Colaborador', 'Folgas', 'Máx. dias seguidos', 'Dias desde folga em domingo', 'Carga / limite', 'Feriados trabalhados', 'Situação'].map(t => h('th', {}, t)))), h('tbody', {}, lin))));
+}
+
+function gLog() {
+  const inp = h('input', { type: 'file', accept: '.json', style: 'display:none', onchange: ev => {
+    const file = ev.target.files[0]; if (!file) return; const rd = new FileReader();
+    rd.onload = () => { try { const s = JSON.parse(rd.result); if (!s.funcionarios || !s.params) throw new Error(); if (!confirm('Isso substitui os dados atuais. Continuar?')) return; estado = s; salvar(); sair(); } catch (e) { toast('Arquivo inválido.', true); } };
+    rd.readAsText(file); } });
+  return h('div', {},
+    h('div', { class: 'card' }, h('h2', {}, 'Registro de eventos'), h('ul', { class: 'limpa' }, estado.log.map(l => h('li', {}, h('span', { class: 'sutil' }, l.t + ' '), l.texto)))),
+    h('div', { class: 'card' }, h('h2', {}, 'Backup'), h('p', { class: 'sutil' }, 'Os dados ficam só neste navegador. Baixe um backup de vez em quando.'),
+      h('div', { class: 'acoes' }, h('button', { onclick: () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(estado, null, 2)], { type: 'application/json' })); a.download = 'backup_escala.json'; a.click(); } }, 'Baixar backup'),
+        h('button', { onclick: () => inp.click() }, 'Restaurar backup'), inp,
+        h('button', { class: 'perigo', onclick: () => { if (confirm('Apagar tudo e voltar à demonstração inicial?')) { localStorage.removeItem(CHAVE); sessionStorage.clear(); location.reload(); } } }, 'Reiniciar demonstração'))));
+}
+
+// ---------- início ----------
+(async function () {
+  try { const s = JSON.parse(localStorage.getItem(CHAVE)); if (s && s.funcionarios && s.params) estado = s; } catch (e) {}
+  if (!estado) await criarEstadoInicial();
+  semanaGestor = iniSemana(hojeISO());
+  iniciar();
+})();
 </script>
 </body>
 </html>
