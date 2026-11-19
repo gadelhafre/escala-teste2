@@ -3,29 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Escala 5x2 · Quintal do Carmo</title>
+<title>Escala</title>
+<link rel="icon" href="data:,">
 <style>
-:root{--bg:#0e1110;--card:#161b19;--borda:#2b3330;--borda2:#222a27;--acc:#5ad2aa;--acc-esc:#07120e;--txt:#f4f7f5;--mut:#9aa8a2;--erro:#ff8a7a;--aviso:#ffc15c;--sup:#1b211f;--azul:#7cc4ff;--lilas:#d9a6ff}
+:root{
+  --bg:#111418;--card:#1a1f26;--txt:#f2f4f7;--acc:#6ea8fe;--acc-esc:#0b0e0d;
+  --erro:#ff8a7a;--aviso:#ffc15c;--fj:#3dd6c6;--extra:#d9a6ff;
+  --borda:color-mix(in srgb,var(--txt) 16%,var(--card));
+  --borda2:color-mix(in srgb,var(--txt) 9%,var(--card));
+  --sup:color-mix(in srgb,var(--txt) 5%,var(--card));
+  --mut:color-mix(in srgb,var(--txt) 62%,var(--bg));
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.45 system-ui,Segoe UI,Roboto,sans-serif;min-height:100vh}
-.topo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 20px;border-bottom:3px solid var(--acc);background:#080a09;position:sticky;top:0;z-index:5}
+.topo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 20px;border-bottom:3px solid var(--acc);background:var(--card);position:sticky;top:0;z-index:5}
 body.entrada .topo{display:none}
-.topo strong{color:var(--acc);font-size:1.1rem}
+.marca{display:flex;align-items:center;gap:10px;min-width:0}
+.marca strong{color:var(--acc);font-size:1.1rem}
+.logo-topo{height:32px;max-width:130px;object-fit:contain}
+.logo-entra{max-height:90px;max-width:220px;object-fit:contain}
 #usuario{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 main{max-width:1100px;margin:0 auto;padding:18px}
 .card{background:var(--card);border:1px solid var(--borda);border-radius:14px;padding:16px;margin-bottom:16px}
 .card h2,.card h3{margin:0 0 10px;color:var(--acc);font-weight:600}
 .card h2{font-size:1.15rem}.card h3{font-size:1rem}
 button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--acc);background:transparent;color:var(--acc);padding:8px 14px}
-button:hover:not(:disabled){background:rgba(90,210,170,.14)}
+button:hover:not(:disabled){background:color-mix(in srgb,var(--acc) 14%,transparent)}
 button.cheio{background:var(--acc);color:var(--acc-esc);font-weight:700}
 button.perigo{border-color:var(--erro);color:var(--erro)}
 button.aviso{border-color:var(--aviso);color:var(--aviso)}
 button.pq{padding:3px 9px;font-size:.85rem}
 button:disabled{opacity:.4;cursor:not-allowed}
-input,select,textarea{font:inherit;background:#0b0e0d;color:var(--txt);border:1px solid var(--borda);border-radius:10px;padding:10px 12px;width:100%}
+input,select,textarea{font:inherit;background:var(--bg);color:var(--txt);border:1px solid var(--borda);border-radius:10px;padding:10px 12px;width:100%}
+input[type=color]{padding:2px;height:42px;cursor:pointer}
 input:focus,select:focus,textarea:focus,button:focus-visible,td.clic:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 input[type=checkbox]{width:auto}
+input[type=file]{padding:8px}
 label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .sutil{color:var(--mut);font-size:.9rem}
 .pequeno{font-size:.9rem}
@@ -36,18 +49,18 @@ label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .abas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .abas button{border-color:var(--borda);color:var(--txt)}
 .abas button.ativa{background:var(--acc);color:var(--acc-esc);border-color:var(--acc);font-weight:600}
-.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .msg{border-left:3px solid var(--aviso);padding:6px 10px;margin:8px 0;background:var(--sup);border-radius:0 8px 8px 0}
 .msg.erro{border-color:var(--erro)}
-.msg.info{border-color:var(--azul)}
-.msg.proj{border-color:var(--lilas)}
+.msg.info{border-color:var(--fj)}
+.msg.proj{border-color:var(--extra)}
 .msg ul{margin:4px 0;padding-left:20px}
 .semana{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
 .dia{border:1px solid var(--borda2);border-radius:12px;padding:8px 2px;text-align:center;background:var(--sup);min-width:0;overflow:hidden;font-size:.9rem}
 .dia b,.dia small,.dia .t{display:block}.dia small{color:var(--mut)}
 .dia .fer{display:block;font-size:.65rem;color:var(--aviso)}
 .dia.escolha{cursor:pointer}
-.dia.sel{border-color:var(--acc);background:rgba(90,210,170,.25)}
+.dia.sel{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 25%,transparent)}
 .dia.sel .t{color:var(--acc);font-weight:700}
 .dia.travado{opacity:.45;cursor:not-allowed}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px}
@@ -55,12 +68,11 @@ label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .cal-dia{min-width:0;min-height:62px;border:1px solid var(--borda2);border-radius:10px;padding:5px 3px;background:var(--sup);display:flex;flex-direction:column;align-items:center;gap:2px;overflow:hidden}
 .cal-dia .t{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--acc)}
 .cal-dia .fer{font-size:.6rem;color:var(--aviso);text-align:center;line-height:1.1}
-.cal-dia.st-F{border-color:var(--acc);background:rgba(90,210,170,.15)}
-.cal-dia.st-FJ{border-color:var(--azul);background:rgba(124,196,255,.12)}.cal-dia.st-FJ .t{color:var(--azul)}
-.cal-dia.st-FI{border-color:var(--erro);background:rgba(255,138,122,.12)}.cal-dia.st-FI .t{color:var(--erro)}
-.cal-dia.st-EX{border-color:var(--lilas);background:rgba(217,166,255,.12)}.cal-dia.st-EX .t{color:var(--lilas)}
+.cal-dia.st-F{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent)}
+.cal-dia.st-FJ{border-color:var(--fj);background:color-mix(in srgb,var(--fj) 14%,transparent)}.cal-dia.st-FJ .t{color:var(--fj)}
+.cal-dia.st-FI{border-color:var(--erro);background:color-mix(in srgb,var(--erro) 14%,transparent)}.cal-dia.st-FI .t{color:var(--erro)}
+.cal-dia.st-EX{border-color:var(--extra);background:color-mix(in srgb,var(--extra) 14%,transparent)}.cal-dia.st-EX .t{color:var(--extra)}
 .cal-dia.prev{border-style:dashed}
-.cal-dia.prev.st-F{background:rgba(90,210,170,.06)}
 .cal-dia.hoje{outline:2px dashed var(--aviso);outline-offset:-1px}
 .cal-dia.fora{opacity:.2;background:transparent}
 .nav-mes{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 10px}
@@ -69,24 +81,24 @@ label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.9rem}
 .nav-sem input{width:auto}
 .legenda{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;color:var(--mut);margin-bottom:10px}
 .legenda i{display:inline-block;width:16px;height:16px;border-radius:5px;margin-right:6px;vertical-align:middle}
-.l-folga{background:rgba(90,210,170,.15);border:1px solid var(--acc)}
+.l-folga{background:color-mix(in srgb,var(--acc) 18%,transparent);border:1px solid var(--acc)}
 .l-prev{border:1px dashed var(--acc)}
 .l-hoje{border:2px dashed var(--aviso)}
-.l-fj{background:rgba(124,196,255,.2);border:1px solid var(--azul)}
-.l-fi{background:rgba(255,138,122,.2);border:1px solid var(--erro)}
-.l-ex{background:rgba(217,166,255,.2);border:1px solid var(--lilas)}
+.l-fj{background:color-mix(in srgb,var(--fj) 22%,transparent);border:1px solid var(--fj)}
+.l-fi{background:color-mix(in srgb,var(--erro) 22%,transparent);border:1px solid var(--erro)}
+.l-ex{background:color-mix(in srgb,var(--extra) 22%,transparent);border:1px solid var(--extra)}
 .l-alt{border:2px solid var(--aviso)}
 .linha-semana{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--borda2)}
 table{width:100%;border-collapse:collapse;font-size:.88rem}
 th,td{padding:6px 5px;border-bottom:1px solid var(--borda2);text-align:center;vertical-align:top}
 th:first-child,td:first-child{text-align:left}
 td.clic{cursor:pointer;user-select:none}
-td.clic:hover{background:rgba(255,255,255,.08)}
-td.f{background:rgba(90,210,170,.17);color:var(--acc);font-weight:700}
-td.w{color:#c9d3cf;font-size:.8rem}
-td.fj{background:rgba(124,196,255,.15);color:var(--azul);font-weight:700}
-td.fi{background:rgba(255,138,122,.18);color:var(--erro);font-weight:700}
-td.ex{background:rgba(217,166,255,.16);color:var(--lilas);font-weight:700}
+td.clic:hover{background:color-mix(in srgb,var(--txt) 9%,transparent)}
+td.f{background:color-mix(in srgb,var(--acc) 17%,transparent);color:var(--acc);font-weight:700}
+td.w{font-size:.8rem}
+td.fj{background:color-mix(in srgb,var(--fj) 16%,transparent);color:var(--fj);font-weight:700}
+td.fi{background:color-mix(in srgb,var(--erro) 18%,transparent);color:var(--erro);font-weight:700}
+td.ex{background:color-mix(in srgb,var(--extra) 16%,transparent);color:var(--extra);font-weight:700}
 td.alt{box-shadow:inset 0 0 0 2px var(--aviso)}
 td.def{color:var(--erro);font-weight:700}
 td.grupo{color:var(--acc);text-align:left;font-weight:600}
@@ -96,7 +108,7 @@ td.grupo{color:var(--acc);text-align:left;font-weight:600}
 .rolagem{overflow-x:auto}
 .pedido{border:1px solid var(--borda2);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--sup)}
 .pedido.urg{border-color:var(--erro)}
-.alerta{border:2px solid var(--erro);background:rgba(255,122,107,.08);border-radius:14px;padding:14px;margin-bottom:16px}
+.alerta{border:2px solid var(--erro);background:color-mix(in srgb,var(--erro) 8%,transparent);border-radius:14px;padding:14px;margin-bottom:16px}
 .grade2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .grade3{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
 ul.limpa{list-style:none;margin:0;padding:0}ul.limpa li{padding:5px 0;border-bottom:1px solid var(--borda2)}
@@ -104,39 +116,90 @@ ul.limpa{list-style:none;margin:0;padding:0}ul.limpa li{padding:5px 0;border-bot
 .sbtn{padding:10px 6px;border:1px solid var(--borda);color:var(--txt);text-align:center}
 .sbtn b{display:block}.sbtn small{display:block;color:var(--mut);font-size:.7rem}
 .sbtn.on{font-weight:700}
-.sbtn.on.s-T{border-color:#c9d3cf;background:rgba(255,255,255,.1)}
-.sbtn.on.s-F{border-color:var(--acc);background:rgba(90,210,170,.2);color:var(--acc)}
-.sbtn.on.s-FJ{border-color:var(--azul);background:rgba(124,196,255,.2);color:var(--azul)}
-.sbtn.on.s-FI{border-color:var(--erro);background:rgba(255,138,122,.2);color:var(--erro)}
-.sbtn.on.s-EX{border-color:var(--lilas);background:rgba(217,166,255,.2);color:var(--lilas)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:20;padding:14px}
+.sbtn.on.s-T{border-color:var(--txt);background:color-mix(in srgb,var(--txt) 12%,transparent)}
+.sbtn.on.s-F{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 22%,transparent);color:var(--acc)}
+.sbtn.on.s-FJ{border-color:var(--fj);background:color-mix(in srgb,var(--fj) 22%,transparent);color:var(--fj)}
+.sbtn.on.s-FI{border-color:var(--erro);background:color-mix(in srgb,var(--erro) 22%,transparent);color:var(--erro)}
+.sbtn.on.s-EX{border-color:var(--extra);background:color-mix(in srgb,var(--extra) 22%,transparent);color:var(--extra)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:20;padding:14px}
 .modal[hidden]{display:none}
 .modal-box{background:var(--card);border:1px solid var(--borda);border-radius:16px;padding:18px;max-width:600px;width:100%;max-height:90vh;overflow:auto}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#080a09;border:1px solid var(--acc);color:var(--acc);padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--acc);color:var(--acc);padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
 #toast.show{opacity:1}#toast.erro{background:var(--erro);border-color:var(--erro);color:#0e1110}
 .entra{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 0}
 .entra h1{margin:0;color:var(--acc);font-size:1.6rem;text-align:center}
 .entra-card{width:min(400px,100%);display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--borda);border-radius:20px;padding:24px}
 .demo{width:min(400px,100%)}
 .demo button{margin:3px 4px 0 0}
+.preview-logo{max-height:80px;max-width:240px;object-fit:contain;display:block;margin:6px 0;padding:8px;border:1px dashed var(--borda);border-radius:10px;background:var(--bg)}
+.cor-item label{margin-top:0}
 @media (max-width:640px){main{padding:10px}.cal{gap:3px}.cal-dia{min-height:52px}.cal-dia .fer{display:none}.cal-dia .t{font-size:.58rem}.dia{font-size:.78rem}}
 </style>
 </head>
 <body>
-<header class="topo"><strong>Quintal do Carmo · Escala 5x2</strong><span id="usuario"></span></header>
+<header class="topo"><span class="marca" id="marca"></span><span id="usuario"></span></header>
 <main id="app"></main>
 <div id="modal" class="modal" hidden><div id="modalBox" class="modal-box"></div></div>
 <div id="toast"></div>
 
 <script>
 'use strict';
-const CHAVE = 'quintal_escala_v1';
+// ===== FIM DA PARTE 1 =====
+  // =====================================================================
+//  CONFIGURAÇÃO INICIAL  (é aqui que você personaliza cada cliente)
+//  Vale só na primeira abertura do site em um navegador (ou ao reiniciar).
+//  Depois disso, tudo também pode ser mudado dentro do site.
+// =====================================================================
+const TEMAS = {
+  neutro: { nome: 'Neutro escuro', cores: { acc: '#6ea8fe', bg: '#111418', card: '#1a1f26', txt: '#f2f4f7', fj: '#3dd6c6', erro: '#ff8a7a', aviso: '#ffc15c', extra: '#d9a6ff' } },
+  verde:  { nome: 'Verde escuro',  cores: { acc: '#5ad2aa', bg: '#0e1110', card: '#161b19', txt: '#f4f7f5', fj: '#7cc4ff', erro: '#ff8a7a', aviso: '#ffc15c', extra: '#d9a6ff' } },
+  quente: { nome: 'Quente escuro', cores: { acc: '#e0a458', bg: '#14100e', card: '#1f1815', txt: '#f6efe9', fj: '#6fd3c9', erro: '#ff8a7a', aviso: '#ffd27a', extra: '#d9a6ff' } },
+  claro:  { nome: 'Claro',         cores: { acc: '#1f6feb', bg: '#f3f5f8', card: '#ffffff', txt: '#1a2230', fj: '#0e7490', erro: '#d1242f', aviso: '#b7791f', extra: '#7e22ce' } }
+};
+
+const CONFIG_INICIAL = {
+  armazenamento: 'escala_base_v1',          // nome do "cofre" no navegador (use um diferente por cliente se publicar no mesmo endereço)
+  contasDemonstracao: true,                  // true mostra botões de login de teste na tela de entrada
+  marca: { nome: 'Minha Empresa', subtitulo: 'Escala de folgas 5x2', logo: '', cores: TEMAS.neutro.cores },
+  equipes: [ { id: 'e1', nome: 'Equipe A' }, { id: 'e2', nome: 'Equipe B' }, { id: 'e3', nome: 'Equipe C' } ],
+  // mínimo de pessoas trabalhando por dia, na ordem Seg, Ter, Qua, Qui, Sex, Sáb, Dom
+  minimos: { e1: [2, 2, 2, 2, 3, 3, 3], e2: [2, 2, 2, 2, 3, 3, 3], e3: [1, 1, 1, 1, 1, 1, 1] },
+  // dias: 0 = segunda ... 6 = domingo. "off" (0 a 3) define quando cada pessoa folga no domingo.
+  pessoas: [
+    { nome: 'Gestor Demo',    cpf: '900.000.000-01', equipe: 'e1', gestor: true },
+    { nome: 'Colaborador A1', cpf: '100.000.000-01', equipe: 'e1', base: [0, 1], off: 0, ent: '09:00', sai: '18:00', int: 60 },
+    { nome: 'Colaborador A2', cpf: '100.000.000-02', equipe: 'e1', base: [1, 2], off: 1, ent: '09:00', sai: '18:00', int: 60 },
+    { nome: 'Colaborador A3', cpf: '100.000.000-03', equipe: 'e1', base: [2, 3], off: 2, ent: '09:00', sai: '18:00', int: 60 },
+    { nome: 'Colaborador A4', cpf: '100.000.000-04', equipe: 'e1', base: [0, 3], off: 3, ent: '09:00', sai: '18:00', int: 60 },
+    { nome: 'Colaborador B1', cpf: '200.000.000-01', equipe: 'e2', base: [0, 1], off: 0, ent: '15:00', sai: '00:00', int: 60 },
+    { nome: 'Colaborador B2', cpf: '200.000.000-02', equipe: 'e2', base: [1, 2], off: 1, ent: '15:00', sai: '00:00', int: 60 },
+    { nome: 'Colaborador B3', cpf: '200.000.000-03', equipe: 'e2', base: [2, 3], off: 2, ent: '15:00', sai: '00:00', int: 60 },
+    { nome: 'Colaborador B4', cpf: '200.000.000-04', equipe: 'e2', base: [0, 3], off: 3, ent: '15:00', sai: '00:00', int: 60 },
+    { nome: 'Colaborador C1', cpf: '300.000.000-01', equipe: 'e3', base: [0, 1], off: 0, ent: '08:00', sai: '17:00', int: 60 },
+    { nome: 'Colaborador C2', cpf: '300.000.000-02', equipe: 'e3', base: [2, 3], off: 2, ent: '08:00', sai: '17:00', int: 60 }
+  ],
+  params: { cctNome: 'Informe aqui a convenção coletiva ou o acordo da empresa', folgasSemana: 2, maxSeguidos: 6, horasDia: 8,
+    limiteAtual: 44, limiteApos1: 42, limiteApos2: 40, dataEmenda: '2026-12-16', dataLimite40: '2027-12-16',
+    domingoACadaDias: 30, feriadoCompDias: 15 }
+};
+
+const CHAVE = CONFIG_INICIAL.armazenamento;
+const SESSAO = 'escala_sessao';
+const SAL = 'escala-base|';
+// COMPATIBILIDADE (pode apagar as 3 linhas abaixo e o que usa SAL_ANTIGO/CHAVE_ANTIGA numa versão limpa):
+// permite abrir dados salvos por uma versão anterior deste site neste mesmo navegador.
+const SAL_ANTIGO = 'quintal-escala|';
+const CHAVE_ANTIGA = 'quintal_escala_v1';
+
 const DIAS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 const DIAS_L = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-const FUNCOES = { cozinha:'Cozinha', salao:'Salão', caixa:'Caixa', bar:'Bar e chopeira' };
 const CATEGORIAS = ['Saúde / consulta','Família','Estudo','Transporte','Compromisso pessoal','Outro'];
 const ST_REGRA = { lei:'lei', cct:'CCT', sistema:'regra do sistema', confirmar:'confirmar' };
+const CORES_ROTULOS = [
+  ['acc','Destaque (botões, títulos, folga)'], ['bg','Fundo da página'], ['card','Fundo dos cartões'], ['txt','Texto'],
+  ['fj','Falta justificada (F.J)'], ['erro','Alertas e falta injustificada (F.INJ)'], ['aviso','Avisos e feriados'], ['extra','Dia extra']
+];
 
 // Tipos de dia. "trabalha" = conta na cobertura e na carga semanal.
 const STATUS = {
@@ -148,10 +211,9 @@ const STATUS = {
 };
 const ROT_CAL = { F:'folga', FJ:'F.J', FI:'F.INJ', EX:'extra' };
 const MOTIVOS_FJ = [
-  'Atestado médico ou odontológico (cl. 45)', 'Falecimento de familiar (cl. 46, a)', 'Casamento (cl. 46, b)',
-  'Nascimento de filho (cl. 46, c)', 'Doação de sangue (cl. 46, d)', 'Alistamento ou serviço militar (cl. 46, e)',
-  'Internação de cônjuge ou filho (cl. 46, f)', 'Acompanhar filho menor de 12 anos ao médico (cl. 46, g)',
-  'Prova escolar, vestibular ou ENEM (cl. 44)', 'Outro motivo abonado'
+  'Atestado médico ou odontológico', 'Falecimento de familiar', 'Casamento', 'Nascimento de filho', 'Doação de sangue',
+  'Alistamento ou serviço militar', 'Internação de cônjuge ou filho', 'Acompanhar filho menor de 12 anos ao médico',
+  'Prova escolar, vestibular ou ENEM', 'Outro motivo abonado'
 ];
 const trabalha = s => s === 'T' || s === 'EX';
 
@@ -195,18 +257,54 @@ const idxSemana = ws => Math.round((parse(ws) - parse('2024-01-01')) / (7 * 8640
 const num = v => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? 0 : n; };
 const stamp = () => { const d = new Date(); return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 const parTxt = p => (p && p.length) ? p.map(i => DIAS_L[i]).join(' e ') : '—';
+const clonar = o => JSON.parse(JSON.stringify(o));
 const funcionario = id => estado.funcionarios.find(f => f.id === id);
 const feriadoDe = data => { const x = estado.feriados.find(f => f.data === data); return x ? x.nome : ''; };
 const equipeDe = funcao => estado.funcionarios.filter(f => !f.gestor && f.funcao === funcao);
+const idsFuncoes = () => estado.funcoes.map(x => x.id);
+const nomeEq = id => { const x = estado.funcoes.find(y => y.id === id); return x ? x.nome : '(sem equipe)'; };
 const normNome = n => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
-async function hashCPF(cpf) {
+async function hashCPF(cpf, sal) {
   const d = cpf.replace(/\D/g, '');
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('quintal-escala|' + d));
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode((sal || SAL) + d));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 function salvar() { localStorage.setItem(CHAVE, JSON.stringify(estado)); }
 function logar(txt) { estado.log.unshift({ t: stamp(), texto: txt }); estado.log = estado.log.slice(0, 300); }
-const quemSou = () => { const f = funcionario(sessionStorage.getItem('quintal_sessao')); return f ? f.nome : ''; };
+const quemSou = () => { const f = funcionario(sessionStorage.getItem(SESSAO)); return f ? f.nome : ''; };
+
+// ---------- identidade visual ----------
+const contraste = hex => {
+  const n = parseInt(String(hex).replace('#', ''), 16) || 0;
+  const lum = (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+  return lum > 0.6 ? '#0b0e0d' : '#ffffff';
+};
+function renderMarca() {
+  const m = estado.marca, el = document.getElementById('marca');
+  el.replaceChildren(...[m.logo ? h('img', { class: 'logo-topo', src: m.logo, alt: '' }) : null, h('strong', {}, m.nome)].filter(Boolean));
+}
+function aplicarTema() {
+  const m = estado.marca, c = Object.assign({}, TEMAS.neutro.cores, m.cores), r = document.documentElement.style;
+  Object.keys(c).forEach(k => r.setProperty('--' + k, c[k]));
+  r.setProperty('--acc-esc', contraste(c.acc));
+  document.title = m.nome + ' · Escala';
+  let ic = document.querySelector('link[rel="icon"]');
+  if (!ic) { ic = document.createElement('link'); ic.rel = 'icon'; document.head.append(ic); }
+  ic.href = m.logo || 'data:,';
+  renderMarca();
+}
+function lerLogo(file, cb) {
+  const url = URL.createObjectURL(file), img = new Image();
+  img.onload = () => {
+    const W = img.width || 256, H = img.height || 256, k = Math.min(1, 256 / Math.max(W, H));
+    const w = Math.max(1, Math.round(W * k)), hh = Math.max(1, Math.round(H * k));
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = hh;
+    cv.getContext('2d').drawImage(img, 0, 0, w, hh);
+    URL.revokeObjectURL(url); cb(cv.toDataURL('image/png'));
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); toast('Não consegui ler essa imagem. Use PNG, JPG ou SVG.', true); };
+  img.src = url;
+}
 
 // ---------- horários (ponto) ----------
 const minDe = t => (typeof t === 'string' && /^\d{2}:\d{2}$/.test(t)) ? (+t.slice(0, 2)) * 60 + (+t.slice(3)) : null;
@@ -222,7 +320,6 @@ const fmtH = m => m == null ? '—' : Math.floor(m / 60) + 'h' + (m % 60 ? pad(m
 const fmtSaldo = m => m === 0 ? '0h' : (m > 0 ? '+' : '−') + fmtH(Math.abs(m));
 const horarioTurno = turno => turno === 'Manhã/Tarde' ? ['08:00', '17:00', 60] : turno === 'Tarde/Noite' ? ['15:00', '00:00', 60] : ['09:00', '18:00', 60];
 const horarioPadrao = f => (f.hEnt || '—') + '–' + (f.hSai || '—');
-// minutos entre a saída de um dia e a entrada do dia seguinte
 function gapJornadas(pe, ne) {
   const a = minDe(pe && pe.ent), b = minDe(pe && pe.sai), c = minDe(ne && ne.ent);
   if (a == null || b == null || c == null) return null;
@@ -234,13 +331,13 @@ function avisosHorario(f, data, hv, L) {
   if (!hv.ent || !hv.sai) { av.push('Falta preencher ' + (hv.ent ? 'a saída' : 'a entrada') + '.'); return av; }
   const bruto = minBruto(hv), m = minTrab(hv), it = +hv.int || 0;
   if (bruto === 0) av.push('Entrada e saída iguais.');
-  if (m != null && m > 600) av.push('Jornada de ' + fmtH(m) + ' no dia: acima de 10 h (regra geral da CLT, art. 59, admite no máximo 2 h extras por dia; conferir a CCT).');
-  if (bruto > 360 && it < 60) av.push('Jornada acima de 6 h normalmente pede intervalo de ao menos 1 h (regra geral da CLT, art. 71; conferir se a CCT prevê outra regra).');
+  if (m != null && m > 600) av.push('Jornada de ' + fmtH(m) + ' no dia: acima de 10 h (regra geral da CLT, art. 59, admite no máximo 2 h extras por dia; conferir a convenção).');
+  if (bruto > 360 && it < 60) av.push('Jornada acima de 6 h normalmente pede intervalo de ao menos 1 h (regra geral da CLT, art. 71; conferir se a convenção prevê outra regra).');
   else if (bruto > 240 && bruto <= 360 && it < 15) av.push('Jornada entre 4 h e 6 h normalmente pede intervalo de ao menos 15 min (CLT, art. 71).');
   const prev = L[addDias(data, -1) + '|' + f.id], next = L[addDias(data, 1) + '|' + f.id];
   const g1 = gapJornadas(prev, hv), g2 = gapJornadas(hv, next);
-  if (g1 != null && g1 < 660) av.push('Só ' + fmtH(g1) + ' entre a saída de ontem e a entrada de hoje (descanso entre jornadas: 11 h, CLT art. 66; conferir a CCT).');
-  if (g2 != null && g2 < 660) av.push('Só ' + fmtH(g2) + ' entre a saída de hoje e a entrada de amanhã (descanso entre jornadas: 11 h, CLT art. 66; conferir a CCT).');
+  if (g1 != null && g1 < 660) av.push('Só ' + fmtH(g1) + ' entre a saída de ontem e a entrada de hoje (descanso entre jornadas: 11 h, CLT art. 66; conferir a convenção).');
+  if (g2 != null && g2 < 660) av.push('Só ' + fmtH(g2) + ' entre a saída de hoje e a entrada de amanhã (descanso entre jornadas: 11 h, CLT art. 66; conferir a convenção).');
   return av;
 }
 
@@ -263,54 +360,33 @@ function baixar(nome, texto, tipo) {
   a.download = nome; document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-
-// ---------- dados iniciais (equipe fictícia) ----------
-const DEMO = [
-  { nome: 'Marina Gestora', cpf: '900.000.000-01', funcao: 'cozinha', gestor: true },
-  { nome: 'Carlos Souza', cpf: '100.000.000-01', funcao: 'cozinha', base: [0, 1], off: 0, turno: 'Manhã/Tarde' },
-  { nome: 'Ana Beatriz Lima', cpf: '100.000.000-02', funcao: 'cozinha', base: [1, 2], off: 1, turno: 'Manhã/Tarde' },
-  { nome: 'Pedro Henrique Alves', cpf: '100.000.000-03', funcao: 'cozinha', base: [2, 3], off: 2, turno: 'Tarde/Noite' },
-  { nome: 'Joana Martins', cpf: '100.000.000-04', funcao: 'cozinha', base: [0, 3], off: 3, turno: 'Tarde/Noite' },
-  { nome: 'Rafael Costa', cpf: '100.000.000-05', funcao: 'cozinha', base: [1, 3], off: 0, turno: 'Tarde/Noite' },
-  { nome: 'Fernanda Rocha', cpf: '200.000.000-01', funcao: 'salao', base: [0, 1], off: 0, turno: 'Tarde/Noite' },
-  { nome: 'Lucas Pereira', cpf: '200.000.000-02', funcao: 'salao', base: [1, 2], off: 1, turno: 'Tarde/Noite' },
-  { nome: 'Camila Duarte', cpf: '200.000.000-03', funcao: 'salao', base: [2, 3], off: 2, turno: 'Tarde/Noite' },
-  { nome: 'Bruno Teixeira', cpf: '200.000.000-04', funcao: 'salao', base: [0, 3], off: 3, turno: 'Tarde/Noite' },
-  { nome: 'Patrícia Nogueira', cpf: '300.000.000-01', funcao: 'caixa', base: [0, 1], off: 0, turno: 'Tarde/Noite' },
-  { nome: 'Rodrigo Mendes', cpf: '300.000.000-02', funcao: 'caixa', base: [2, 3], off: 2, turno: 'Tarde/Noite' },
-  { nome: 'Tiago Ribeiro', cpf: '400.000.000-01', funcao: 'bar', base: [1, 2], off: 1, turno: 'Tarde/Noite' },
-  { nome: 'Larissa Gomes', cpf: '400.000.000-02', funcao: 'bar', base: [0, 3], off: 3, turno: 'Tarde/Noite' }
-];
-
+// ===== FIM DA PARTE 2 =====// ---------- regras de referência (textos editáveis dentro do site) ----------
 const REGRAS_V2 = [
-  { titulo: 'Faltas justificadas (F.J)', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusulas 44, 45 e 46',
-    descricao: 'Ausências abonadas, sem desconto de salário nem de repousos: falecimento de familiar (2 dias consecutivos; 4 se o funeral for em outra cidade, conforme a cláusula), casamento (3 dias), nascimento de filho (5 dias), doação de sangue (1 dia a cada 12 meses), alistamento militar (até 2 dias), internação de cônjuge ou filho (até 6 dias), acompanhar filho menor de 12 anos ao médico, provas escolares, vestibular e ENEM (cl. 44) e atestados (cl. 45). Atestado de telemedicina além do período do atendimento exige atestado presencial (cl. 24, §10).' },
-  { titulo: 'Falta injustificada (F.INJ)', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cl. 21 §2 (Vale Compra) e regra geral da CLT',
-    descricao: 'Quem tiver qualquer falta injustificada no mês perde o Vale Compra Alimentação daquele mês (cl. 21, §2). O desconto do dia e a possível perda do repouso semanal remunerado da semana seguem a regra geral (Lei 605/49): confirmar com o contador.' },
-  { titulo: 'Dias extras (folga ou feriado trabalhado)', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cl. 42 §1, §3 e §4, e cl. 17',
-    descricao: 'Folga dominical trabalhada é paga em dobro e não entra em banco de horas (cl. 42, §1 e §4). Feriado trabalhado: compensar em até 15 dias antes ou depois, senão pagar em dobro (cl. 42, §3). Folga semanal trabalhada: confirmar com sindicato ou contador. Horas acima da jornada têm adicional de 80% (50% no REPIS), cl. 17.' }
+  { titulo: 'Faltas justificadas (F.J)', status: 'cct', ativo: true, fonte: 'Exemplo de convenção coletiva (substitua pela da empresa)',
+    descricao: 'Ausências abonadas, sem desconto de salário nem de repousos: falecimento de familiar, casamento, nascimento de filho, doação de sangue, alistamento militar, internação de cônjuge ou filho, acompanhar filho menor de 12 anos ao médico, provas escolares, vestibular e ENEM e atestados. Texto de exemplo vindo de uma convenção específica: adapte à convenção da sua empresa.' },
+  { titulo: 'Falta injustificada (F.INJ)', status: 'confirmar', ativo: true, fonte: 'Exemplo de convenção coletiva e regra geral da CLT',
+    descricao: 'No exemplo, quem tiver qualquer falta injustificada no mês perde o vale alimentação daquele mês. O desconto do dia e a possível perda do repouso semanal remunerado seguem a regra geral (Lei 605/49): confirmar com o contador.' },
+  { titulo: 'Dias extras (folga ou feriado trabalhado)', status: 'confirmar', ativo: true, fonte: 'Exemplo de convenção coletiva',
+    descricao: 'No exemplo, folga dominical trabalhada é paga em dobro e não entra em banco de horas; feriado trabalhado é compensado em até 15 dias antes ou depois, senão pago em dobro. Confirmar a regra da sua convenção.' }
 ];
 const REGRAS_INICIAIS = [
-  { titulo: 'Repouso semanal de 2 dias (EC 141/2026)', status: 'confirmar', ativo: true, fonte: 'Conferir número, texto e vigência da emenda na publicação oficial',
-    descricao: 'Segundo a análise do PDF enviado, o repouso semanal remunerado passaria a ser de 2 dias, um deles preferencialmente aos domingos, com vigência cerca de 2 meses após a publicação (por volta de 16/12/2026). Antes disso, a escala 5x2 é uma política da casa. Confirme a emenda e as datas na publicação oficial antes de depender desta regra.' },
-  { titulo: 'Jornada: 8 h por dia e limite semanal gradual', status: 'confirmar', ativo: true, fonte: 'Conferir no texto oficial da emenda',
-    descricao: 'Segundo a análise do PDF enviado: limite semanal de 42 h a partir de 2 meses após a publicação e de 40 h um ano depois, sem redução de salário. Cinco dias de 8 horas somam 40 h por semana. Os limites e as datas são parâmetros editáveis acima.' },
-  { titulo: 'Cláusulas de CCT incompatíveis perdem efeito', status: 'confirmar', ativo: true, fonte: 'Conferir no texto oficial da emenda',
-    descricao: 'Segundo a análise do PDF enviado, cláusulas de convenção sobre jornada e repouso incompatíveis com a emenda ficariam sem efeito após o prazo de transição. Conferir com o sindicato quais cláusulas da CCT são atingidas (por exemplo 12x36, banco de horas e intervalos).' },
-  { titulo: 'Folga extra mensal em domingo', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cláusula 42 e §§',
-    descricao: 'Quem trabalha em estabelecimento que abre aos domingos recebe uma folga extra por mês, obrigatoriamente em domingo, para ambos os gêneros. Se for trabalhada, é paga em dobro; não entra em compensação de horário e deve constar de escala predefinida. O sistema usa o parâmetro "folga em domingo ao menos a cada X dias" para alertar. Interpretação a confirmar com o sindicato.' },
-  { titulo: 'Feriado trabalhado', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusula 42, §3º e §4º',
-    descricao: 'Feriado trabalhado pode ser compensado até 15 dias antes ou depois, sem prejuízo da folga semanal; se não houver compensação, é pago em dobro. É vedado usar banco de horas em feriados e em folgas dominicais trabalhadas.' },
+  { titulo: 'Repouso semanal de 2 dias (a confirmar)', status: 'confirmar', ativo: true, fonte: 'Proposta analisada no PDF enviado: conferir número, texto e vigência na publicação oficial',
+    descricao: 'Segundo a análise do PDF enviado, o repouso semanal remunerado passaria a ser de 2 dias, um deles preferencialmente aos domingos. Isso ainda precisa ser confirmado na publicação oficial, incluindo as datas de vigência. Enquanto isso, a escala 5x2 é uma política da casa. Não dependa desta regra antes de conferir o texto oficial.' },
+  { titulo: 'Jornada: 8 h por dia e limite semanal gradual (a confirmar)', status: 'confirmar', ativo: true, fonte: 'Conferir no texto oficial',
+    descricao: 'Segundo a análise do PDF enviado, haveria redução gradual do limite semanal (44 h, depois 42 h, depois 40 h), sem redução de salário. Cinco dias de 8 horas somam 40 h por semana. Os limites e as datas são parâmetros editáveis e as datas padrão são apenas estimativas a confirmar.' },
   { titulo: 'Máximo de dias seguidos de trabalho', status: 'sistema', ativo: true, fonte: 'Parâmetro do sistema (editável)',
     descricao: 'O sistema avisa quando uma mudança deixa mais dias seguidos de trabalho do que o limite configurado (padrão: 6). Para o gestor é só aviso; o funcionário não consegue pedir mudança que passe do limite.' },
-  { titulo: 'Controle de jornada', status: 'cct', ativo: true, fonte: 'CCT 2025/2026, cláusula 43',
-    descricao: 'É obrigatório controlar a jornada por livro ou ponto (mecânico, magnético ou digital), qualquer que seja o número de funcionários. Este sistema organiza a escala e anota horários; não substitui o controle de ponto oficial.' },
-  { titulo: 'Convenção vigente e CCT 2026/2027', status: 'confirmar', ativo: true, fonte: 'CCT 2025/2026, cláusula 59',
-    descricao: 'A CCT 2025/2026 teve vigência até 31/07/2026 e a cláusula 59 mantém as condições até nova convenção ser assinada. A CCT 2026/2027 ainda não saiu. Quando sair, atualize os parâmetros e as regras desta aba.' },
+  { titulo: 'Folga em domingo', status: 'confirmar', ativo: true, fonte: 'Parâmetro do sistema (editável); exemplo vindo de convenção',
+    descricao: 'O sistema usa o parâmetro "folga em domingo ao menos a cada X dias" para alertar. Em algumas convenções a folga dominical é obrigatória e paga em dobro se trabalhada. Confirmar a regra da sua empresa.' },
+  { titulo: 'Feriado trabalhado', status: 'confirmar', ativo: true, fonte: 'Parâmetro do sistema (editável); exemplo vindo de convenção',
+    descricao: 'O prazo para compensar feriado trabalhado é um parâmetro editável. Sem compensação, o pagamento costuma ser em dobro: confirmar a regra da sua convenção.' },
+  { titulo: 'Controle de jornada', status: 'confirmar', ativo: true, fonte: 'Regra geral da CLT e convenção',
+    descricao: 'Este sistema organiza a escala e anota horários; não substitui o controle de ponto oficial exigido pela legislação ou pela convenção.' },
   { titulo: 'Avisos de horário diário (intervalo e descanso)', status: 'confirmar', ativo: true, fonte: 'Regra geral da CLT, arts. 59, 66 e 71',
-    descricao: 'O registro de horários avisa quando a jornada passa de 10 h, quando o intervalo é menor que 1 h (jornada acima de 6 h) ou 15 min (4 a 6 h), e quando o descanso entre duas jornadas é menor que 11 h. Esses avisos usam a regra geral; conferir se a CCT prevê regra própria.' }
+    descricao: 'O registro de horários avisa quando a jornada passa de 10 h, quando o intervalo é menor que 1 h (jornada acima de 6 h) ou 15 min (4 a 6 h), e quando o descanso entre duas jornadas é menor que 11 h. Esses avisos usam a regra geral; conferir se a convenção prevê regra própria.' }
 ].concat(REGRAS_V2);
 
+// Feriados nacionais. Inclua os municipais na aba "Regras e parâmetros".
 const FERIADOS_INICIAIS = [
   ['2026-11-20', 'Consciência Negra'], ['2026-12-25', 'Natal'], ['2027-01-01', 'Confraternização Universal'],
   ['2027-03-26', 'Sexta-feira Santa'], ['2027-04-21', 'Tiradentes'], ['2027-05-01', 'Dia do Trabalho'],
@@ -318,32 +394,47 @@ const FERIADOS_INICIAIS = [
   ['2027-11-15', 'Proclamação da República'], ['2027-11-20', 'Consciência Negra'], ['2027-12-25', 'Natal']
 ].map(([data, nome]) => ({ data, nome }));
 
+// ---------- criação e migração dos dados ----------
 async function criarEstadoInicial() {
-  const funcionarios = [];
-  for (const [i, d] of DEMO.entries()) {
-    const [he, hs, hi] = horarioTurno(d.turno);
-    funcionarios.push({ id: 'f' + (i + 1), nome: d.nome, cpfHash: await hashCPF(d.cpf), cpfFim: d.cpf.slice(-2), funcao: d.funcao,
-      turno: d.turno || '', base: d.base || [], off: d.off || 0, horas: 8, hEnt: he, hSai: hs, hInt: hi, gestor: !!d.gestor, demo: true });
+  const cfg = CONFIG_INICIAL, funcionarios = [];
+  for (const [i, d] of cfg.pessoas.entries()) {
+    funcionarios.push({ id: 'f' + (i + 1), nome: d.nome, cpfHash: await hashCPF(d.cpf), cpfFim: d.cpf.slice(-2), funcao: d.equipe,
+      turno: d.turno || '', base: d.base || [], off: d.off || 0, horas: d.horas || cfg.params.horasDia || 8,
+      hEnt: d.ent || '', hSai: d.sai || '', hInt: d.int != null ? d.int : 60, gestor: !!d.gestor,
+      demo: !!cfg.contasDemonstracao, demoCpf: cfg.contasDemonstracao ? d.cpf : '' });
   }
   estado = {
-    v: 3, demoAtivo: true,
-    params: { cctNome: 'CCT 2025/2026 (SP009729/2025); a de 2026/2027 ainda não saiu', folgasSemana: 2, maxSeguidos: 6, horasDia: 8,
-      limiteAtual: 44, limiteApos1: 42, limiteApos2: 40, dataEmenda: '2026-12-16', dataLimite40: '2027-12-16',
-      domingoACadaDias: 30, feriadoCompDias: 15 },
-    minimos: { cozinha: [2, 2, 2, 2, 3, 3, 3], salao: [2, 2, 2, 2, 3, 4, 3], caixa: [1, 1, 1, 1, 1, 2, 1], bar: [1, 1, 1, 1, 1, 2, 1] },
+    v: 4, demoAtivo: !!cfg.contasDemonstracao, params: clonar(cfg.params),
+    marca: clonar(cfg.marca), funcoes: clonar(cfg.equipes), minimos: clonar(cfg.minimos),
     funcionarios, dias: {}, projecoes: [], inicioRegistro: addDias(iniSemana(hojeISO()), -56), registradoAte: '',
-    pedidos: [], feriados: FERIADOS_INICIAIS,
+    pedidos: [], feriados: clonar(FERIADOS_INICIAIS),
     regras: REGRAS_INICIAIS.map((r, i) => Object.assign({ id: 'r' + (i + 1) }, r)), log: []
   };
   estado.projecoes.push({ id: 'pj0', nome: 'Exemplo pelas regras', nota: 'Projeção de demonstração: começa igual ao padrão do sistema e pode ser alterada à vontade.', criadaEm: stamp(), dias: {} });
-  const lucas = funcionarios.find(f => f.nome === 'Lucas Pereira');
-  const prox = addDias(iniSemana(hojeISO()), 7);
-  estado.pedidos.push({ id: 'p0', funcId: lucas.id, semana: prox, antigo: parDe(lucas, prox), novo: [0, 2],
-    categoria: 'Estudo', motivo: 'Prova na segunda-feira (pedido de demonstração)', status: 'pendente', criadoEm: stamp() });
-  logar('Sistema iniciado com equipe fictícia de demonstração.');
+  if (cfg.contasDemonstracao && cfg.equipes[1]) {
+    const alvo = funcionarios.filter(f => !f.gestor && f.funcao === cfg.equipes[1].id)[1];
+    const prox = addDias(iniSemana(hojeISO()), 7);
+    if (alvo) estado.pedidos.push({ id: 'p0', funcId: alvo.id, semana: prox, antigo: parDe(alvo, prox), novo: [0, 2],
+      categoria: 'Estudo', motivo: 'Pedido de demonstração', status: 'pendente', criadoEm: stamp() });
+  }
+  logar('Sistema iniciado com a configuração inicial.');
   salvar();
 }
-
+async function criarEstadoVazio(empresa, gNome, gCpf) {
+  const p = clonar(CONFIG_INICIAL.params);
+  const hash = await hashCPF(gCpf);
+  estado = {
+    v: 4, demoAtivo: false, params: p,
+    marca: { nome: empresa, subtitulo: 'Escala de folgas', logo: '', cores: Object.assign({}, TEMAS.neutro.cores) },
+    funcoes: [{ id: 'e1', nome: 'Equipe 1' }], minimos: { e1: [1, 1, 1, 1, 1, 1, 1] },
+    funcionarios: [{ id: 'f1', nome: gNome, cpfHash: hash, cpfFim: gCpf.slice(-2), funcao: 'e1', turno: '', base: [], off: 0,
+      horas: p.horasDia, hEnt: '', hSai: '', hInt: 60, gestor: true, demo: false, demoCpf: '' }],
+    dias: {}, projecoes: [], inicioRegistro: iniSemana(hojeISO()), registradoAte: '', pedidos: [],
+    feriados: clonar(FERIADOS_INICIAIS), regras: [], log: []
+  };
+  logar('Cliente em branco criado: ' + empresa);
+  salvar();
+}
 // Converte dados de versões anteriores e garante os campos novos.
 function migrar(s) {
   estado = s;
@@ -355,19 +446,28 @@ function migrar(s) {
     });
     delete s.escala;
   }
+  // COMPATIBILIDADE: dados antigos sem identidade/equipes recebem estes valores (apague se quiser uma versão limpa).
+  if (!s.funcoes) s.funcoes = [{ id: 'cozinha', nome: 'Cozinha' }, { id: 'salao', nome: 'Salão' }, { id: 'caixa', nome: 'Caixa' }, { id: 'bar', nome: 'Bar' }];
+  if (!s.marca) s.marca = { nome: 'Minha Empresa', subtitulo: 'Escala de folgas 5x2', logo: '', cores: Object.assign({}, TEMAS.verde.cores) };
+  s.marca.cores = Object.assign({}, TEMAS.neutro.cores, s.marca.cores || {});
+  s.minimos = s.minimos || {};
+  s.funcoes.forEach(fn => { if (!s.minimos[fn.id]) s.minimos[fn.id] = [1, 1, 1, 1, 1, 1, 1]; });
   s.projecoes = s.projecoes || [];
   s.log = s.log || [];
+  s.pedidos = s.pedidos || [];
+  s.regras = s.regras || [];
+  s.feriados = s.feriados || clonar(FERIADOS_INICIAIS);
+  s.params = Object.assign({}, CONFIG_INICIAL.params, s.params || {});
   if (!s.inicioRegistro) s.inicioRegistro = addDias(iniSemana(hojeISO()), -56);
   if (s.registradoAte == null) s.registradoAte = '';
   s.funcionarios.forEach(f => {
     if (f.hEnt == null) { const [a, b, c] = horarioTurno(f.turno); f.hEnt = a; f.hSai = b; f.hInt = c; }
   });
-  REGRAS_V2.forEach((r, i) => { if (!s.regras.some(x => x.titulo === r.titulo)) s.regras.push(Object.assign({ id: 'r' + Date.now() + i }, r)); });
-  s.v = 3; salvar(); return s;
+  if ((s.v || 0) < 3) REGRAS_V2.forEach((r, i) => { if (!s.regras.some(x => x.titulo === r.titulo)) s.regras.push(Object.assign({ id: 'r' + Date.now() + i }, r)); });
+  s.v = 4; salvar(); return s;
 }
 
 // ---------- motor de escala ----------
-// Padrão do sistema: folgas-base com rodízio de domingo (a cada 4 semanas).
 function padraoPar(f, ws) {
   if (!f.base || !f.base.length) return [];
   if (estado.params.domingoACadaDias > 0 && (((idxSemana(ws) + f.off) % 4) + 4) % 4 === 0 && !f.base.includes(6))
@@ -379,7 +479,6 @@ const padrao = (f, data) => padraoPar(f, iniSemana(data)).includes(dowM(data)) ?
 const entrada = (f, data, ov) => (ov || estado.dias)[data + '|' + f.id];
 function statusDia(f, data, ov) { const e = entrada(f, data, ov); return e ? e.s : padrao(f, data); }
 function parDe(f, ws, ov) { const r = []; for (let d = 0; d < 7; d++) if (statusDia(f, addDias(ws, d), ov) === 'F') r.push(d); return r; }
-// Devolve cópia da camada com as folgas da semana trocadas para "par".
 function comPar(f, ws, par, ov) {
   const base = ov || estado.dias, r = Object.assign({}, base);
   for (let d = 0; d < 7; d++) {
@@ -389,7 +488,6 @@ function comPar(f, ws, par, ov) {
   }
   return r;
 }
-// Registra (congela) as semanas que já passaram, para que mudanças futuras nas regras não reescrevam o histórico.
 function registrarPassado() {
   const hoje = iniSemana(hojeISO());
   let ws = estado.registradoAte ? addDias(estado.registradoAte, 7) : estado.inicioRegistro, mudou = false;
@@ -431,7 +529,6 @@ function furos(funcao, ws, ov) {
 }
 const totalFalta = arr => arr.reduce((a, x) => a + x.falta, 0);
 
-// Erros que bloqueiam o PEDIDO DO FUNCIONÁRIO (o gestor só recebe avisos)
 function validar(f, ws, par, ov) {
   const p = estado.params, m = [];
   if (par.length !== p.folgasSemana) m.push('A semana precisa ter exatamente ' + p.folgasSemana + ' folgas.');
@@ -454,7 +551,6 @@ function avisosDe(f, ws, tmp) {
   });
   return a;
 }
-// Sugestão de remanejamento: troca folgas de colegas da mesma função para tapar furos.
 function sugerir(funcao, ws, ov, ignorarId) {
   ov = ov || estado.dias;
   const hoje = hojeISO(); let trabalho = Object.assign({}, ov); const sug = [];
@@ -506,7 +602,7 @@ function auditar(f, ws, ov) {
   if (p.domingoACadaDias > 0 && sd > p.domingoACadaDias) motivos.push('sem folga em domingo há mais de ' + p.domingoACadaDias + ' dias (a confirmar)');
   if (horas > lim) motivos.push(horas + ' h previstas, acima do limite de ' + lim + ' h');
   if (temReg && reg > lim * 60) motivos.push(fmtH(reg) + ' registradas, acima do limite de ' + lim + ' h');
-  if (fi) motivos.push('falta injustificada: Vale Compra do mês em risco');
+  if (fi) motivos.push('falta injustificada: conferir desconto e benefícios do mês');
   if (ex) motivos.push('dia(s) extra(s): conferir pagamento ou compensação');
   return { f, folgas, fj, fi, ex, ms, sd, horas, lim, fers, reg: temReg ? reg : null, motivos };
 }
@@ -520,8 +616,6 @@ function resumoMes(f, ym, L) {
   }
   return r;
 }
-
-// Análise de um dia: tudo é aviso, nada bloqueia o gestor.
 function analisarDia(f, data, s, L) {
   const p = estado.params, ws = iniSemana(data), dow = dowM(data);
   const atual = statusDia(f, data, L), pd = padrao(f, data);
@@ -530,27 +624,27 @@ function analisarDia(f, data, s, L) {
   if (s !== atual) {
     if (s === 'F' || atual === 'F') {
       const n = parDe(f, ws, tmp).length;
-      if (n !== p.folgasSemana) avisos.push('A semana ficaria com ' + n + ' folga(s); a regra é ' + p.folgasSemana + ' (a confirmar na emenda).' + (n === 1 ? ' Pode haver exceção por convenção ou acordo coletivo: confirmar.' : ''));
+      if (n !== p.folgasSemana) avisos.push('A semana ficaria com ' + n + ' folga(s); a regra é ' + p.folgasSemana + ' (a confirmar).' + (n === 1 ? ' Pode haver exceção por convenção ou acordo coletivo: confirmar.' : ''));
     }
     const ms = maxSeguidos(f, ws, tmp);
     if (ms > p.maxSeguidos) avisos.push('Isso deixaria ' + ms + ' dias seguidos de trabalho (máximo ' + p.maxSeguidos + ').');
     const c = cobertura(f.funcao, ws, tmp)[dow], mn = (estado.minimos[f.funcao] || [])[dow] || 0;
-    if (c < mn) avisos.push('Cobertura de ' + FUNCOES[f.funcao] + ' em ' + DIAS_L[dow] + ' ficaria em ' + c + '/' + mn + '.');
+    if (c < mn) avisos.push('Cobertura de ' + nomeEq(f.funcao) + ' em ' + DIAS_L[dow] + ' ficaria em ' + c + '/' + mn + '.');
     avisosDe(f, ws, tmp).forEach(x => { if (!avisos.includes(x)) avisos.push(x); });
   }
   if (s === 'FJ') {
-    infos.push('Falta justificada: dia abonado, sem desconto de salário nem de repouso (CCT cl. 44 a 46). Guarde o comprovante.');
-    infos.push('Não conta na cobertura nem na carga semanal. Atestado de telemedicina além do período do atendimento exige atestado presencial (cl. 24, §10).');
+    infos.push('Falta justificada: dia abonado, sem desconto de salário nem de repouso (conforme a convenção). Guarde o comprovante.');
+    infos.push('Não conta na cobertura nem na carga semanal.');
   }
   if (s === 'FI') {
-    avisos.push('Falta injustificada: perde o Vale Compra Alimentação do mês (CCT cl. 21, §2).');
+    avisos.push('Falta injustificada: pode haver perda de benefícios do mês conforme a convenção (ex.: vale alimentação).');
     avisos.push('O dia pode ser descontado, e o repouso semanal remunerado da semana pode ser perdido pela regra geral (Lei 605/49): confirmar com o contador.');
     infos.push('Não conta na cobertura nem na carga semanal.');
   }
   if (s === 'EX') {
-    if (pd === 'F' && dow === 6) avisos.push('Domingo de folga trabalhado: pago em dobro e fora do banco de horas (CCT cl. 42, §1 e §4).');
+    if (pd === 'F' && dow === 6) avisos.push('Domingo de folga trabalhado: em muitas convenções é pago em dobro e fica fora do banco de horas. Confirmar a regra da empresa.');
     else if (pd === 'F') avisos.push('Folga semanal trabalhada: pagar em dobro ou dar outra folga na mesma semana (confirmar com o sindicato ou contador).');
-    if (pd === 'T') infos.push('Este dia já era de trabalho na escala. Use Extra para dias além da escala; horas acima da jornada seguem a regra de hora extra (adicional de 80%, ou 50% no REPIS, cl. 17).');
+    if (pd === 'T') infos.push('Este dia já era de trabalho na escala. Use Extra para dias além da escala; horas acima da jornada seguem a regra de hora extra.');
     infos.push('Conta na cobertura e na carga semanal.');
   }
   if (s === 'T' && pd === 'F') infos.push('Trabalho no lugar da folga: a folga deste dia é perdida. Se for um dia a mais, e não uma troca, use Extra.');
@@ -562,15 +656,16 @@ function analisarDia(f, data, s, L) {
 const projAtual = () => estado.projecoes.find(p => p.id === projAtiva) || null;
 function camada() { const p = projAtual(); return p ? p.dias : estado.dias; }
 const ctxLog = () => { const p = projAtual(); return p && abaGestor !== 'pedidos' ? '[Projeção ' + p.nome + '] ' : ''; };
-
-// ---------- sessão e entrada ----------
+// ===== FIM DA PARTE 3 =====// ---------- sessão e entrada ----------
 function barra(nome, papel) {
   document.body.classList.remove('entrada');
   usuario.replaceChildren(h('span', { class: 'sutil' }, nome + ' · ' + papel), h('button', { class: 'pq', onclick: sair }, 'Sair'));
 }
-function sair() { sessionStorage.removeItem('quintal_sessao'); telaEntrada(); }
+function sair() { sessionStorage.removeItem(SESSAO); telaEntrada(); }
 function telaEntrada() {
+  aplicarTema();
   usuario.replaceChildren(); document.body.classList.add('entrada');
+  const m = estado.marca;
   const nome = h('input', { placeholder: 'Nome completo', 'aria-label': 'Nome completo', autocomplete: 'off' });
   const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: 'CPF', 'aria-label': 'CPF', autocomplete: 'off' });
   cpf.addEventListener('input', () => {
@@ -583,21 +678,24 @@ function telaEntrada() {
   form.addEventListener('submit', async ev => {
     ev.preventDefault(); botao.disabled = true;
     try {
-      const hs = await hashCPF(cpf.value), n = normNome(nome.value);
-      const f = estado.funcionarios.find(x => normNome(x.nome) === n && x.cpfHash === hs);
+      const hs = await hashCPF(cpf.value), hsAnt = await hashCPF(cpf.value, SAL_ANTIGO), n = normNome(nome.value);
+      const f = estado.funcionarios.find(x => normNome(x.nome) === n && (x.cpfHash === hs || x.cpfHash === hsAnt));
       if (!f) throw new Error('Nome ou CPF não conferem.');
-      sessionStorage.setItem('quintal_sessao', f.id); iniciar();
+      sessionStorage.setItem(SESSAO, f.id); iniciar();
     } catch (e) { msg.replaceChildren(h('div', { class: 'msg erro' }, e.message)); }
     finally { botao.disabled = false; }
   });
-  const demo = estado.demoAtivo ? h('div', { class: 'card demo' }, h('h3', {}, 'Contas de demonstração (fictícias)'),
+  const contas = estado.funcionarios.filter(f => f.demoCpf).sort((a, b) => (b.gestor ? 1 : 0) - (a.gestor ? 1 : 0));
+  const demo = estado.demoAtivo && contas.length ? h('div', { class: 'card demo' }, h('h3', {}, 'Contas de demonstração (fictícias)'),
     h('p', { class: 'sutil pequeno' }, 'Toque para preencher. Não use CPF real neste protótipo.'),
-    DEMO.map(d => h('button', { class: 'pq', type: 'button', onclick: () => { nome.value = d.nome; cpf.value = d.cpf; } }, d.nome + (d.gestor ? ' (gestora)' : '')))) : null;
-  app.replaceChildren(h('div', { class: 'entra' }, h('h1', {}, 'Quintal do Carmo'), h('p', { class: 'sutil' }, 'Escala de folgas 5x2'), form, demo));
+    contas.map(d => h('button', { class: 'pq', type: 'button', onclick: () => { nome.value = d.nome; cpf.value = d.demoCpf; } }, d.nome + (d.gestor ? ' (gestor)' : '')))) : null;
+  app.replaceChildren(h('div', { class: 'entra' }, m.logo ? h('img', { class: 'logo-entra', src: m.logo, alt: '' }) : null,
+    h('h1', {}, m.nome), h('p', { class: 'sutil' }, m.subtitulo || ''), form, demo));
   nome.focus();
 }
 function iniciar() {
-  const f = funcionario(sessionStorage.getItem('quintal_sessao'));
+  aplicarTema();
+  const f = funcionario(sessionStorage.getItem(SESSAO));
   if (!f) return telaEntrada();
   registrarPassado();
   if (f.gestor) { semanaGestor = semanaGestor || iniSemana(hojeISO()); return painelGestor(); }
@@ -680,7 +778,7 @@ function painelFuncionario(f) {
         h('button', { class: 'pq aviso', onclick: () => modalPedido(f, ws) }, emAnalise ? 'Trocar pedido' : 'Pedir mudança')));
   });
   app.replaceChildren(
-    h('div', { class: 'card' }, h('h2', {}, f.nome + ' · ' + FUNCOES[f.funcao]), navMes, h('div', { class: 'cal' }, DIAS.map(d => h('div', { class: 'cal-cab' }, d)), celulas),
+    h('div', { class: 'card' }, h('h2', {}, f.nome + ' · ' + nomeEq(f.funcao)), navMes, h('div', { class: 'cal' }, DIAS.map(d => h('div', { class: 'cal-cab' }, d)), celulas),
       h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-fj' }), 'F.J'), h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ'),
         h('span', {}, h('i', { class: 'l-ex' }), 'Extra'), h('span', {}, h('i', { class: 'l-prev' }), 'Previsão'), h('span', {}, h('i', { class: 'l-hoje' }), 'Hoje')),
       h('p', { class: 'sutil pequeno' }, 'Depois da próxima semana a escala é uma previsão e pode mudar. Dias com nome embaixo são feriados.')),
@@ -719,12 +817,12 @@ function modalPedido(f, ws) {
 // ---------- gestor ----------
 function painelGestor() {
   const y = window.scrollY;
-  const eu = funcionario(sessionStorage.getItem('quintal_sessao'));
+  const eu = funcionario(sessionStorage.getItem(SESSAO));
   barra(eu.nome, 'gestor(a)');
   const pend = estado.pedidos.filter(p => p.status === 'pendente').length;
-  const abas = [['pedidos', 'Pedidos' + (pend ? ' (' + pend + ')' : '')], ['escala', 'Escala e projeções'], ['ponto', 'Horários (ponto)'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['log', 'Registro e backup']];
+  const abas = [['pedidos', 'Pedidos' + (pend ? ' (' + pend + ')' : '')], ['escala', 'Escala e projeções'], ['ponto', 'Horários (ponto)'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['marca', 'Identidade'], ['log', 'Registro e backup']];
   const nav = h('div', { class: 'abas' }, abas.map(([k, t]) => h('button', { class: abaGestor === k ? 'ativa' : '', onclick: () => { abaGestor = k; painelGestor(); } }, t)));
-  const telas = { pedidos: gPedidos, escala: gEscala, ponto: gPonto, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, log: gLog };
+  const telas = { pedidos: gPedidos, escala: gEscala, ponto: gPonto, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, marca: gMarca, log: gLog };
   app.replaceChildren(nav, telas[abaGestor]());
   window.scrollTo(0, y);
 }
@@ -754,7 +852,7 @@ function cartaoPedido(p) {
   };
   const recusarFn = () => { p.status = 'recusada'; p.decididoEm = stamp(); logar('Pedido de ' + f.nome + ' recusado'); salvar(); toast('Pedido recusado.'); painelGestor(); };
   return h('div', { class: 'pedido urg' },
-    h('div', {}, h('b', {}, f.nome), ' ', h('span', { class: 'badge' }, FUNCOES[f.funcao])),
+    h('div', {}, h('b', {}, f.nome), ' ', h('span', { class: 'badge' }, nomeEq(f.funcao))),
     h('div', { class: 'sutil' }, 'Semana de ' + dataBR(ws) + ' · pedido em ' + p.criadoEm),
     h('div', {}, parTxt(p.antigo) + '  →  ', h('b', {}, parTxt(p.novo))),
     h('div', {}, 'Categoria: ' + p.categoria + (p.motivo ? ' · ' + p.motivo : '')),
@@ -776,8 +874,7 @@ function gPedidos() {
       return h('li', {}, h('b', {}, f ? f.nome : '(removido)'), ' · semana de ' + dataBR(p.semana) + ' · ' + parTxt(p.antigo) + ' → ' + parTxt(p.novo) + ' · ', h('span', { class: 'badge ' + (p.status === 'aprovada' ? 'ok' : 'bad') }, rot[p.status]));
     }))) : null);
 }
-
-// ----- escala e projeções -----
+// ===== FIM DA PARTE 4 =====// ----- escala e projeções -----
 function diferencas(ws, p) {
   let n = 0;
   estado.funcionarios.filter(f => !f.gestor).forEach(f => {
@@ -815,7 +912,7 @@ function modalNovaProjecao(duplicar) {
     h('label', {}, 'Nome'), nome, h('label', {}, 'Nota'), nota, h('label', {}, 'Começar a partir de'), origem,
     h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => {
       const base = origem.value === 'regras' ? {} : origem.value === 'oficial' ? estado.dias : (p0 ? p0.dias : {});
-      const nova = { id: 'pj' + Date.now(), nome: nome.value.trim() || 'Projeção ' + (estado.projecoes.length + 1), nota: nota.value.trim(), criadaEm: stamp(), dias: JSON.parse(JSON.stringify(base)) };
+      const nova = { id: 'pj' + Date.now(), nome: nome.value.trim() || 'Projeção ' + (estado.projecoes.length + 1), nota: nota.value.trim(), criadaEm: stamp(), dias: clonar(base) };
       estado.projecoes.push(nova); projAtiva = nova.id; logar('Projeção criada: ' + nova.nome); salvar(); fecharModal(); toast('Projeção criada.'); painelGestor();
     } }, 'Criar'), h('button', { onclick: fecharModal }, 'Cancelar')));
 }
@@ -871,12 +968,12 @@ function gEscala() {
   const cab = h('tr', {}, h('th', {}, 'Colaborador'), DIAS.map((d, i) => { const dt = addDias(ws, i), fer = feriadoDe(dt);
     return h('th', {}, d, h('br'), h('small', { class: 'sutil' }, dataBR(dt)), fer ? h('br') : null, fer ? h('small', { class: 'badge warn' }, 'feriado') : null); }));
   const linhas = []; let totalFuros = 0;
-  Object.keys(FUNCOES).forEach(fn => {
+  idsFuncoes().forEach(fn => {
     const eq = equipeDe(fn); if (!eq.length) return;
-    linhas.push(h('tr', {}, h('td', { colspan: '8', class: 'grupo' }, FUNCOES[fn])));
+    linhas.push(h('tr', {}, h('td', { colspan: '8', class: 'grupo' }, nomeEq(fn))));
     eq.forEach(f => linhas.push(h('tr', {}, h('td', {}, f.nome), DIAS.map((_, d) => celula(f, addDias(ws, d), L, false)))));
-    const cb = cobertura(fn, ws, L), mn = estado.minimos[fn]; totalFuros += furos(fn, ws, L).length;
-    linhas.push(h('tr', {}, h('td', { class: 'sutil' }, 'Trabalhando / mínimo'), DIAS.map((_, d) => h('td', { class: cb[d] < mn[d] ? 'def' : 'sutil' }, cb[d] + '/' + mn[d]))));
+    const cb = cobertura(fn, ws, L), mn = estado.minimos[fn] || [0, 0, 0, 0, 0, 0, 0]; totalFuros += furos(fn, ws, L).length;
+    linhas.push(h('tr', {}, h('td', { class: 'sutil' }, 'Trabalhando / mínimo'), DIAS.map((_, d) => h('td', { class: cb[d] < (mn[d] || 0) ? 'def' : 'sutil' }, cb[d] + '/' + (mn[d] || 0)))));
   });
   return h('div', {}, barraCamada(),
     h('div', { class: 'card' }, h('h2', {}, 'Escala completa · ' + (projAtual() ? 'projeção "' + projAtual().nome + '"' : 'oficial')), seletorSemana(),
@@ -888,14 +985,14 @@ function gEscala() {
       h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-fj' }), 'F.J (falta justificada)'),
         h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ (falta injustificada)'), h('span', {}, h('i', { class: 'l-ex' }), 'Extra (dia extra)'),
         h('span', {}, h('i', { class: 'l-alt' }), 'Alterado à mão'), h('span', {}, h('span', { class: 'obs-m' }, '●'), ' Tem observação')),
-      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas)))));
+      linhas.length ? h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))) : h('p', { class: 'sutil' }, 'Ainda não há funcionários cadastrados. Cadastre na aba Equipe.')));
 }
 function sugerirCobertura(ws) {
   const L = camada(); let todas = []; const blocos = [];
-  Object.keys(FUNCOES).forEach(fn => {
+  idsFuncoes().forEach(fn => {
     if (!furos(fn, ws, L).length) return;
     const pl = sugerir(fn, ws, L); todas = todas.concat(pl.sugestoes);
-    blocos.push(h('h3', {}, FUNCOES[fn]), blocoPlano(pl, 'Furos:'));
+    blocos.push(h('h3', {}, nomeEq(fn)), blocoPlano(pl, 'Furos:'));
   });
   abrirModal(h('h2', {}, 'Cobrir furos da semana de ' + dataBR(ws)), blocos.length ? blocos : h('p', {}, 'Sem furos nesta semana.'),
     h('div', { class: 'acoes' }, todas.length ? h('button', { class: 'cheio', onclick: () => {
@@ -904,8 +1001,7 @@ function sugerirCobertura(ws) {
       salvar(); fecharModal(); toast('Trocas aplicadas.'); painelGestor();
     } }, 'Aplicar estas trocas') : null, h('button', { onclick: fecharModal }, 'Fechar')));
 }
-
-// ----- janela de um dia: tipo, horários e observação -----
+// ===== FIM DA PARTE 5 =====// ----- janela de um dia: tipo, horários e observação -----
 function modalDia(f, data) {
   const L = camada(), k = data + '|' + f.id, e0 = L[k] || {}, pd = padrao(f, data), fer = feriadoDe(data), proj = projAtual();
   let s = statusDia(f, data, L);
@@ -972,7 +1068,7 @@ function modalDia(f, data) {
 
   abrirModal(h('h2', {}, f.nome),
     h('p', { class: 'sutil' }, DIAS_L[dowM(data)] + ', ' + dataBRfull(data) + (fer ? ' · feriado: ' + fer : '') + ' · padrão do sistema: ' + (pd === 'F' ? 'folga' : 'trabalho')),
-    proj ? h('div', { class: 'msg proj' }, 'Editando a projeção "' + proj.nome + '"'.replace('"', '"')) : null,
+    proj ? h('div', { class: 'msg proj' }, 'Editando a projeção "' + proj.nome + '"') : null,
     e0.por ? h('p', { class: 'sutil pequeno' }, 'Última alteração: ' + e0.por + ' em ' + e0.em) : null,
     h('h3', {}, 'Tipo do dia'), grade, motivoBox, tempoBox,
     h('label', {}, 'Observações'), obs, analise,
@@ -987,7 +1083,7 @@ function preencherPadrao(ws) {
     for (let d = 0; d < 7; d++) {
       const data = addDias(ws, d); if (data > hoje) continue;
       const k = data + '|' + f.id, e = L[k], st = statusDia(f, data, L);
-      if (!trabalha(st) || (e && (e.ent || e.sai))) continue;
+      if (!trabalha(st) || (e && (e.ent || e.sai)) || !f.hEnt || !f.hSai) continue;
       L[k] = Object.assign({}, e || { s: st, obs: '' }, { ent: f.hEnt, sai: f.hSai, int: f.hInt, por: quemSou(), em: stamp() });
       n++;
     }
@@ -1003,13 +1099,13 @@ function csvHorarios(prefixo) {
     const e = L[k]; if (!e || (!e.ent && !e.sai)) return;
     const f = funcionario(k.slice(11)); if (!f) return;
     const m = minTrab(e);
-    lista.push({ data, nome: f.nome, row: [dataBRfull(data), f.nome, FUNCOES[f.funcao], STATUS[e.s] ? STATUS[e.s].nome : e.s, e.ent || '', e.sai || '',
+    lista.push({ data, nome: f.nome, row: [dataBRfull(data), f.nome, nomeEq(f.funcao), STATUS[e.s] ? STATUS[e.s].nome : e.s, e.ent || '', e.sai || '',
       e.int != null ? e.int : '', m != null ? (m / 60).toFixed(2).replace('.', ',') : '', e.obs || '', e.motivo || ''] });
   });
   if (!lista.length) { toast('Nenhum horário registrado neste período.', true); return; }
   lista.sort((a, b) => a.data.localeCompare(b.data) || a.nome.localeCompare(b.nome));
   const esc = v => '"' + String(v).replace(/"/g, '""') + '"';
-  const cab = ['Data', 'Funcionário', 'Função', 'Tipo do dia', 'Entrada', 'Saída', 'Intervalo (min)', 'Horas trabalhadas', 'Observação', 'Motivo'];
+  const cab = ['Data', 'Funcionário', 'Equipe', 'Tipo do dia', 'Entrada', 'Saída', 'Intervalo (min)', 'Horas trabalhadas', 'Observação', 'Motivo'];
   const txt = '\uFEFF' + [cab].concat(lista.map(x => x.row)).map(r => r.map(esc).join(';')).join('\r\n');
   baixar('horarios_' + (prefixo || 'todos') + '.csv', txt, 'text/csv;charset=utf-8');
   toast('Arquivo CSV gerado.');
@@ -1019,9 +1115,9 @@ function gPonto() {
   const cab = h('tr', {}, h('th', {}, 'Colaborador'), DIAS.map((d, i) => { const dt = addDias(ws, i), fer = feriadoDe(dt);
     return h('th', {}, d, h('br'), h('small', { class: 'sutil' }, dataBR(dt)), fer ? h('br') : null, fer ? h('small', { class: 'badge warn' }, 'feriado') : null); }), h('th', {}, 'Semana'));
   const linhas = [];
-  Object.keys(FUNCOES).forEach(fn => {
+  idsFuncoes().forEach(fn => {
     const eq = equipeDe(fn); if (!eq.length) return;
-    linhas.push(h('tr', {}, h('td', { colspan: '9', class: 'grupo' }, FUNCOES[fn])));
+    linhas.push(h('tr', {}, h('td', { colspan: '9', class: 'grupo' }, nomeEq(fn))));
     eq.forEach(f => {
       let tot = 0, prev = 0;
       const tds = DIAS.map((_, d) => {
@@ -1040,58 +1136,93 @@ function gPonto() {
       h('div', { class: 'acoes' },
         h('button', { class: 'pq', onclick: () => { if (confirm('Preencher o horário padrão de cada funcionário nos dias de trabalho já passados desta semana que estão sem horário?')) preencherPadrao(ws); } }, 'Preencher horário padrão nos dias sem horário'),
         h('button', { class: 'pq', onclick: () => csvHorarios(ws.slice(0, 7)) }, 'Baixar horários do mês (CSV)')),
-      h('div', { class: 'rolagem', style: 'margin-top:10px' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas)))));
+      linhas.length ? h('div', { class: 'rolagem', style: 'margin-top:10px' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))) : h('p', { class: 'sutil' }, 'Ainda não há funcionários cadastrados.')));
 }
 
 // ----- equipe -----
 function gEquipe() {
-  const grupos = Object.keys(FUNCOES).map(fn => {
-    const eq = equipeDe(fn);
-    return h('div', { class: 'card' }, h('h3', {}, FUNCOES[fn] + ' (' + eq.length + ')'),
+  const novaEq = h('input', { placeholder: 'Nome da nova equipe (ex.: Cozinha, Loja 2, Atendimento)', maxlength: '40' });
+  const cardEquipes = h('div', { class: 'card' }, h('h2', {}, 'Equipes'),
+    h('p', { class: 'sutil pequeno' }, 'Crie e renomeie as equipes da empresa. Só dá para remover uma equipe vazia. O mínimo de pessoas por dia de cada equipe fica na aba Cobertura mínima.'),
+    estado.funcoes.map(fn => {
+      const n = equipeDe(fn.id).length;
+      return h('div', { class: 'grade2', style: 'align-items:end;margin-bottom:8px' },
+        h('div', {}, h('label', {}, 'Nome da equipe'), h('input', { value: fn.nome, maxlength: '40', onchange: e => {
+          fn.nome = e.target.value.trim() || fn.nome; salvar(); toast('Nome da equipe salvo.'); painelGestor(); } })),
+        h('div', { class: 'acoes', style: 'margin:0' }, h('span', { class: 'sutil pequeno' }, n + ' pessoa(s)'),
+          h('button', { class: 'pq perigo', disabled: n > 0 || estado.funcoes.length < 2, title: n > 0 ? 'Mova ou remova as pessoas antes' : '', onclick: () => {
+            if (!confirm('Remover a equipe "' + fn.nome + '"?')) return;
+            estado.funcoes = estado.funcoes.filter(x => x.id !== fn.id); delete estado.minimos[fn.id];
+            logar('Equipe removida: ' + fn.nome); salvar(); painelGestor(); } }, 'Remover')));
+    }),
+    h('div', { class: 'grade2', style: 'margin-top:8px' }, novaEq),
+    h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => {
+      const n = novaEq.value.trim(); if (!n) return toast('Informe o nome da equipe.', true);
+      const id = 'e' + Date.now();
+      estado.funcoes.push({ id, nome: n }); estado.minimos[id] = [1, 1, 1, 1, 1, 1, 1];
+      logar('Equipe criada: ' + n); salvar(); toast('Equipe criada.'); painelGestor();
+    } }, '+ Adicionar equipe')));
+  const grupos = estado.funcoes.map(fn => {
+    const eq = equipeDe(fn.id);
+    return h('div', { class: 'card' }, h('h3', {}, fn.nome + ' (' + eq.length + ')'),
       eq.length ? h('ul', { class: 'limpa' }, eq.map(f => h('li', {}, h('div', { class: 'linha-semana', style: 'border:0;padding:0' },
         h('div', {}, h('b', {}, f.nome), h('div', { class: 'sutil pequeno' }, 'Folgas-base: ' + parTxt(f.base) + ' · ' + f.horas + ' h/dia · horário padrão ' + horarioPadrao(f) + ' (intervalo ' + (f.hInt || 0) + ' min) · CPF final ' + f.cpfFim)),
         h('div', { class: 'acoes', style: 'margin:0' }, h('button', { class: 'pq', onclick: () => modalFunc(f) }, 'Editar'))))))
-        : h('p', { class: 'sutil' }, 'Ninguém nesta função.'));
+        : h('p', { class: 'sutil' }, 'Ninguém nesta equipe.'));
   });
+  const gestores = estado.funcionarios.filter(f => f.gestor);
+  const cardGestores = h('div', { class: 'card' }, h('h3', {}, 'Gestores (' + gestores.length + ')'),
+    h('p', { class: 'sutil pequeno' }, 'Gestores acessam todas as abas e não entram na escala.'),
+    h('ul', { class: 'limpa' }, gestores.map(f => h('li', {}, h('div', { class: 'linha-semana', style: 'border:0;padding:0' },
+      h('div', {}, h('b', {}, f.nome), h('div', { class: 'sutil pequeno' }, 'CPF final ' + f.cpfFim)),
+      h('div', { class: 'acoes', style: 'margin:0' }, h('button', { class: 'pq', onclick: () => modalFunc(f) }, 'Editar')))))),
+    h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => modalFunc(null, true) }, '+ Novo gestor')));
   return h('div', {}, h('div', { class: 'card' }, h('h2', {}, 'Equipe'),
     h('p', { class: 'sutil pequeno' }, 'Folgas-base, carga diária e horário padrão de cada pessoa. Semanas já registradas não mudam quando você altera as folgas-base.'),
-    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => modalFunc(null) }, '+ Novo funcionário'))), grupos);
+    h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => modalFunc(null) }, '+ Novo funcionário'))), cardEquipes, grupos, cardGestores);
 }
-function modalFunc(f) {
+function modalFunc(f, gestorNovo) {
   const novo = !f, p = estado.params;
   const nome = h('input', { value: f ? f.nome : '', placeholder: 'Nome completo' });
   const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: novo ? 'CPF (só para entrar no sistema)' : 'Deixe em branco para manter o atual' });
-  const funcao = h('select', {}, Object.keys(FUNCOES).map(k => h('option', { value: k, selected: f ? f.funcao === k : k === 'salao' }, FUNCOES[k])));
-  const turno = h('input', { value: f ? f.turno : '', placeholder: 'Ex.: Tarde/Noite' });
+  const funcao = h('select', {}, estado.funcoes.map(x => h('option', { value: x.id, selected: f ? f.funcao === x.id : x.id === estado.funcoes[0].id }, x.nome)));
+  const ehG = h('input', { type: 'checkbox', checked: f ? !!f.gestor : !!gestorNovo });
+  const turno = h('input', { value: f ? f.turno : '', placeholder: 'Ex.: Tarde/Noite (só para anotação)' });
   const cbs = DIAS.map((d, i) => h('input', { type: 'checkbox', checked: !!(f && f.base.includes(i)) }));
   const off = h('select', {}, [0, 1, 2, 3].map(i => h('option', { value: String(i), selected: f ? f.off === i : i === 0 }, 'Grupo ' + (i + 1))));
   const horas = h('input', { type: 'number', min: '1', max: '12', step: '0.5', value: String(f ? f.horas : p.horasDia) });
-  const he = h('input', { type: 'time', value: f ? f.hEnt || '' : '15:00' });
-  const hs = h('input', { type: 'time', value: f ? f.hSai || '' : '00:00' });
+  const he = h('input', { type: 'time', value: f ? f.hEnt || '' : '09:00' });
+  const hs = h('input', { type: 'time', value: f ? f.hSai || '' : '18:00' });
   const hi = h('input', { type: 'number', min: '0', max: '480', step: '5', value: String(f && f.hInt != null ? f.hInt : 60) });
   cpf.addEventListener('input', () => { cpf.value = cpf.value.replace(/\D/g, '').slice(0, 11); });
   const salvarFn = async () => {
-    const base = cbs.map((c, i) => c.checked ? i : -1).filter(i => i >= 0);
+    const base = cbs.map((c, i) => c.checked ? i : -1).filter(i => i >= 0), gest = ehG.checked;
     if (!nome.value.trim()) return toast('Informe o nome.', true);
-    if (base.length !== p.folgasSemana) return toast('Marque exatamente ' + p.folgasSemana + ' dias de folga-base.', true);
+    if (!gest && base.length !== p.folgasSemana) return toast('Marque exatamente ' + p.folgasSemana + ' dias de folga-base.', true);
     if (novo && cpf.value.length !== 11) return toast('Informe o CPF com 11 dígitos.', true);
-    const reg = f || { id: 'f' + Date.now(), gestor: false };
-    reg.nome = nome.value.trim(); reg.funcao = funcao.value; reg.turno = turno.value.trim(); reg.base = base; reg.off = +off.value;
+    if (!novo && f.gestor && !gest && estado.funcionarios.filter(x => x.gestor).length < 2) return toast('Precisa existir ao menos um gestor.', true);
+    const reg = f || { id: 'f' + Date.now(), demo: false, demoCpf: '' };
+    reg.gestor = gest; reg.nome = nome.value.trim(); reg.funcao = funcao.value; reg.turno = turno.value.trim();
+    reg.base = gest ? [] : base; reg.off = +off.value;
     reg.horas = num(horas.value) || p.horasDia; reg.hEnt = he.value; reg.hSai = hs.value; reg.hInt = Math.max(0, parseInt(hi.value, 10) || 0);
-    if (cpf.value.length === 11) { reg.cpfHash = await hashCPF(cpf.value); reg.cpfFim = cpf.value.slice(-2); }
+    if (cpf.value.length === 11) { reg.cpfHash = await hashCPF(cpf.value); reg.cpfFim = cpf.value.slice(-2); reg.demoCpf = ''; }
     if (novo) estado.funcionarios.push(reg);
-    logar((novo ? 'Funcionário adicionado: ' : 'Funcionário editado: ') + reg.nome);
+    logar((novo ? 'Pessoa adicionada: ' : 'Pessoa editada: ') + reg.nome);
     salvar(); fecharModal(); toast('Salvo.'); painelGestor();
   };
   const remover = () => {
-    if (!confirm('Remover ' + f.nome + ' da equipe? Os pedidos dele(a) também serão apagados.')) return;
+    if (f.id === sessionStorage.getItem(SESSAO)) return toast('Você não pode remover a si mesmo(a).', true);
+    if (f.gestor && estado.funcionarios.filter(x => x.gestor).length < 2) return toast('Precisa existir ao menos um gestor.', true);
+    if (!confirm('Remover ' + f.nome + '? Os pedidos dessa pessoa também serão apagados.')) return;
     estado.funcionarios = estado.funcionarios.filter(x => x.id !== f.id);
     estado.pedidos = estado.pedidos.filter(x => x.funcId !== f.id);
-    logar('Funcionário removido: ' + f.nome); salvar(); fecharModal(); painelGestor();
+    logar('Pessoa removida: ' + f.nome); salvar(); fecharModal(); painelGestor();
   };
-  abrirModal(h('h2', {}, novo ? 'Novo funcionário' : 'Editar ' + f.nome),
-    h('label', {}, 'Nome'), nome, h('label', {}, 'CPF'), cpf, h('label', {}, 'Função'), funcao, h('label', {}, 'Turno (texto livre)'), turno,
-    h('label', {}, 'Folgas-base (marque ' + p.folgasSemana + ' dias)'),
+  abrirModal(h('h2', {}, novo ? (gestorNovo ? 'Novo gestor' : 'Novo funcionário') : 'Editar ' + f.nome),
+    h('label', {}, 'Nome'), nome, h('label', {}, 'CPF'), cpf, h('label', {}, 'Equipe'), funcao,
+    h('label', { style: 'display:flex;gap:6px;align-items:center' }, ehG, 'É gestor(a): acessa todas as abas e não entra na escala'),
+    h('label', {}, 'Turno (texto livre)'), turno,
+    h('label', {}, 'Folgas-base (marque ' + p.folgasSemana + ' dias; ignorado para gestores)'),
     h('div', {}, DIAS.map((d, i) => h('label', { style: 'display:inline-flex;gap:4px;align-items:center;margin:4px 12px 4px 0' }, cbs[i], d))),
     h('label', {}, 'Grupo do rodízio de domingo'), off,
     h('label', {}, 'Horas por dia (carga)'), horas,
@@ -1100,20 +1231,19 @@ function modalFunc(f) {
     h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: salvarFn }, 'Salvar'), h('button', { onclick: fecharModal }, 'Cancelar'),
       novo ? null : h('button', { class: 'perigo', onclick: remover }, 'Remover')));
 }
-
-// ----- cobertura mínima -----
+// ===== FIM DA PARTE 6 =====// ----- cobertura mínima -----
 function gCobertura() {
-  const cab = h('tr', {}, h('th', {}, 'Função'), DIAS.map(d => h('th', {}, d)), h('th', {}, 'Equipe'));
-  const linhas = Object.keys(FUNCOES).map(fn => h('tr', {}, h('td', {}, FUNCOES[fn]),
-    DIAS.map((_, d) => h('td', {}, h('input', { type: 'number', min: '0', max: '30', style: 'width:64px;text-align:center', 'aria-label': FUNCOES[fn] + ' ' + DIAS_L[d],
+  const cab = h('tr', {}, h('th', {}, 'Equipe'), DIAS.map(d => h('th', {}, d)), h('th', {}, 'Pessoas'));
+  const linhas = idsFuncoes().map(fn => h('tr', {}, h('td', {}, nomeEq(fn)),
+    DIAS.map((_, d) => h('td', {}, h('input', { type: 'number', min: '0', max: '99', style: 'width:64px;text-align:center', 'aria-label': nomeEq(fn) + ' ' + DIAS_L[d],
       value: String((estado.minimos[fn] || [])[d] || 0), onchange: e => {
         estado.minimos[fn] = estado.minimos[fn] || [0, 0, 0, 0, 0, 0, 0];
         estado.minimos[fn][d] = Math.max(0, parseInt(e.target.value, 10) || 0);
         salvar(); toast('Cobertura mínima salva.');
       } }))),
-    h('td', { class: 'sutil' }, equipeDe(fn).length + ' pessoas')));
+    h('td', { class: 'sutil' }, equipeDe(fn).length)));
   return h('div', { class: 'card' }, h('h2', {}, 'Cobertura mínima'),
-    h('p', { class: 'sutil pequeno' }, 'Quantas pessoas de cada função precisam estar trabalhando em cada dia da semana. Quando a escala fica abaixo disso, aparece "furo". Valores iniciais são exemplos: ajuste para a realidade do restaurante.'),
+    h('p', { class: 'sutil pequeno' }, 'Quantas pessoas de cada equipe precisam estar trabalhando em cada dia da semana. Quando a escala fica abaixo disso, aparece "furo". Ajuste para a realidade da empresa.'),
     h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))));
 }
 
@@ -1147,89 +1277,170 @@ function gRegras() {
     h('div', { class: 'acoes' },
       h('label', { style: 'display:inline-flex;gap:6px;align-items:center;margin:0' }, h('input', { type: 'checkbox', checked: !!r.ativo, onchange: e => { r.ativo = e.target.checked; salvar(); painelGestor(); } }), 'Em vigor'),
       h('button', { class: 'pq perigo', onclick: () => { if (confirm('Apagar esta regra?')) { estado.regras = estado.regras.filter(x => x.id !== r.id); salvar(); painelGestor(); } } }, 'Apagar'))));
-  const fers = estado.feriados.slice().sort((a, b) => a.data.localeCompare(b.data));
-  const fData = h('input', { type: 'date' }), fNome = h('input', { placeholder: 'Nome do feriado' });
+  const fData = h('input', { type: 'date' }), fNome = h('input', { placeholder: 'Nome do feriado (ex.: Aniversário da cidade)', maxlength: '50' });
+  const feriados = estado.feriados.slice().sort((a, b) => a.data.localeCompare(b.data));
   return h('div', {},
     h('div', { class: 'card' }, h('h2', {}, 'Parâmetros'),
-      h('p', { class: 'sutil pequeno' }, 'São estes números que fazem o sistema avisar sobre folgas, dias seguidos, carga semanal e domingos. As datas das etapas da jornada foram calculadas por estimativa: confirme na publicação oficial. Quando sair a CCT 2026/2027, atualize aqui.'),
+      h('p', { class: 'sutil pequeno' }, 'Valores que o sistema usa nos alertas e cálculos. As datas das etapas do limite semanal são estimativas e precisam ser confirmadas na fonte oficial. Mudar um parâmetro vale para as próximas consultas; semanas já registradas continuam como estão.'),
       h('div', { class: 'grade2' }, campos)),
-    h('div', { class: 'card' }, h('h2', {}, 'Regras (texto de referência)'),
-      h('p', { class: 'sutil pequeno' }, 'Os textos abaixo documentam de onde vem cada regra e podem ser editados à vontade. O que muda os avisos do sistema são os parâmetros acima. Regras marcadas como "confirmar" precisam de validação com sindicato ou contador.'),
-      regras, h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => {
-        estado.regras.push({ id: 'r' + Date.now(), titulo: 'Nova regra', status: 'confirmar', ativo: true, fonte: '', descricao: '' }); salvar(); painelGestor();
-      } }, '+ Nova regra'))),
     h('div', { class: 'card' }, h('h2', {}, 'Feriados'),
-      h('p', { class: 'sutil pequeno' }, 'Só estão cadastrados feriados nacionais de 2026 e 2027. Adicione os municipais de Araraquara e os que faltarem.'),
-      h('ul', { class: 'limpa' }, fers.map(x => h('li', {}, dataBRfull(x.data) + ' · ' + x.nome + ' ',
-        h('button', { class: 'pq perigo', onclick: () => { estado.feriados = estado.feriados.filter(y => y !== x); salvar(); painelGestor(); } }, 'remover')))),
-      h('div', { class: 'grade2', style: 'margin-top:10px' }, fData, fNome),
+      h('p', { class: 'sutil pequeno' }, 'Inclua aqui os feriados municipais e estaduais da cidade da empresa. Os nacionais já vêm cadastrados até 2027 e devem ser conferidos.'),
+      h('div', { class: 'grade2' }, h('div', {}, h('label', {}, 'Data'), fData), h('div', {}, h('label', {}, 'Nome'), fNome)),
       h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => {
-        if (!fData.value || !fNome.value.trim()) return toast('Informe a data e o nome.', true);
-        estado.feriados.push({ data: fData.value, nome: fNome.value.trim() }); salvar(); painelGestor();
-      } }, '+ Adicionar feriado'))));
+        if (!fData.value || !fNome.value.trim()) return toast('Informe a data e o nome do feriado.', true);
+        if (estado.feriados.some(x => x.data === fData.value)) return toast('Já existe um feriado nessa data.', true);
+        estado.feriados.push({ data: fData.value, nome: fNome.value.trim() });
+        logar('Feriado adicionado: ' + fNome.value.trim() + ' (' + dataBRfull(fData.value) + ')'); salvar(); toast('Feriado adicionado.'); painelGestor();
+      } }, '+ Adicionar feriado')),
+      h('ul', { class: 'limpa', style: 'margin-top:10px' }, feriados.map(x => h('li', {}, h('div', { class: 'linha-semana', style: 'border:0;padding:0' },
+        h('span', {}, dataBRfull(x.data) + ' · ' + x.nome),
+        h('button', { class: 'pq perigo', onclick: () => {
+          estado.feriados = estado.feriados.filter(y => y.data !== x.data); logar('Feriado removido: ' + x.nome); salvar(); painelGestor();
+        } }, 'Remover')))))),
+    h('div', { class: 'card' }, h('h2', {}, 'Regras de referência'),
+      h('p', { class: 'sutil pequeno' }, 'Textos de consulta para o gestor. Edite, desative ou apague o que não se aplica à sua empresa. A situação "confirmar" indica que a regra ainda não foi validada com o sindicato ou o contador.'),
+      regras,
+      h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => {
+        estado.regras.push({ id: 'r' + Date.now(), titulo: 'Nova regra', status: 'confirmar', ativo: true, fonte: '', descricao: '' });
+        salvar(); painelGestor();
+      } }, '+ Nova regra'))));
 }
 
 // ----- auditoria e resumo -----
 function gAudit() {
-  const L = camada(), ws = semanaGestor, ym = mesResumo || hojeISO().slice(0, 7);
-  const eqs = estado.funcionarios.filter(f => !f.gestor);
-  const aud = eqs.map(f => auditar(f, ws, L));
-  const linhasSem = aud.map(a => h('tr', {}, h('td', {}, a.f.nome), h('td', {}, String(a.folgas)), h('td', {}, String(a.ms)),
-    h('td', {}, a.horas + ' h' + (a.reg != null ? ' / ' + fmtH(a.reg) + ' reg.' : '')),
-    h('td', { style: 'text-align:left' }, a.motivos.length ? h('ul', { style: 'margin:0;padding-left:16px' }, a.motivos.map(m => h('li', {}, m))) : h('span', { class: 'badge ok' }, 'ok'))));
-  const linhasMes = eqs.map(f => {
-    const r = resumoMes(f, ym, L);
-    return h('tr', {}, h('td', {}, f.nome), h('td', {}, String(r.T)), h('td', {}, String(r.F)), h('td', {}, String(r.FJ)),
-      h('td', { class: r.FI ? 'def' : '' }, String(r.FI)), h('td', {}, String(r.EX)), h('td', {}, r.exDom + ' / ' + r.exFer), h('td', {}, r.min ? fmtH(r.min) : '—'));
-  });
+  const L = camada(), ws = semanaGestor, pessoas = estado.funcionarios.filter(f => !f.gestor);
+  mesResumo = mesResumo || hojeISO().slice(0, 7);
+  const aud = pessoas.map(f => auditar(f, ws, L));
+  const nProb = aud.filter(a => a.motivos.length || a.fers.length).length;
+  const cabS = h('tr', {}, ['Colaborador', 'Folgas', 'F.J', 'F.INJ', 'Extra', 'Máx. seguidos', 'Previsto', 'Registrado', 'Situação'].map(t => h('th', {}, t)));
+  const linhasS = aud.map(a => h('tr', {},
+    h('td', {}, a.f.nome, h('br'), h('small', { class: 'sutil' }, nomeEq(a.f.funcao))),
+    h('td', {}, String(a.folgas)), h('td', {}, String(a.fj)), h('td', {}, String(a.fi)), h('td', {}, String(a.ex)),
+    h('td', {}, String(a.ms)), h('td', {}, a.horas + ' h / ' + a.lim + ' h'), h('td', {}, a.reg == null ? '—' : fmtH(a.reg)),
+    h('td', { style: 'text-align:left' }, (a.motivos.length || a.fers.length)
+      ? h('ul', { style: 'margin:0;padding-left:16px' }, a.motivos.map(m => h('li', {}, m)), a.fers.length ? h('li', {}, 'Feriado trabalhado: ' + a.fers.join(', ')) : null)
+      : h('span', { class: 'badge ok' }, 'em ordem'))));
+  const dados = pessoas.map(f => ({ f, r: resumoMes(f, mesResumo, L) }));
+  const mesInput = h('input', { type: 'month', value: mesResumo, 'aria-label': 'Mês do resumo', style: 'width:auto', onchange: e => {
+    if (e.target.value) { mesResumo = e.target.value; painelGestor(); } } });
+  const cabM = h('tr', {}, ['Colaborador', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Extra', 'Extra em domingo', 'Extra em feriado', 'Horas registradas'].map(t => h('th', {}, t)));
+  const linhasM = dados.map(({ f, r }) => h('tr', {},
+    h('td', {}, f.nome, h('br'), h('small', { class: 'sutil' }, nomeEq(f.funcao))),
+    h('td', {}, String(r.T)), h('td', {}, String(r.F)), h('td', {}, String(r.FJ)), h('td', { class: r.FI ? 'def' : '' }, String(r.FI)),
+    h('td', {}, String(r.EX)), h('td', {}, String(r.exDom)), h('td', {}, String(r.exFer)), h('td', {}, r.min ? fmtH(r.min) : '—')));
+  const exportar = () => {
+    if (!dados.length) return toast('Não há funcionários para exportar.', true);
+    const esc = v => '"' + String(v).replace(/"/g, '""') + '"';
+    const cab = ['Colaborador', 'Equipe', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Extra', 'Extra em domingo', 'Extra em feriado', 'Horas registradas'];
+    const rows = dados.map(({ f, r }) => [f.nome, nomeEq(f.funcao), r.T, r.F, r.FJ, r.FI, r.EX, r.exDom, r.exFer, (r.min / 60).toFixed(2).replace('.', ',')]);
+    baixar('resumo_' + mesResumo + '.csv', '\uFEFF' + [cab].concat(rows).map(r => r.map(esc).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+    toast('Arquivo CSV gerado.');
+  };
   return h('div', {}, barraCamada(),
-    h('div', { class: 'card' }, h('h2', {}, 'Auditoria da semana'), seletorSemana(),
-      h('p', { class: 'sutil pequeno' }, 'Confere folgas, dias seguidos, carga semanal e horas registradas. Colunas: folgas na semana, maior sequência de dias de trabalho, horas previstas / horas registradas.'),
-      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Colaborador', 'Folgas', 'Dias seguidos', 'Horas', 'Situação'].map(t => h('th', {}, t)))), h('tbody', {}, linhasSem)))),
+    h('div', { class: 'card' }, h('h2', {}, 'Auditoria da semana · ' + (projAtual() ? 'projeção "' + projAtual().nome + '"' : 'oficial')), seletorSemana(),
+      h('p', { class: 'sutil pequeno' }, nProb ? nProb + ' pessoa(s) com pontos de atenção nesta semana.' : 'Nenhum ponto de atenção nesta semana.'),
+      pessoas.length ? h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cabS), h('tbody', {}, linhasS))) : h('p', { class: 'sutil' }, 'Ainda não há funcionários cadastrados.')),
     h('div', { class: 'card' }, h('h2', {}, 'Resumo do mês'),
-      h('div', { class: 'nav-sem' }, h('input', { type: 'month', value: ym, onchange: e => { if (e.target.value) { mesResumo = e.target.value; painelGestor(); } } }),
-        h('button', { class: 'pq', onclick: () => csvHorarios(ym) }, 'Baixar horários do mês (CSV)')),
-      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, ['Colaborador', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Extra', 'Extra dom. / fer.', 'Horas registradas'].map(t => h('th', {}, t)))), h('tbody', {}, linhasMes)))));
+      h('div', { class: 'nav-sem' }, mesInput, h('button', { class: 'pq', onclick: exportar }, 'Baixar resumo do mês (CSV)')),
+      h('p', { class: 'sutil pequeno' }, 'Conta os dias de cada tipo no mês inteiro, usando a escala exibida acima (oficial ou projeção). Use como apoio para conferir folha e benefícios com o contador.'),
+      pessoas.length ? h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cabM), h('tbody', {}, linhasM))) : null));
+}
+
+// ----- identidade -----
+function gMarca() {
+  const m = estado.marca;
+  m.cores = Object.assign({}, TEMAS.neutro.cores, m.cores || {});
+  const nome = h('input', { value: m.nome, maxlength: '60', onchange: e => { m.nome = e.target.value.trim() || m.nome; salvar(); aplicarTema(); toast('Nome salvo.'); } });
+  const sub = h('input', { value: m.subtitulo || '', maxlength: '80', onchange: e => { m.subtitulo = e.target.value.trim(); salvar(); toast('Subtítulo salvo.'); } });
+  const arq = h('input', { type: 'file', accept: 'image/*', onchange: e => {
+    const file = e.target.files && e.target.files[0]; if (!file) return;
+    lerLogo(file, url => { m.logo = url; salvar(); aplicarTema(); toast('Logo salva.'); painelGestor(); });
+  } });
+  const temas = Object.keys(TEMAS).map(k => h('button', { class: 'pq', onclick: () => {
+    m.cores = Object.assign({}, TEMAS[k].cores); salvar(); aplicarTema(); toast('Tema aplicado.'); painelGestor();
+  } }, TEMAS[k].nome));
+  const cores = CORES_ROTULOS.map(([k, rot]) => h('div', { class: 'cor-item' }, h('label', {}, rot),
+    h('input', { type: 'color', value: m.cores[k], oninput: e => { m.cores[k] = e.target.value; aplicarTema(); }, onchange: () => { salvar(); toast('Cor salva.'); } })));
+  const demoCk = h('input', { type: 'checkbox', checked: !!estado.demoAtivo, onchange: e => { estado.demoAtivo = e.target.checked; salvar(); toast('Salvo.'); } });
+
+  const bEmp = h('input', { placeholder: 'Nome da empresa', maxlength: '60' });
+  const bNome = h('input', { placeholder: 'Nome do gestor(a)', maxlength: '60' });
+  const bCpf = h('input', { inputmode: 'numeric', maxlength: '11', placeholder: 'CPF do gestor(a) (só números)' });
+  bCpf.addEventListener('input', () => { bCpf.value = bCpf.value.replace(/\D/g, '').slice(0, 11); });
+  const criarBranco = async () => {
+    if (!bEmp.value.trim() || !bNome.value.trim()) return toast('Informe a empresa e o nome do gestor.', true);
+    if (bCpf.value.length !== 11) return toast('Informe o CPF com 11 dígitos.', true);
+    if (!confirm('Isso APAGA todos os dados deste navegador (escalas, pessoas, projeções, regras) e começa uma empresa em branco. Continuar?')) return;
+    await criarEstadoVazio(bEmp.value.trim(), bNome.value.trim(), bCpf.value);
+    projAtiva = ''; semanaGestor = ''; abaGestor = 'equipe';
+    sessionStorage.setItem(SESSAO, 'f1'); toast('Empresa em branco criada.'); iniciar();
+  };
+  const reiniciar = async () => {
+    if (!confirm('Isso APAGA todos os dados deste navegador e volta aos dados de exemplo do bloco CONFIG_INICIAL. Continuar?')) return;
+    await criarEstadoInicial();
+    projAtiva = ''; semanaGestor = ''; abaGestor = 'pedidos';
+    sessionStorage.removeItem(SESSAO); toast('Dados de exemplo restaurados.'); telaEntrada();
+  };
+  return h('div', {},
+    h('div', { class: 'card' }, h('h2', {}, 'Identidade'),
+      h('p', { class: 'sutil pequeno' }, 'Nome, logo e cores que aparecem no site para todos os usuários deste navegador.'),
+      h('label', {}, 'Nome da empresa'), nome, h('label', {}, 'Subtítulo (tela de entrada)'), sub,
+      h('label', {}, 'Logo (PNG, JPG ou SVG; é reduzida automaticamente)'), m.logo ? h('img', { class: 'preview-logo', src: m.logo, alt: 'Logo atual' }) : h('p', { class: 'sutil pequeno' }, 'Nenhuma logo definida.'),
+      arq,
+      m.logo ? h('div', { class: 'acoes' }, h('button', { class: 'pq perigo', onclick: () => { m.logo = ''; salvar(); aplicarTema(); painelGestor(); } }, 'Remover logo')) : null),
+    h('div', { class: 'card' }, h('h3', {}, 'Cores'),
+      h('p', { class: 'sutil pequeno' }, 'Comece por um tema pronto e ajuste as cores que quiser.'),
+      h('div', { class: 'acoes' }, temas), h('div', { class: 'grade3', style: 'margin-top:10px' }, cores)),
+    h('div', { class: 'card' }, h('h3', {}, 'Tela de entrada'),
+      h('label', { style: 'display:flex;gap:6px;align-items:center' }, demoCk, 'Mostrar botões de contas de demonstração (desmarque antes de entregar ao cliente)')),
+    h('div', { class: 'card' }, h('h3', {}, 'Começar uma empresa em branco'),
+      h('p', { class: 'sutil pequeno' }, 'Apaga os dados deste navegador e cria só um gestor, sem equipes preenchidas. Importante: este protótipo guarda tudo apenas neste navegador e não tem servidor; para uso real com CPFs verdadeiros é preciso um sistema com banco de dados e login seguro.'),
+      h('div', { class: 'grade2' }, h('div', {}, bEmp), h('div', {}, bNome), h('div', {}, bCpf)),
+      h('div', { class: 'acoes' }, h('button', { class: 'pq perigo', onclick: criarBranco }, 'Criar empresa em branco'),
+        h('button', { class: 'pq perigo', onclick: reiniciar }, 'Voltar aos dados de exemplo'))));
 }
 
 // ----- registro e backup -----
+function lerBackup(file) {
+  const rd = new FileReader();
+  rd.onload = () => {
+    let o;
+    try {
+      o = JSON.parse(rd.result);
+      if (!o || !Array.isArray(o.funcionarios) || !Array.isArray(o.funcoes) || !o.funcionarios.some(x => x.gestor)) throw new Error('inválido');
+    } catch (e) { toast('Arquivo de backup inválido.', true); return; }
+    if (!confirm('Restaurar este backup? Os dados atuais deste navegador serão substituídos.')) return;
+    projAtiva = ''; semanaGestor = '';
+    migrar(o); logar('Backup restaurado.'); salvar(); toast('Backup restaurado.'); iniciar();
+  };
+  rd.onerror = () => toast('Não consegui ler o arquivo.', true);
+  rd.readAsText(file);
+}
 function gLog() {
-  const arq = h('input', { type: 'file', accept: 'application/json,.json', 'aria-label': 'Restaurar backup', onchange: e => {
-    const fl = e.target.files[0]; if (!fl) return;
-    const r = new FileReader();
-    r.onload = () => {
-      try {
-        const o = JSON.parse(r.result);
-        if (!o.funcionarios || !o.params) throw new Error('inválido');
-        if (!confirm('Substituir todos os dados atuais pelo backup?')) return;
-        migrar(o); logar('Backup restaurado'); salvar(); toast('Backup restaurado.'); iniciar();
-      } catch (er) { toast('Arquivo de backup inválido.', true); }
-    };
-    r.readAsText(fl);
-  } });
+  const arq = h('input', { type: 'file', accept: '.json,application/json', onchange: e => {
+    const file = e.target.files && e.target.files[0]; if (file) lerBackup(file); } });
   return h('div', {},
     h('div', { class: 'card' }, h('h2', {}, 'Backup e exportação'),
-      h('p', { class: 'sutil pequeno' }, 'Os dados ficam só neste navegador e neste aparelho. Faça backup de vez em quando, principalmente antes de limpar o histórico do navegador.'),
+      h('p', { class: 'sutil pequeno' }, 'Os dados ficam só neste navegador e neste aparelho. Baixe um backup com frequência e use-o para levar os dados a outro aparelho.'),
       h('div', { class: 'acoes' },
-        h('button', { class: 'cheio', onclick: () => baixar('backup_escala_' + hojeISO() + '.json', JSON.stringify(estado, null, 1), 'application/json') }, 'Baixar backup (JSON)'),
-        h('button', { onclick: () => csvHorarios('') }, 'Baixar todos os horários (CSV)')),
-      h('label', {}, 'Restaurar um backup'), arq,
-      h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: async () => {
-        if (!confirm('Apagar TODOS os dados e voltar à demonstração?')) return;
-        localStorage.removeItem(CHAVE); projAtiva = ''; await criarEstadoInicial(); sessionStorage.removeItem('quintal_sessao'); telaEntrada();
-      } }, 'Reiniciar demonstração'))),
-    h('div', { class: 'card' }, h('h2', {}, 'Registro de atividades'),
-      estado.log.length ? h('ul', { class: 'limpa' }, estado.log.slice(0, 80).map(x => h('li', {}, h('span', { class: 'sutil' }, x.t + ' · '), x.texto))) : h('p', { class: 'sutil' }, 'Nada registrado ainda.')));
+        h('button', { class: 'pq', onclick: () => { baixar('backup_escala_' + hojeISO() + '.json', JSON.stringify(estado), 'application/json'); toast('Backup baixado.'); } }, 'Baixar backup (JSON)'),
+        h('button', { class: 'pq', onclick: () => csvHorarios('') }, 'Baixar todos os horários (CSV)')),
+      h('label', {}, 'Restaurar backup (arquivo .json)'), arq),
+    h('div', { class: 'card' }, h('h2', {}, 'Registro de alterações'),
+      h('p', { class: 'sutil pequeno' }, 'As últimas alterações feitas no sistema (guarda até 300).'),
+      estado.log.length ? h('ul', { class: 'limpa' }, estado.log.slice(0, 80).map(x => h('li', {}, h('span', { class: 'sutil' }, x.t + ' · '), x.texto)))
+        : h('p', { class: 'sutil' }, 'Nada registrado ainda.')));
 }
 
 // ---------- início ----------
 (async function () {
-  try {
-    const salvo = localStorage.getItem(CHAVE);
-    if (salvo) migrar(JSON.parse(salvo)); else await criarEstadoInicial();
-  } catch (e) {
-    console.error(e); await criarEstadoInicial();
+  let bruto = localStorage.getItem(CHAVE);
+  if (!bruto) bruto = localStorage.getItem(CHAVE_ANTIGA);
+  if (bruto) {
+    try { migrar(JSON.parse(bruto)); }
+    catch (e) { bruto = null; }
   }
+  if (!bruto) await criarEstadoInicial();
   iniciar();
 })();
 </script>
