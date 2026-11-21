@@ -361,6 +361,20 @@ function baixar(nome, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // ===== FIM DA PARTE 2 =====// ---------- regras de referência (textos editáveis dentro do site) ----------
+  // ---------- tipo de dia extra: Troca de feriado (seta para baixo) ----------
+STATUS.TR = { sigla: '↓', nome: 'Troca de feriado', desc: 'Troca (feriado)', cls: 'c-troca' };
+if (typeof ROT_CAL !== 'undefined') ROT_CAL.TR = '↓';
+(function estiloTroca() {
+  const st = document.createElement('style');
+  st.textContent = `
+td.c-troca{background:color-mix(in srgb,#14b8a6 24%,transparent);color:#14b8a6;font-weight:700}
+.cal-dia.st-TR{background:color-mix(in srgb,#14b8a6 24%,transparent);border-color:#14b8a6}
+.cal-dia.st-TR .t{color:#14b8a6;font-weight:700}
+.sbtn.s-TR.on{outline:2px solid #14b8a6}
+.l-troca{background:#14b8a6}
+.ag-tr{background:color-mix(in srgb,#14b8a6 24%,transparent);color:#0f766e;font-weight:700}`;
+  document.head.append(st);
+})();
 // ---------- regras de referência (textos editáveis dentro do site) ----------
 const REGRAS_V2 = [
   { titulo: 'Faltas justificadas (F.J)', status: 'cct', ativo: true, fonte: 'Exemplo de convenção coletiva (substitua pela da empresa)',
@@ -630,7 +644,7 @@ function auditar(f, ws, ov) {
   return { f, folgas, fj, fi, ex, ms, sd, horas, lim, fers, reg: temReg ? reg : null, motivos };
 }
 function resumoMes(f, ym, L) {
-  const r = { T: 0, F: 0, FJ: 0, FI: 0, EX: 0, exDom: 0, exFer: 0, min: 0 };
+    const r = { T: 0, F: 0, FJ: 0, FI: 0, EX: 0, TR: 0, exDom: 0, exFer: 0, min: 0 };
   const ult = new Date(+ym.slice(0, 4), +ym.slice(5, 7), 0).getDate();
   for (let d = 1; d <= ult; d++) {
     const data = ym + '-' + pad(d), s = statusDia(f, data, L); r[s]++;
@@ -645,6 +659,7 @@ function analisarDia(f, data, s, L) {
   const tmp = Object.assign({}, L, { [data + '|' + f.id]: { s } });
   const avisos = [], infos = [];
   if (s !== atual) {
+    
     if (s === 'F' || atual === 'F') {
       const n = parDe(f, ws, tmp).length, esp = folgasEsperadas(f, ws);
       if (n !== esp) avisos.push('A semana ficaria com ' + n + ' folga(s); o padrão de ' + f.nome + ' é ' + esp + '.');
@@ -669,6 +684,10 @@ function analisarDia(f, data, s, L) {
     else if (pd === 'F') avisos.push('Folga semanal trabalhada: pagar em dobro ou dar outra folga na mesma semana (confirmar com o sindicato ou contador).');
     if (pd === 'T') infos.push('Este dia já era de trabalho na escala. Use Extra para dias além da escala; horas acima da jornada seguem a regra de hora extra.');
     infos.push('Conta na cobertura e na carga semanal.');
+  }
+    if (s === 'TR') {
+    infos.push('Troca de feriado: dia de descanso em compensação por um feriado trabalhado. Não conta como trabalho, como cobertura nem como uma das folgas da semana.');
+    infos.push('Anote na observação qual feriado foi trabalhado e em que data. Prazo de compensação configurado: ' + p.feriadoCompDias + ' dias antes ou depois.');
   }
   if (s === 'T' && pd === 'F') infos.push('Trabalho no lugar da folga: a folga deste dia é perdida. Se for um dia a mais, e não uma troca, use Extra.');
   if (s === 'F' && pd === 'T') infos.push('Folga em um dia que era de trabalho.');
@@ -763,7 +782,7 @@ function painelFuncionario(f) {
   app.replaceChildren(
     h('div', { class: 'card' }, h('h2', {}, f.nome + ' · ' + nomeEq(f.funcao)), navMes, h('div', { class: 'cal' }, DIAS.map(d => h('div', { class: 'cal-cab' }, d)), celulas),
       h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-fj' }), 'F.J'), h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ'),
-        h('span', {}, h('i', { class: 'l-ex' }), 'Extra'), h('span', {}, h('i', { class: 'l-prev' }), 'Previsão'), h('span', {}, h('i', { class: 'l-hoje' }), 'Hoje')),
+        h('span', {}, h('i', { class: 'l-ex' }), 'Extra'),        h('span', {}, h('i', { class: 'l-troca' }), 'Troca'), h('span', {}, h('i', { class: 'l-prev' }), 'Previsão'), h('span', {}, h('i', { class: 'l-hoje' }), 'Hoje')),
       h('p', { class: 'sutil pequeno' }, 'Depois da próxima semana a escala é uma previsão e pode mudar. Dias com nome embaixo são feriados.')),
     h('div', { class: 'card' }, h('h2', {}, 'Suas folgas'),
       h('p', { class: 'sutil pequeno' }, 'Seu horário padrão: ' + horarioPadrao(f) + '. Para qualquer mudança de folga, fale com o gestor.'), linhas));
@@ -902,7 +921,8 @@ function gEscala() {
       totalFuros ? h('div', { class: 'msg erro' }, h('b', { style: 'color:var(--erro)' }, 'Furo: ' + totalFuros + ' ponto(s) abaixo da cobertura mínima. '),
         passada ? null : h('button', { class: 'pq', onclick: () => sugerirCobertura(ws) }, 'Sugerir como cobrir')) : null,
       h('div', { class: 'legenda' }, h('span', {}, h('i', { class: 'l-folga' }), 'Folga'), h('span', {}, h('i', { class: 'l-fj' }), 'F.J (falta justificada)'),
-        h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ (falta injustificada)'), h('span', {}, h('i', { class: 'l-ex' }), 'Extra (dia extra)'),
+        h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ (falta injustificada)'), h('span', {}, h('i', { class: 'l-ex' }), 'Extra (dia extra)'),    h('span', {}, h('i', { class: 'l-troca' }), 'Troca de feriado'),
+       
         h('span', {}, h('i', { class: 'l-alt' }), 'Alterado à mão'), h('span', {}, h('span', { class: 'obs-m' }, '●'), ' Tem observação')),
       linhas.length ? h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cab), h('tbody', {}, linhas))) : h('p', { class: 'sutil' }, 'Ainda não há funcionários cadastrados. Cadastre na aba Equipe.')));
 }
@@ -1252,7 +1272,7 @@ const ultimoDia = ym => new Date(+ym.slice(0, 4), +ym.slice(5, 7), 0).getDate();
 
 function celulaMes(f, data, L) {
   const st = statusDia(f, data, L), e = L[data + '|' + f.id];
-  const cls = { F: 'ag-f', FJ: 'ag-fj', FI: 'ag-fi', EX: 'ag-ex', T: '' }[st] || '';
+   const cls = { F: 'ag-f', FJ: 'ag-fj', FI: 'ag-fi', EX: 'ag-ex', TR: 'ag-tr', T: '' }[st];
   const temObs = !!(e && (e.obs || e.motivo));
   const alt = !!e && !e.auto && (st !== padrao(f, data) || temObs);
   const ent = (e && e.ent) || f.hEnt || '', sai = (e && e.sai) || f.hSai || '';
@@ -1412,7 +1432,7 @@ function gMes() {
     h('span', {}, h('span', { class: 'chip ag-f' }, 'F'), 'Folga'),
     h('span', {}, h('span', { class: 'chip ag-fj' }, 'FJ'), 'Falta justificada'),
     h('span', {}, h('span', { class: 'chip ag-fi' }, 'FI'), 'Falta injustificada'),
-    h('span', {}, h('span', { class: 'chip ag-ex' }, 'EX'), 'Dia extra'),
+    h('span', {}, h('span', { class: 'chip ag-ex' }, 'EX'), 'Dia extra'),     h('span', {}, h('i', { class: 'l-troca' }), 'TROCA DE FERIADO'),
     h('span', {}, '● tem observação'), h('span', {}, 'Cinza no cabeçalho: domingo'));
   const aviso = totalFuros ? h('div', { class: 'msg erro nao-imprimir' }, h('b', { style: 'color:var(--erro)' }, 'Furo: ' + totalFuros + ' ponto(s) abaixo da cobertura mínima neste mês. '), 'Veja as linhas "Trabalhando / mínimo" em vermelho e ajuste clicando nos dias.') : null;
 
@@ -1528,8 +1548,8 @@ function gRegras() {
 let mesAudit = '';
 function csvAuditoria(ym, resumos) {
   const esc = v => '"' + String(v).replace(/"/g, '""') + '"';
-  const cab = ['Colaborador', 'Equipe', 'Dias de trabalho', 'Folgas', 'F.J', 'F.INJ', 'Extras', 'Extras em domingo', 'Extras em feriado', 'Horas registradas'];
-  const linhas = resumos.map(x => [x.f.nome, nomeEq(x.f.funcao), x.r.T, x.r.F, x.r.FJ, x.r.FI, x.r.EX, x.r.exDom, x.r.exFer, (x.r.min / 60).toFixed(2).replace('.', ',')]);
+   const cab = ['Colaborador', 'Equipe', 'Dias de trabalho', 'Folgas', 'F.J', 'F.INJ', 'Trocas de feriado', 'Extras', 'Extras em domingo', 'Extras em feriado', 'Horas registradas'];
+  const linhas = resumos.map(x => [x.f.nome, nomeEq(x.f.funcao), x.r.T, x.r.F, x.r.FJ, x.r.FI, x.r.TR, x.r.EX, x.r.exDom, x.r.exFer, (x.r.min / 60).toFixed(2).replace('.', ',')]);
   baixar('auditoria_' + ym + '.csv', '\uFEFF' + [cab].concat(linhas).map(r => r.map(esc).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
   toast('Arquivo CSV gerado.');
 }
@@ -1551,11 +1571,11 @@ function gAudit() {
     });
   }
   const mesInput = h('input', { type: 'month', value: ym, style: 'width:auto', 'aria-label': 'Mês da auditoria', onchange: e => { if (e.target.value) { mesAudit = e.target.value; painelGestor(); } } });
-  const cab = ['Colaborador', 'Equipe', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Extra', 'Extra dom.', 'Extra fer.', 'Horas reg.'];
+    const cab = ['Colaborador', 'Equipe', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Troca', 'Extra', 'Extra dom.', 'Extra fer.', 'Horas reg.'];
   const tabela = pessoas.length
     ? h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, h('tr', {}, cab.map(t => h('th', {}, t)))),
       h('tbody', {}, resumos.map(x => h('tr', {}, h('td', {}, x.f.name || x.f.nome), h('td', {}, nomeEq(x.f.funcao)),
-        h('td', {}, String(x.r.T)), h('td', {}, String(x.r.F)), h('td', {}, String(x.r.FJ)), h('td', { class: x.r.FI ? 'def' : '' }, String(x.r.FI)),
+        h('td', {}, String(x.r.T)), h('td', {}, String(x.r.F)), h('td', {}, String(x.r.FJ)), h('td', { class: x.r.FI ? 'def' : '' }, String(x.r.FI)),         h('td', {}, String(x.r.TR)),
         h('td', {}, String(x.r.EX)), h('td', {}, String(x.r.exDom)), h('td', {}, String(x.r.exFer)), h('td', {}, x.r.min ? fmtH(x.r.min) : '—'))))))
     : h('p', { class: 'sutil' }, 'Ainda não há funcionários cadastrados.');
   const cardOc = h('div', { class: 'card' }, h('h3', {}, 'Pontos de atenção por semana'),
