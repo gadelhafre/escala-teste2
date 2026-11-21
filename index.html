@@ -408,13 +408,24 @@ const REGRA_6X1 = {
 };
 
 // Feriados nacionais. Inclua os municipais na aba "Regras e parâmetros".
-const FERIADOS_INICIAIS = [
-  ['2026-11-20', 'Consciência Negra'], ['2026-12-25', 'Natal'], ['2027-01-01', 'Confraternização Universal'],
-  ['2027-03-26', 'Sexta-feira Santa'], ['2027-04-21', 'Tiradentes'], ['2027-05-01', 'Dia do Trabalho'],
-  ['2027-09-07', 'Independência'], ['2027-10-12', 'N. Sra. Aparecida'], ['2027-11-02', 'Finados'],
-  ['2027-11-15', 'Proclamação da República'], ['2027-11-20', 'Consciência Negra'], ['2027-12-25', 'Natal']
-].map(([data, nome]) => ({ data, nome }));
-
+function feriadosNacionais(de, ate) {
+  const p2 = n => String(n).padStart(2, '0'), r = [];
+  for (let ano = de; ano <= ate; ano++) {
+    [['01-01', 'Confraternização Universal'], ['04-21', 'Tiradentes'], ['05-01', 'Dia do Trabalho'],
+     ['09-07', 'Independência'], ['10-12', 'N. Sra. Aparecida'], ['11-02', 'Finados'],
+     ['11-15', 'Proclamação da República'], ['11-20', 'Consciência Negra'], ['12-25', 'Natal']]
+      .forEach(([md, nome]) => r.push({ data: ano + '-' + md, nome }));
+    // Sexta-feira Santa = 2 dias antes da Páscoa (algoritmo de Meeus/Jones/Butcher)
+    const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4;
+    const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), hh = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - hh - k) % 7, m = Math.floor((a + 11 * hh + 22 * l) / 451);
+    const mes = Math.floor((hh + l - 7 * m + 114) / 31), dia = ((hh + l - 7 * m + 114) % 31) + 1;
+    const sexta = new Date(Date.UTC(ano, mes - 1, dia - 2));
+    r.push({ data: sexta.toISOString().slice(0, 10), nome: 'Sexta-feira Santa' });
+  }
+  return r.sort((x, y) => x.data.localeCompare(y.data));
+}
+const FERIADOS_INICIAIS = feriadosNacionais(2025, 2035);
 // ---------- criação e migração dos dados ----------
 async function criarEstadoInicial() {
   const cfg = CONFIG_INICIAL, funcionarios = [];
@@ -472,6 +483,10 @@ function migrar(s) {
   s.log = s.log || [];
   s.regras = s.regras || [];
   s.feriados = s.feriados || clonar(FERIADOS_INICIAIS);
+    if (!s.feriadosNac) {
+    FERIADOS_INICIAIS.forEach(x => { if (!s.feriados.some(y => y.data === x.data)) s.feriados.push({ data: x.data, nome: x.nome }); });
+    s.feriadosNac = 1;
+  }
   s.params = Object.assign({ modelo: '5x2' }, CONFIG_INICIAL.params, s.params || {});
   if (!s.inicioRegistro) s.inicioRegistro = addDias(iniSemana(hojeISO()), -56);
   if (s.registradoAte == null) s.registradoAte = '';
