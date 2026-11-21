@@ -260,7 +260,7 @@ const parTxt = p => (p && p.length) ? p.map(i => DIAS_L[i]).join(' e ') : '—';
 const clonar = o => JSON.parse(JSON.stringify(o));
 const funcionario = id => estado.funcionarios.find(f => f.id === id);
 const feriadoDe = data => { const x = estado.feriados.find(f => f.data === data); return x ? x.nome : ''; };
-const equipeDe = funcao => estado.funcionarios.filter(f => entraNaEscala(f) && f.funcao === funcao);
+const equipeDe = funcao => estado.funcionarios.filter(f => !f.gestor && f.funcao === funcao);
 const idsFuncoes = () => estado.funcoes.map(x => x.id);
 const nomeEq = id => { const x = estado.funcoes.find(y => y.id === id); return x ? x.nome : '(sem equipe)'; };
 const normNome = n => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -361,8 +361,6 @@ function baixar(nome, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // ===== FIM DA PARTE 2 =====// ---------- regras de referência (textos editáveis dentro do site) ----------
-  // gestor pode ou não entrar na escala
-const entraNaEscala = f => entraNaEscala(f) || !!f.naEscala;
   // ---------- tipo de dia extra: Troca de feriado (seta para baixo) ----------
 STATUS.TR = { sigla: '↓', nome: 'Troca de feriado', desc: 'Troca (feriado)', cls: 'c-troca' };
 if (typeof ROT_CAL !== 'undefined') ROT_CAL.TR = '↓';
@@ -409,25 +407,25 @@ const REGRA_6X1 = {
   descricao: 'Segundo o texto da emenda, o repouso semanal remunerado passa a ser de 2 dias (art. 7º, XV), com vigência 2 meses após a publicação (em torno de 16/12/2026). O § 2º permite, excepcionalmente, que convenção ou acordo coletivo estabeleçam regime compensatório que assegure, na média, 2 dias de repouso dentro do mês-calendário, garantido o gozo de pelo menos 1 dia dentro do período máximo de 1 semana de trabalho. Ou seja, a escala 6x1 só se sustenta por convenção ou acordo coletivo nesses termos. O sistema avisa quando uma semana tem menos de 2 folgas depois da data configurada. Conferir com o sindicato ou o contador.'
 };
 
-// Feriados nacionais de 2025 a 2030, gerados pelo código. Inclua os municipais na aba "Regras e parâmetros".
-function feriadosNacionais(anoIni, anoFim) {
-  const f2 = n => String(n).padStart(2, '0');
-  const fixos = [['01-01', 'Confraternização Universal'], ['04-21', 'Tiradentes'], ['05-01', 'Dia do Trabalho'], ['09-07', 'Independência'],
-    ['10-12', 'N. Sra. Aparecida'], ['11-02', 'Finados'], ['11-15', 'Proclamação da República'], ['11-20', 'Consciência Negra'], ['12-25', 'Natal']];
-  const lista = [];
-  for (let ano = anoIni; ano <= anoFim; ano++) {
-    fixos.forEach(([md, nome]) => lista.push({ data: ano + '-' + md, nome }));
-    // Páscoa (algoritmo de Meeus/Jones/Butcher), para achar a Sexta-feira Santa
-    const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, g = Math.floor((b + 8) / 25),
-      gg = Math.floor((b - g + 1) / 3), hh = (19 * a + b - d - gg + 15) % 30, i = Math.floor(c / 4), k = c % 4,
-      l = (32 + 2 * e + 2 * i - hh - k) % 7, m = Math.floor((a + 11 * hh + 22 * l) / 451),
-      mes = Math.floor((hh + l - 7 * m + 114) / 31), dia = ((hh + l - 7 * m + 114) % 31) + 1;
-    const sx = new Date(ano, mes - 1, dia - 2);
-    lista.push({ data: sx.getFullYear() + '-' + f2(sx.getMonth() + 1) + '-' + f2(sx.getDate()), nome: 'Sexta-feira Santa' });
+// Feriados nacionais. Inclua os municipais na aba "Regras e parâmetros".
+function feriadosNacionais(de, ate) {
+  const p2 = n => String(n).padStart(2, '0'), r = [];
+  for (let ano = de; ano <= ate; ano++) {
+    [['01-01', 'Confraternização Universal'], ['04-21', 'Tiradentes'], ['05-01', 'Dia do Trabalho'],
+     ['09-07', 'Independência'], ['10-12', 'N. Sra. Aparecida'], ['11-02', 'Finados'],
+     ['11-15', 'Proclamação da República'], ['11-20', 'Consciência Negra'], ['12-25', 'Natal']]
+      .forEach(([md, nome]) => r.push({ data: ano + '-' + md, nome }));
+    // Sexta-feira Santa = 2 dias antes da Páscoa (algoritmo de Meeus/Jones/Butcher)
+    const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4;
+    const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), hh = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - hh - k) % 7, m = Math.floor((a + 11 * hh + 22 * l) / 451);
+    const mes = Math.floor((hh + l - 7 * m + 114) / 31), dia = ((hh + l - 7 * m + 114) % 31) + 1;
+    const sexta = new Date(Date.UTC(ano, mes - 1, dia - 2));
+    r.push({ data: sexta.toISOString().slice(0, 10), nome: 'Sexta-feira Santa' });
   }
-  return lista.sort((x, y) => x.data.localeCompare(y.data));
+  return r.sort((x, y) => x.data.localeCompare(y.data));
 }
-const FERIADOS_INICIAIS = feriadosNacionais(2025, 2030);
+const FERIADOS_INICIAIS = feriadosNacionais(2025, 2035);
 // ---------- criação e migração dos dados ----------
 async function criarEstadoInicial() {
   const cfg = CONFIG_INICIAL, funcionarios = [];
@@ -484,10 +482,7 @@ function migrar(s) {
   s.projecoes = s.projecoes || [];
   s.log = s.log || [];
   s.regras = s.regras || [];
-  s.feriados = s.feriados || clonar(FERIADOS_INICIAIS);   if (!s.feriadosNacionaisV2) {
-    FERIADOS_INICIAIS.forEach(x => { if (!s.feriados.some(y => y.data === x.data)) s.feriados.push(clonar(x)); });
-    s.feriadosNacionaisV2 = true;
-  }
+  s.feriados = s.feriados || clonar(FERIADOS_INICIAIS);
     if (!s.feriadosNac) {
     FERIADOS_INICIAIS.forEach(x => { if (!s.feriados.some(y => y.data === x.data)) s.feriados.push({ data: x.data, nome: x.nome }); });
     s.feriadosNac = 1;
@@ -535,7 +530,7 @@ function registrarPassado() {
   const hoje = iniSemana(hojeISO());
   let ws = estado.registradoAte ? addDias(estado.registradoAte, 7) : estado.inicioRegistro, mudou = false;
   while (ws < hoje) {
-    estado.funcionarios.filter(f => entraNaEscala(f)).forEach(f => {
+    estado.funcionarios.filter(f => !f.gestor).forEach(f => {
       for (let d = 0; d < 7; d++) {
         const data = addDias(ws, d), k = data + '|' + f.id;
         if (!estado.dias[k]) estado.dias[k] = { s: padrao(f, data), obs: '', auto: true };
@@ -835,7 +830,7 @@ function seletorSemana() {
 // ===== FIM DA PARTE 4 =====// ----- escala e projeções -----
 function diferencas(ws, p) {
   let n = 0;
-  estado.funcionarios.filter(f => entraNaEscala(f)).forEach(f => {
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
     for (let d = 0; d < 7; d++) { const dt = addDias(ws, d); if (statusDia(f, dt, p.dias) !== statusDia(f, dt, estado.dias)) n++; }
   });
   return n;
@@ -1038,7 +1033,7 @@ function modalDia(f, data) {
 // ----- aba de horários (ponto) -----
 function preencherPadrao(ws) {
   const L = camada(), hoje = hojeISO(); let n = 0;
-  estado.funcionarios.filter(f => entraNaEscala(f)).forEach(f => {
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
     for (let d = 0; d < 7; d++) {
       const data = addDias(ws, d); if (data > hoje) continue;
       const k = data + '|' + f.id, e = L[k], st = statusDia(f, data, L);
@@ -1161,16 +1156,16 @@ function gEquipe() {
     const eq = equipeDe(fn.id);
     return h('div', { class: 'card' }, h('h3', {}, fn.nome + ' (' + eq.length + ')'),
       eq.length ? h('ul', { class: 'limpa' }, eq.map(f => h('li', {}, h('div', { class: 'linha-semana', style: 'border:0;padding:0' },
-        h('div', {}, h('b', {}, f.nome), ' ', f.gestor ? h('span', { class: 'badge warn' }, 'gestor(a)') : null, ' ',, h('span', { class: 'badge ok' }, modeloDe(f)),
+        h('div', {}, h('b', {}, f.nome), ' ', h('span', { class: 'badge ok' }, modeloDe(f)),
           h('div', { class: 'sutil pequeno' }, 'Folgas-base: ' + parTxt(f.base) + ' · ' + f.horas + ' h/dia · horário padrão ' + horarioPadrao(f) + ' (intervalo ' + (f.hInt || 0) + ' min) · CPF final ' + f.cpfFim)),
         h('div', { class: 'acoes', style: 'margin:0' }, h('button', { class: 'pq', onclick: () => modalFunc(f) }, 'Editar'))))))
         : h('p', { class: 'sutil' }, 'Ninguém nesta equipe.'));
   });
   const gestores = estado.funcionarios.filter(f => f.gestor);
   const cardGestores = h('div', { class: 'card' }, h('h3', {}, 'Gestores (' + gestores.length + ')'),
-    h('p', { class: 'sutil pequeno' }, 'Gestores acessam todas as abas. Marque "também entra na escala" em Editar quando o gestor trabalha e tem folgas.'),
+    h('p', { class: 'sutil pequeno' }, 'Gestores acessam todas as abas e não entram na escala.'),
     h('ul', { class: 'limpa' }, gestores.map(f => h('li', {}, h('div', { class: 'linha-semana', style: 'border:0;padding:0' },
-      h('div', {}, h('b', {}, f.nome), h('div', { class: 'sutil pequeno' }, 'CPF final ' + f.cpfFim + ' · ' + (f.naEscala ? 'entra na escala' : 'fora da escala')
+      h('div', {}, h('b', {}, f.nome), h('div', { class: 'sutil pequeno' }, 'CPF final ' + f.cpfFim)),
       h('div', { class: 'acoes', style: 'margin:0' }, h('button', { class: 'pq', onclick: () => modalFunc(f) }, 'Editar')))))),
     h('div', { class: 'acoes' }, h('button', { class: 'pq', onclick: () => modalFunc(null, true) }, '+ Novo gestor')));
   return h('div', {}, h('div', { class: 'card' }, h('h2', {}, 'Equipe'),
@@ -1182,7 +1177,7 @@ function modalFunc(f, gestorNovo) {
   const nome = h('input', { value: f ? f.nome : '', placeholder: 'Nome completo' });
   const cpf = h('input', { inputmode: 'numeric', maxlength: '14', placeholder: novo ? 'CPF (só para entrar no sistema)' : 'Deixe em branco para manter o atual' });
   const funcao = h('select', {}, estado.funcoes.map(x => h('option', { value: x.id, selected: f ? f.funcao === x.id : x.id === estado.funcoes[0].id }, x.nome)));
-  const ehG = h('input', { type: 'checkbox', checked: f ? !entraNaEscala(f) : !!gestorNovo });
+  const ehG = h('input', { type: 'checkbox', checked: f ? !!f.gestor : !!gestorNovo });
   const turno = h('input', { value: f ? f.turno : '', placeholder: 'Ex.: Manhã (só para anotação)' });
   const cbs = DIAS.map((d, i) => h('input', { type: 'checkbox', checked: !!(f && f.base.includes(i)) }));
   const modelo = h('select', { 'aria-label': 'Modelo de escala' },
@@ -1198,11 +1193,7 @@ function modalFunc(f, gestorNovo) {
   };
   cbs.forEach(c => c.addEventListener('change', sincModelo));
   modelo.addEventListener('change', () => { if (modelo.value === '5x2') ajustar(2); else if (modelo.value === '6x1') ajustar(1); });
-  if (novo && !gestorNovo) ajustar(p.modelo === '6x1' ? 1 : 2); else sincModelo();   const naEsc = h('input', { type: 'checkbox', checked: !!(f && f.naEscala) });
-  const boxEsc = h('label', { style: 'display:flex;gap:6px;align-items:center;margin-left:22px' }, naEsc, 'Este gestor também entra na escala (tem folgas e aparece no calendário)');
-  const atualizaG = () => { boxEsc.style.display = ehG.checked ? 'flex' : 'none'; };
-  ehG.addEventListener('change', atualizaG); atualizaG();
-  naEsc.addEventListener('change', () => { if (naEsc.checked && !marcados()) ajustar(p.modelo === '6x1' ? 1 : 2); });
+  if (novo && !gestorNovo) ajustar(p.modelo === '6x1' ? 1 : 2); else sincModelo();
   const off = h('select', {}, [0, 1, 2, 3].map(i => h('option', { value: String(i), selected: f ? f.off === i : i === 0 }, 'Grupo ' + (i + 1))));
   const horas = h('input', { type: 'number', min: '1', max: '12', step: '0.5', value: String(f ? f.horas : p.horasDia) });
   const he = h('input', { type: 'time', value: f ? f.hEnt || '' : '09:00' });
@@ -1212,12 +1203,12 @@ function modalFunc(f, gestorNovo) {
   const salvarFn = async () => {
     const base = cbs.map((c, i) => c.checked ? i : -1).filter(i => i >= 0), gest = ehG.checked;
     if (!nome.value.trim()) return toast('Informe o nome.', true);
-    if ((!gest || naEsc.checked) && (base.length < 1 || base.length > 6)) return toast('Marque de 1 a 6 dias de folga-base.', true);
+    if (!gest && (base.length < 1 || base.length > 6)) return toast('Marque de 1 a 6 dias de folga-base.', true);
     if (novo && cpf.value.length !== 11) return toast('Informe o CPF com 11 dígitos.', true);
     if (!novo && f.gestor && !gest && estado.funcionarios.filter(x => x.gestor).length < 2) return toast('Precisa existir ao menos um gestor.', true);
     const reg = f || { id: 'f' + Date.now(), demo: false, demoCpf: '' };
     reg.gestor = gest; reg.nome = nome.value.trim(); reg.funcao = funcao.value; reg.turno = turno.value.trim();
-       reg.naEscala = gest && naEsc.checked; reg.base = (!gest || naEsc.checked) ? base : []; reg.off = +off.value;
+    reg.base = gest ? [] : base; reg.off = +off.value;
     reg.horas = num(horas.value) || p.horasDia; reg.hEnt = he.value; reg.hSai = hs.value; reg.hInt = Math.max(0, parseInt(hi.value, 10) || 0);
     if (cpf.value.length === 11) { reg.cpfHash = await hashCPF(cpf.value); reg.cpfFim = cpf.value.slice(-2); reg.demoCpf = ''; }
     if (novo) estado.funcionarios.push(reg);
@@ -1233,8 +1224,7 @@ function modalFunc(f, gestorNovo) {
   };
   abrirModal(h('h2', {}, novo ? (gestorNovo ? 'Novo gestor' : 'Novo funcionário') : 'Editar ' + f.nome),
     h('label', {}, 'Nome'), nome, h('label', {}, 'CPF'), cpf, h('label', {}, 'Equipe'), funcao,
-       h('label', { style: 'display:flex;gap:6px;align-items:center' }, ehG, 'É gestor(a): acessa todas as abas'),
-    boxEsc,
+    h('label', { style: 'display:flex;gap:6px;align-items:center' }, ehG, 'É gestor(a): acessa todas as abas e não entra na escala'),
     h('label', {}, 'Turno (texto livre)'), turno,
     h('label', {}, 'Modelo de escala'), modelo,
     h('label', {}, 'Folgas-base: marque os dias de folga (de 1 a 6; ignorado para gestores)'),
@@ -1318,7 +1308,7 @@ function celulaMes(f, data, L) {
 // ----- versões salvas (projeções) -----
 function diferencasMes(ym, p) {
   let n = 0; const ult = ultimoDia(ym);
-  estado.funcionarios.filter(f => entraNaEscala(f)).forEach(f => {
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
     for (let d = 1; d <= ult; d++) { const dt = ym + '-' + pad(d); if (statusDia(f, dt, p.dias) !== statusDia(f, dt, estado.dias)) n++; }
   });
   return n;
@@ -1363,7 +1353,7 @@ function barraVersoes(ym, nomeMes) {
 function montarMes(ym, soFuturo) {
   const L = camada(), hoje = hojeISO(), ult = ultimoDia(ym), oficial = L === estado.dias, semAtual = iniSemana(hoje);
   let n = 0;
-  estado.funcionarios.filter(f => entraNaEscala(f)).forEach(f => {
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
     for (let d = 1; d <= ult; d++) {
       const data = ym + '-' + pad(d); if (soFuturo && data < hoje) continue;
       const k = data + '|' + f.id;
@@ -1404,7 +1394,7 @@ function gMes() {
   const ym = mesAgenda, ano = +ym.slice(0, 4), mesN = +ym.slice(5, 7), ult = ultimoDia(ym);
   const nomeMes = MESES[mesN - 1].charAt(0).toUpperCase() + MESES[mesN - 1].slice(1) + ' de ' + ano;
   const dias = []; for (let d = 1; d <= ult; d++) dias.push(ym + '-' + pad(d));
-  const pessoas = estado.funcionarios.filter(f => entraNaEscala(f));
+  const pessoas = estado.funcionarios.filter(f => !f.gestor);
   const irMes = delta => { const dt = new Date(ano, mesN - 1 + delta, 1); mesAgenda = dt.getFullYear() + '-' + pad(dt.getMonth() + 1); painelGestor(); };
 
   const mesInput = h('input', { type: 'month', value: ym, style: 'width:auto', 'aria-label': 'Mês da escala', onchange: e => { if (e.target.value) { mesAgenda = e.target.value; painelGestor(); } } });
@@ -1584,7 +1574,7 @@ function gAudit() {
   const ym = mesAudit, ano = +ym.slice(0, 4), mesN = +ym.slice(5, 7);
   const ult = iso(new Date(ano, mesN, 0));
   const ini = iniSemana(ym + '-01'), fim = iniSemana(ult);
-  const pessoas = estado.funcionarios.filter(f => entraNaEscala(f));
+  const pessoas = estado.funcionarios.filter(f => !f.gestor);
   const nomeMes = MESES[mesN - 1].charAt(0).toUpperCase() + MESES[mesN - 1].slice(1) + ' de ' + ano;
   const resumos = pessoas.map(f => ({ f, r: resumoMes(f, ym, L) }));
   const ocorr = [];
