@@ -774,9 +774,9 @@ function painelGestor() {
   const y = window.scrollY;
   const eu = funcionario(sessionStorage.getItem(SESSAO));
   barra(eu.nome, 'gestor(a)');
-  const telas = { escala: gEscala, agenda: gAgenda, ponto: gPonto, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, marca: gMarca, log: gLog };
+    const telas = { escala: gMes, ponto: gPonto, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, marca: gMarca, log: gLog };
   if (!telas[abaGestor]) abaGestor = 'escala';
-  const abas = [['escala', 'Escala e projeções'], ['agenda', 'Agenda (montar e imprimir)'], ['ponto', 'Horários (ponto)'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['marca', 'Identidade'], ['log', 'Registro e backup']];
+  const abas = [['escala', 'Escala do mês'], ['ponto', 'Horários (ponto)'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['marca', 'Identidade'], ['log', 'Registro e backup']];
   const nav = h('div', { class: 'abas' }, abas.map(([k, t]) => h('button', { class: abaGestor === k ? 'ativa' : '', onclick: () => { abaGestor = k; painelGestor(); } }, t)));
   app.replaceChildren(nav, telas[abaGestor]());
   window.scrollTo(0, y);
@@ -1202,109 +1202,238 @@ function modalFunc(f, gestorNovo) {
       novo ? null : h('button', { class: 'perigo', onclick: remover }, 'Remover')));
 }
 // ===== FIM DA PARTE 6 =====// ----- agenda: calendário bonito para conferir e imprimir -----
+// ----- escala do mês: tela única para montar, editar, salvar e imprimir -----
 let mesAgenda = '';
-let agendaHorarios = true;
-(function estiloAgenda() {
+let agendaHorarios = false;
+(function estiloMes() {
   const st = document.createElement('style');
   st.textContent = `
-.ag-topo{text-align:center;margin-bottom:14px}
-.ag-topo h2{margin:4px 0 2px;color:var(--txt);font-size:1.3rem}
-.ag-topo .logo-entra{max-height:60px}
-.ag-semana{margin:0 0 20px;break-inside:avoid;page-break-inside:avoid}
-.ag-semana h3{margin:0 0 6px;color:var(--txt);font-size:1rem}
-.ag-tab{width:100%;min-width:620px;border-collapse:collapse;table-layout:fixed;font-size:.8rem}
-.ag-tab th,.ag-tab td{border:1px solid var(--borda);padding:5px 3px;text-align:center;vertical-align:middle;word-break:break-word}
-.ag-tab th{background:var(--sup)}
-.ag-tab th:first-child,.ag-tab td:first-child{text-align:left;width:22%}
-.ag-tab td.grupo{background:var(--sup);color:var(--acc);font-weight:700;text-align:left}
+.mes-topo{text-align:center;margin-bottom:12px}
+.mes-topo h2{margin:4px 0 2px;color:var(--txt);font-size:1.3rem}
+.mes-topo .logo-entra{max-height:60px}
+.mes-tab{border-collapse:collapse;font-size:.72rem;width:max-content;min-width:100%}
+.mes-tab th,.mes-tab td{border:1px solid var(--borda);padding:3px 2px;text-align:center;min-width:27px;vertical-align:middle}
+.mes-tab th{background:var(--sup);font-weight:600}
+.mes-tab th small{display:block;font-weight:400;font-size:.58rem;color:var(--mut)}
+.mes-tab .nome{text-align:left;min-width:130px;white-space:nowrap;padding:3px 6px;position:sticky;left:0;background:var(--card);z-index:1}
+.mes-tab th.nome{background:var(--sup)}
+.mes-tab td.grupo{background:var(--sup);color:var(--acc);font-weight:700;text-align:left}
+.mes-tab td.clic{cursor:pointer}
+.mes-tab td.clic:hover{outline:2px solid var(--acc);outline-offset:-2px}
+.mes-tab .dom{background:color-mix(in srgb,var(--mut) 14%,transparent)}
 .ag-f{background:color-mix(in srgb,var(--acc) 24%,transparent);color:var(--acc);font-weight:700}
 .ag-fj{background:color-mix(in srgb,var(--fj) 22%,transparent);color:var(--fj);font-weight:700}
 .ag-fi{background:color-mix(in srgb,var(--erro) 22%,transparent);color:var(--erro);font-weight:700}
 .ag-ex{background:color-mix(in srgb,var(--extra) 22%,transparent);color:var(--extra)}
-.ag-fora{opacity:.4}
-.ag-h{display:block;font-size:.72rem;font-weight:400;color:var(--txt)}
-.ag-fer{display:block;font-size:.6rem;color:var(--aviso);font-weight:400}
+.mes-alt{box-shadow:inset 0 0 0 2px var(--aviso)}
+.ag-h{display:block;font-size:.6rem;font-weight:400;line-height:1.1}
+.ag-fer{display:block;font-size:.55rem;color:var(--aviso);font-weight:400}
+.chip{display:inline-block;padding:1px 6px;border:1px solid var(--borda);border-radius:4px;margin-right:4px;font-weight:700;font-size:.75rem}
 .ag-rodape{font-size:.75rem;color:var(--mut);margin-top:8px}
+@page{size:landscape;margin:8mm}
 @media print{
   body{--bg:#fff;--card:#fff;--txt:#111;--mut:#555;--acc:#1f4fb4;--fj:#0e7490;--erro:#b3261e;--aviso:#8a5a00;--extra:#6b21a8;--borda:#888;--borda2:#bbb;--sup:#eee;background:#fff;color:#111}
   .topo,.abas,.nao-imprimir,#toast{display:none!important}
   main{max-width:none;padding:0}
-  .card{border:0;padding:0;background:#fff;margin:0}
+  .card{border:0;padding:0;background:#fff;margin:0 0 10px}
   .rolagem{overflow:visible}
-  .ag-tab{min-width:0}
+  .mes-tab{width:100%;font-size:.6rem}
+  .mes-tab .nome{position:static;background:#fff}
+  .mes-tab th.nome{background:#eee}
+  .mes-alt{box-shadow:none}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }`;
   document.head.append(st);
 })();
 
-function celulaAgenda(f, data, L, mes) {
+const SIG_MES = { T: 'T', F: 'F', FJ: 'FJ', FI: 'FI', EX: 'EX' };
+const hhMes = x => (x || '').slice(0, 5);
+const ultimoDia = ym => new Date(+ym.slice(0, 4), +ym.slice(5, 7), 0).getDate();
+
+function celulaMes(f, data, L) {
   const st = statusDia(f, data, L), e = L[data + '|' + f.id];
-  const cls = { F: 'ag-f', FJ: 'ag-fj', FI: 'ag-fi', EX: 'ag-ex', T: '' }[st];
-  const hor = (e && e.ent && e.sai) ? e.ent + '–' + e.sai : (f.hEnt && f.hSai ? f.hEnt + '–' + f.hSai : '');
-  let conteudo;
-  if (st === 'T') conteudo = agendaHorarios ? hor : 'trabalho';
-  else if (st === 'EX') conteudo = [h('b', {}, 'EXTRA'), agendaHorarios && hor ? h('small', { class: 'ag-h' }, hor) : null];
-  else conteudo = STATUS[st].sigla.toUpperCase();
+  const cls = { F: 'ag-f', FJ: 'ag-fj', FI: 'ag-fi', EX: 'ag-ex', T: '' }[st] || '';
   const temObs = !!(e && (e.obs || e.motivo));
-  return h('td', { class: cls + (data.slice(0, 7) !== mes ? ' ag-fora' : ''), title: [e && e.motivo, e && e.obs].filter(Boolean).join(' · ') },
-    conteudo, temObs ? ' ●' : null);
+  const alt = !!e && !e.auto && (st !== padrao(f, data) || temObs);
+  const ent = (e && e.ent) || f.hEnt || '', sai = (e && e.sai) || f.hSai || '';
+  const mostraH = agendaHorarios && (st === 'T' || st === 'EX') && ent && sai;
+  const conteudo = [];
+  if (st === 'EX') conteudo.push(h('b', {}, 'EX'));
+  else if (!mostraH) conteudo.push(SIG_MES[st] || st);
+  if (mostraH) { conteudo.push(h('small', { class: 'ag-h' }, hhMes(ent))); conteudo.push(h('small', { class: 'ag-h' }, hhMes(sai))); }
+  if (temObs) conteudo.push(h('small', { class: 'ag-h' }, '●'));
+  const tip = [STATUS[st] ? STATUS[st].nome : st, e && e.ent && e.sai ? e.ent + '–' + e.sai : '', e && e.motivo, e && e.obs].filter(Boolean).join(' · ');
+  const abrir = () => modalDia(f, data);
+  const td = h('td', { class: 'clic ' + cls + (alt ? ' mes-alt' : ''), tabindex: '0', role: 'button', title: tip,
+    'aria-label': f.nome + ', ' + dataBR(data) + ': ' + (STATUS[st] ? STATUS[st].nome : st) + '. Clique para alterar.', onclick: abrir }, conteudo);
+  td.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrir(); } });
+  return td;
 }
-function gAgenda() {
+
+// ----- versões salvas (projeções) -----
+function diferencasMes(ym, p) {
+  let n = 0; const ult = ultimoDia(ym);
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
+    for (let d = 1; d <= ult; d++) { const dt = ym + '-' + pad(d); if (statusDia(f, dt, p.dias) !== statusDia(f, dt, estado.dias)) n++; }
+  });
+  return n;
+}
+function modalAplicarMes(p, ym, nomeMes) {
+  const ini = ym + '-01', fim = ym + '-' + pad(ultimoDia(ym));
+  const modo = h('select', {},
+    h('option', { value: 'mes' }, 'Só ' + nomeMes),
+    h('option', { value: 'adiante' }, 'Deste mês em diante'),
+    h('option', { value: 'tudo' }, 'Todos os meses da versão (inclusive o passado)'));
+  abrirModal(h('h2', {}, 'Aplicar na escala oficial'),
+    h('p', { class: 'sutil' }, 'Os dias do período escolhido ficam iguais aos da versão "' + p.nome + '". Alterações oficiais desse período que não estão na versão (inclusive horários anotados) serão desfeitas. A versão continua salva.'),
+    modo, h('div', { class: 'acoes' }, h('button', { class: 'cheio', onclick: () => {
+      if (!confirm('Substituir a escala oficial (' + modo.options[modo.selectedIndex].text + ') pela versão?')) return;
+      const dentro = d => modo.value === 'tudo' ? true : modo.value === 'mes' ? (d >= ini && d <= fim) : d >= ini;
+      Object.keys(estado.dias).forEach(k => { if (dentro(k.slice(0, 10)) && !p.dias[k]) delete estado.dias[k]; });
+      Object.keys(p.dias).forEach(k => { if (dentro(k.slice(0, 10))) estado.dias[k] = Object.assign({}, p.dias[k], { auto: false }); });
+      logar('Versão "' + p.nome + '" aplicada na escala oficial (' + modo.options[modo.selectedIndex].text + ')');
+      salvar(); fecharModal(); toast('Versão aplicada na escala oficial.'); painelGestor();
+    } }, 'Aplicar'), h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+function barraVersoes(ym, nomeMes) {
+  const p = projAtual();
+  const sel = h('select', { 'aria-label': 'Escala exibida', onchange: e => { projAtiva = e.target.value; painelGestor(); } },
+    h('option', { value: '' }, 'Escala oficial (a que os funcionários veem)'),
+    estado.projecoes.map(x => h('option', { value: x.id, selected: x.id === projAtiva }, 'Versão salva: ' + x.nome)));
+  const card = h('div', { class: 'card nao-imprimir' }, h('h3', {}, 'Qual escala você está vendo e editando?'), sel,
+    p ? h('div', { class: 'msg proj' }, h('b', {}, 'Você está numa VERSÃO SALVA (projeção). '), 'O que você alterar fica salvo nela e não muda a escala oficial até você usar "Aplicar na escala oficial".',
+      p.nota ? h('div', { class: 'sutil pequeno' }, 'Nota: ' + p.nota) : null,
+      h('div', { class: 'sutil pequeno' }, diferencasMes(ym, p) + ' dia(s) de ' + nomeMes + ' diferem da escala oficial.'))
+      : h('div', { class: 'sutil pequeno' }, 'Alterações aqui valem para a escala oficial. Para testar um cenário sem mexer nela, crie uma versão.'),
+    h('div', { class: 'acoes' },
+      h('button', { class: 'pq', onclick: () => modalNovaProjecao(false) }, '+ Nova versão'),
+      p ? h('button', { class: 'pq', onclick: () => modalNovaProjecao(true) }, 'Duplicar esta') : null,
+      p ? h('button', { class: 'pq', onclick: () => modalEditarProjecao(p) }, 'Renomear / nota') : null,
+      p ? h('button', { class: 'pq aviso', onclick: () => modalAplicarMes(p, ym, nomeMes) }, 'Aplicar na escala oficial') : null,
+      p ? h('button', { class: 'pq perigo', onclick: () => modalExcluirProjecao(p) }, 'Excluir') : null));
+  return card;
+}
+
+// ----- montar o mês pelas informações da equipe -----
+function montarMes(ym, soFuturo) {
+  const L = camada(), hoje = hojeISO(), ult = ultimoDia(ym), oficial = L === estado.dias, semAtual = iniSemana(hoje);
+  let n = 0;
+  estado.funcionarios.filter(f => !f.gestor).forEach(f => {
+    for (let d = 1; d <= ult; d++) {
+      const data = ym + '-' + pad(d); if (soFuturo && data < hoje) continue;
+      const k = data + '|' + f.id;
+      if (oficial && data < semAtual) L[k] = { s: padrao(f, data), obs: '', auto: true }; else delete L[k];
+      n++;
+    }
+  });
+  logar(ctxLog() + 'Mês ' + ym.slice(5, 7) + '/' + ym.slice(0, 4) + ' montado pelas informações da equipe (' + (soFuturo ? 'de hoje em diante' : 'mês inteiro') + ')');
+  salvar();
+  return n;
+}
+function modalMontarMes(ym, nomeMes) {
+  const modo = h('select', {},
+    h('option', { value: 'tudo' }, 'O mês inteiro (inclusive dias que já passaram)'),
+    h('option', { value: 'futuro' }, 'Só de hoje em diante'));
+  abrirModal(h('h2', {}, 'Montar ' + nomeMes),
+    h('p', { class: 'sutil' }, 'O sistema refaz o mês com as folgas-base, o rodízio de domingo, os feriados e os horários padrão cadastrados na aba Equipe. Mudanças manuais, faltas, observações e horários anotados no período escolhido serão apagados, na escala que está aberta agora (oficial ou versão salva).'),
+    h('p', { class: 'sutil pequeno' }, 'Dica: baixe um backup ou salve uma versão antes de montar.'), modo,
+    h('div', { class: 'acoes' }, h('button', { class: 'perigo', onclick: () => {
+      const n = montarMes(ym, modo.value === 'futuro');
+      fecharModal(); toast('Mês montado (' + n + ' dia(s) refeitos).'); painelGestor();
+    } }, 'Montar mês'), h('button', { onclick: fecharModal }, 'Cancelar')));
+}
+function salvarVersaoMes(nomeMes) {
+  const nome = prompt('Nome para esta versão salva:', nomeMes + ' (' + stamp() + ')');
+  if (!nome || !nome.trim()) return;
+  const pa = projAtual();
+  const nova = { id: 'pj' + Date.now(), nome: nome.trim(), nota: 'Salva a partir de ' + (pa ? 'versão "' + pa.nome + '"' : 'escala oficial') + ' em ' + stamp() + '.', criadaEm: stamp(), dias: clonar(camada()) };
+  estado.projecoes.push(nova);
+  logar('Versão salva: ' + nova.nome); salvar();
+  toast('Versão salva. Ela aparece na lista "Qual escala você está vendo e editando?".'); painelGestor();
+}
+
+// ----- tela principal -----
+function gMes() {
   const L = camada(), pj = projAtual();
   mesAgenda = mesAgenda || hojeISO().slice(0, 7);
-  const ano = +mesAgenda.slice(0, 4), mesN = +mesAgenda.slice(5, 7);
-  const ult = iso(new Date(ano, mesN, 0));
-  const ini = iniSemana(mesAgenda + '-01'), fim = iniSemana(ult);
+  const ym = mesAgenda, ano = +ym.slice(0, 4), mesN = +ym.slice(5, 7), ult = ultimoDia(ym);
   const nomeMes = MESES[mesN - 1].charAt(0).toUpperCase() + MESES[mesN - 1].slice(1) + ' de ' + ano;
+  const dias = []; for (let d = 1; d <= ult; d++) dias.push(ym + '-' + pad(d));
   const pessoas = estado.funcionarios.filter(f => !f.gestor);
+  const irMes = delta => { const dt = new Date(ano, mesN - 1 + delta, 1); mesAgenda = dt.getFullYear() + '-' + pad(dt.getMonth() + 1); painelGestor(); };
 
-  const mesInput = h('input', { type: 'month', value: mesAgenda, style: 'width:auto', 'aria-label': 'Mês da agenda', onchange: e => {
-    if (e.target.value) { mesAgenda = e.target.value; painelGestor(); } } });
+  const mesInput = h('input', { type: 'month', value: ym, style: 'width:auto', 'aria-label': 'Mês da escala', onchange: e => { if (e.target.value) { mesAgenda = e.target.value; painelGestor(); } } });
   const ckHor = h('input', { type: 'checkbox', checked: agendaHorarios, onchange: e => { agendaHorarios = e.target.checked; painelGestor(); } });
-  const bc = barraCamada(); bc.classList.add('nao-imprimir');
-  const controles = h('div', { class: 'card nao-imprimir' }, h('h2', {}, 'Agenda de folgas e horários'),
-    h('p', { class: 'sutil pequeno' }, 'Monta a agenda do mês, semana por semana, com folgas, horários, feriados e faltas de cada equipe, usando a escala exibida acima (oficial ou projeção). Quando estiver tudo certo, imprima ou salve em PDF.'),
-    h('div', { class: 'nav-sem' }, mesInput,
-      h('label', { style: 'display:inline-flex;gap:6px;align-items:center;margin:0' }, ckHor, 'Mostrar horários'),
-      h('button', { class: 'cheio', onclick: () => window.print() }, 'Imprimir ou salvar em PDF')),
-    h('p', { class: 'sutil pequeno' }, 'Na janela de impressão, escolha "Salvar como PDF" e, se couber melhor, a orientação "Paisagem". Para mudar um dia, volte à aba Escala e clique no quadradinho.'));
+  const controles = h('div', { class: 'card nao-imprimir' }, h('h2', {}, 'Escala do mês · ' + (pj ? 'versão "' + pj.nome + '"' : 'oficial')),
+    h('p', { class: 'sutil pequeno' }, 'Clique em qualquer quadradinho para mudar o tipo do dia (trabalho, folga, F.J, F.INJ ou extra), anotar horários e escrever uma observação. Tudo é salvo automaticamente neste navegador. Dias com contorno amarelo foram alterados à mão.'),
+    h('div', { class: 'nav-sem' },
+      h('button', { class: 'pq', onclick: () => irMes(-1) }, '‹ Mês anterior'), mesInput,
+      h('button', { class: 'pq', onclick: () => irMes(1) }, 'Próximo mês ›'),
+      h('button', { class: 'pq', onclick: () => { mesAgenda = hojeISO().slice(0, 7); painelGestor(); } }, 'Este mês'),
+      h('label', { style: 'display:inline-flex;gap:6px;align-items:center;margin:0' }, ckHor, 'Mostrar horários nos dias')),
+    h('div', { class: 'acoes' },
+      h('button', { class: 'cheio', onclick: () => modalMontarMes(ym, nomeMes) }, 'Montar o mês'),
+      h('button', { class: 'pq', onclick: () => { salvar(); toast('Escala salva neste navegador.'); } }, 'Salvar agora'),
+      h('button', { class: 'pq', onclick: () => salvarVersaoMes(nomeMes) }, 'Salvar como versão'),
+      h('button', { class: 'pq', onclick: () => window.print() }, 'Imprimir ou salvar em PDF'),
+      h('button', { class: 'pq', onclick: () => { abaGestor = 'equipe'; painelGestor(); } }, 'Ir para Equipe')),
+    h('p', { class: 'sutil pequeno' }, 'Para imprimir: na janela do navegador escolha "Salvar como PDF" e a orientação "Paisagem".'));
 
-  if (!pessoas.length) return h('div', {}, bc, controles, h('div', { class: 'card' }, h('p', { class: 'sutil' }, 'Cadastre os funcionários na aba Equipe para montar a agenda.')));
+  if (!pessoas.length) return h('div', {}, barraVersoes(ym, nomeMes), controles, h('div', { class: 'card' }, h('p', { class: 'sutil' }, 'Cadastre os funcionários na aba Equipe para montar a escala.')));
+
+  const cab = h('tr', {}, h('th', { class: 'nome' }, 'Colaborador'),
+    dias.map(data => {
+      const dow = dowM(data), fer = feriadoDe(data);
+      return h('th', { class: dow === 6 ? 'dom' : '', title: fer || '' }, String(+data.slice(8)), h('small', {}, DIAS[dow].slice(0, 3).toLowerCase()), fer ? h('small', { class: 'ag-fer' }, 'fer.') : null);
+    }), h('th', {}, 'Fol.'));
+  const linhas = []; let totalFuros = 0;
+  idsFuncoes().forEach(fn => {
+    const eq = equipeDe(fn); if (!eq.length) return;
+    linhas.push(h('tr', {}, h('td', { colspan: String(ult + 2), class: 'grupo' }, nomeEq(fn))));
+    eq.forEach(f => {
+      const r = resumoMes(f, ym, L);
+      linhas.push(h('tr', {}, h('td', { class: 'nome', title: modeloDe(f) + ' · ' + horarioPadrao(f) }, f.nome), dias.map(data => celulaMes(f, data, L)), h('td', {}, String(r.F))));
+    });
+    const mn = estado.minimos[fn] || [0, 0, 0, 0, 0, 0, 0];
+    linhas.push(h('tr', {}, h('td', { class: 'nome sutil' }, 'Trabalhando / mínimo'),
+      dias.map(data => {
+        const c = eq.filter(f => trabalha(statusDia(f, data, L))).length, m = mn[dowM(data)] || 0;
+        if (c < m) totalFuros++;
+        return h('td', { class: c < m ? 'def' : 'sutil', title: c < m ? 'Abaixo do mínimo em ' + dataBR(data) : '' }, c + '/' + m);
+      }), h('td')));
+  });
 
   const m = estado.marca;
-  const topo = h('div', { class: 'ag-topo' }, m.logo ? h('img', { class: 'logo-entra', src: m.logo, alt: '' }) : null,
-    h('div', { class: 'sutil' }, m.nome), h('h2', {}, 'Agenda de folgas e horários · ' + nomeMes),
-    pj ? h('div', { class: 'sutil' }, 'Projeção: ' + pj.nome) : null);
+  const topo = h('div', { class: 'mes-topo' }, m.logo ? h('img', { class: 'logo-entra', src: m.logo, alt: '' }) : null,
+    h('div', { class: 'sutil' }, m.nome), h('h2', {}, 'Escala de folgas e horários · ' + nomeMes),
+    pj ? h('div', { class: 'sutil' }, 'Versão: ' + pj.nome) : null);
+  const legenda = h('div', { class: 'legenda' },
+    h('span', {}, h('span', { class: 'chip' }, 'T'), 'Trabalho'),
+    h('span', {}, h('span', { class: 'chip ag-f' }, 'F'), 'Folga'),
+    h('span', {}, h('span', { class: 'chip ag-fj' }, 'FJ'), 'Falta justificada'),
+    h('span', {}, h('span', { class: 'chip ag-fi' }, 'FI'), 'Falta injustificada'),
+    h('span', {}, h('span', { class: 'chip ag-ex' }, 'EX'), 'Dia extra'),
+    h('span', {}, '● tem observação'), h('span', {}, 'Cinza no cabeçalho: domingo'));
+  const aviso = totalFuros ? h('div', { class: 'msg erro nao-imprimir' }, h('b', { style: 'color:var(--erro)' }, 'Furo: ' + totalFuros + ' ponto(s) abaixo da cobertura mínima neste mês. '), 'Veja as linhas "Trabalhando / mínimo" em vermelho e ajuste clicando nos dias.') : null;
 
-  const cabR = h('tr', {}, ['Colaborador', 'Equipe', 'Modelo', 'Folgas-base', 'Horário padrão', 'Carga'].map(t => h('th', {}, t)));
-  const linhasR = pessoas.map(f => h('tr', {}, h('td', {}, f.nome), h('td', {}, nomeEq(f.funcao)), h('td', {}, modeloDe(f)),
-    h('td', {}, (f.base || []).map(i => DIAS[i]).join(', ') || '—'), h('td', {}, horarioPadrao(f) + (f.hInt ? ' (int. ' + f.hInt + ' min)' : '')), h('td', {}, f.horas + ' h/dia')));
-  const resumo = h('div', { class: 'ag-semana' }, h('h3', {}, 'Resumo por pessoa'),
-    h('div', { class: 'rolagem' }, h('table', { class: 'ag-tab' }, h('thead', {}, cabR), h('tbody', {}, linhasR))));
+  const cabR = h('tr', {}, ['Colaborador', 'Equipe', 'Modelo', 'Folgas-base', 'Horário padrão', 'Trabalho', 'Folga', 'F.J', 'F.INJ', 'Extra'].map(t => h('th', {}, t)));
+  const linhasR = pessoas.map(f => {
+    const r = resumoMes(f, ym, L);
+    return h('tr', {}, h('td', {}, f.nome), h('td', {}, nomeEq(f.funcao)), h('td', {}, modeloDe(f)),
+      h('td', {}, (f.base || []).map(i => DIAS[i]).join(', ') || '—'), h('td', {}, horarioPadrao(f) + (f.hInt ? ' (int. ' + f.hInt + ' min)' : '')),
+      h('td', {}, String(r.T)), h('td', {}, String(r.F)), h('td', {}, String(r.FJ)), h('td', { class: r.FI ? 'def' : '' }, String(r.FI)), h('td', {}, String(r.EX)));
+  });
+  const fers = estado.feriados.filter(x => x.data.slice(0, 7) === ym).sort((a, b) => a.data.localeCompare(b.data));
+  const rodape = h('div', { class: 'ag-rodape' },
+    fers.length ? 'Feriados do mês: ' + fers.map(x => dataBR(x.data) + ' ' + x.nome).join(' · ') + '. ' : 'Sem feriados cadastrados neste mês. ',
+    'Gerada em ' + stamp() + '. Esta escala organiza as folgas e não substitui o controle de ponto oficial.');
 
-  const semanas = [];
-  for (let ws = ini; ws <= fim; ws = addDias(ws, 7)) {
-    const cab = h('tr', {}, h('th', {}, 'Colaborador'), DIAS.map((d, i) => {
-      const dt = addDias(ws, i), fer = feriadoDe(dt);
-      return h('th', { class: dt.slice(0, 7) !== mesAgenda ? 'ag-fora' : '' }, d, h('br'), h('small', {}, dataBR(dt)), fer ? h('small', { class: 'ag-fer' }, fer) : null);
-    }));
-    const linhas = [];
-    idsFuncoes().forEach(fn => {
-      const eq = equipeDe(fn); if (!eq.length) return;
-      linhas.push(h('tr', {}, h('td', { colspan: '8', class: 'grupo' }, nomeEq(fn))));
-      eq.forEach(f => linhas.push(h('tr', {}, h('td', {}, f.nome), DIAS.map((_, d) => celulaAgenda(f, addDias(ws, d), L, mesAgenda)))));
-    });
-    semanas.push(h('div', { class: 'ag-semana' }, h('h3', {}, 'Semana de ' + dataBR(ws) + ' a ' + dataBR(addDias(ws, 6))),
-      h('div', { class: 'rolagem' }, h('table', { class: 'ag-tab' }, h('thead', {}, cab), h('tbody', {}, linhas)))));
-  }
-    const legenda = h('div', { class: 'legenda' },
-    h('span', {}, h('i', { class: 'l-folga' }), 'FOLGA'),
-    h('span', {}, h('i', { class: 'l-fj' }), 'F.J (falta justificada)'),
-    h('span', {}, h('i', { class: 'l-fi' }), 'F.INJ (falta injustificada)'),
-    h('span', {}, h('i', { class: 'l-ex' }), 'EXTRA (dia extra)'),
-    h('span', {}, '● tem observação'));
-  const rodape = h('div', { class: 'ag-rodape' }, 'Gerada em ' + stamp() + '. Dias de outro mês aparecem esmaecidos. Esta agenda organiza a escala e não substitui o controle de ponto oficial.');
-  return h('div', {}, bc, controles, h('div', { class: 'card' }, topo, legenda, resumo, semanas, rodape));
+  return h('div', {}, barraVersoes(ym, nomeMes), controles,
+    h('div', { class: 'card' }, topo, aviso, legenda,
+      h('div', { class: 'rolagem' }, h('table', { class: 'mes-tab' }, h('thead', {}, cab), h('tbody', {}, linhas))),
+      rodape),
+    h('div', { class: 'card' }, h('h3', {}, 'Resumo por pessoa · ' + nomeMes),
+      h('div', { class: 'rolagem' }, h('table', {}, h('thead', {}, cabR), h('tbody', {}, linhasR)))));
 }
 // ===== FIM DA PARTE 7 =====
   // ----- cobertura mínima -----
