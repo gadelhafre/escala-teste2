@@ -793,9 +793,9 @@ function painelGestor() {
   const y = window.scrollY;
   const eu = funcionario(sessionStorage.getItem(SESSAO));
   barra(eu.nome, 'gestor(a)');
-    const telas = { escala: gMes, ponto: gPonto, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, marca: gMarca, log: gLog };
+      const telas = { escala: gMes, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, marca: gMarca, log: gLog };
   if (!telas[abaGestor]) abaGestor = 'escala';
-  const abas = [['escala', 'Escala do mês'], ['ponto', 'Horários (ponto)'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['marca', 'Identidade'], ['log', 'Registro e backup']];
+  const abas = [['escala', 'Escala do mês'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['marca', 'Identidade'], ['log', 'Registro e backup']];
   const nav = h('div', { class: 'abas' }, abas.map(([k, t]) => h('button', { class: abaGestor === k ? 'ativa' : '', onclick: () => { abaGestor = k; painelGestor(); } }, t)));
   app.replaceChildren(nav, telas[abaGestor]());
   window.scrollTo(0, y);
