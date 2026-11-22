@@ -1717,6 +1717,104 @@ function gLog() {
   iniciar();
 })();
 // ===== FIM DA PARTE 8 =====
+  // ---------- tema "clean": só estética, nenhuma função alterada ----------
+(function temaClean() {
+  const st = document.createElement('style');
+  st.id = 'tema-clean';
+  st.textContent = `
+:root{
+  --raio:12px;
+  --sombra:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.06);
+  --sombra-alta:0 2px 4px rgba(0,0,0,.08),0 10px 28px rgba(0,0,0,.14);
+  --suave:.18s ease;
+}
+html{font-size:17px}
+body{
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+
+/* textos pequenos e cinzas: maiores e na cor normal do texto */
+small,.muted,.sub,.hint,.dica,.nota,.fraco,.dim,.obs,.legenda,.ajuda{
+  font-size:.95rem!important;
+  color:inherit!important;
+  opacity:1!important;
+}
+
+/* títulos mais limpos */
+h1,h2,h3{font-weight:700;letter-spacing:-.01em;line-height:1.25}
+
+/* cartões e blocos */
+.card,.cartao,.box,.panel,.painel,section{border-radius:var(--raio)}
+.card,.cartao,.box,.panel,.painel{
+  box-shadow:var(--sombra);
+  border:1px solid color-mix(in srgb,currentColor 10%,transparent);
+  transition:box-shadow var(--suave),transform var(--suave);
+}
+.card:hover,.cartao:hover,.box:hover{box-shadow:var(--sombra-alta)}
+
+/* botões */
+button,.btn{
+  font:inherit;font-weight:600;cursor:pointer;
+  border-radius:10px;padding:.55rem 1rem;
+  transition:transform var(--suave),box-shadow var(--suave),filter var(--suave);
+}
+button:hover,.btn:hover{transform:translateY(-1px);box-shadow:var(--sombra);filter:brightness(1.06)}
+button:active,.btn:active{transform:translateY(0) scale(.98);box-shadow:none}
+
+/* campos */
+input,select,textarea{
+  font:inherit;font-size:1rem;
+  border-radius:10px;padding:.5rem .7rem;
+  border:1px solid color-mix(in srgb,currentColor 22%,transparent);
+  transition:border-color var(--suave),box-shadow var(--suave);
+}
+input[type=checkbox],input[type=radio]{padding:0;transform:scale(1.15)}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:#3b82f6;
+  box-shadow:0 0 0 3px color-mix(in srgb,#3b82f6 28%,transparent);
+}
+:focus-visible{outline:3px solid color-mix(in srgb,#3b82f6 45%,transparent);outline-offset:2px}
+
+/* abas */
+nav button,.abas button,.aba,.tab{
+  border-radius:999px;box-shadow:none;
+}
+
+/* tabelas e calendário */
+table{font-size:.95rem}
+th{font-weight:700;letter-spacing:.01em}
+th,td{padding:.45rem .4rem}
+tbody tr{transition:background var(--suave)}
+tbody tr:hover{background:color-mix(in srgb,currentColor 6%,transparent)}
+td.clic,.cal-dia{
+  cursor:pointer;border-radius:8px;
+  transition:transform var(--suave),box-shadow var(--suave);
+}
+td.clic:hover,.cal-dia:hover{
+  transform:scale(1.1);box-shadow:var(--sombra-alta);position:relative;z-index:2;
+}
+.sbtn{border-radius:10px;transition:transform var(--suave),box-shadow var(--suave)}
+.sbtn:hover{transform:translateY(-2px);box-shadow:var(--sombra)}
+
+/* selos e mensagens */
+.badge{font-size:.85rem;font-weight:600;border-radius:999px;padding:.15rem .6rem}
+.msg,.toast{border-radius:var(--raio);box-shadow:var(--sombra);font-size:1rem}
+
+/* janelas (modais) */
+.modal,.modal-box,.modal-caixa,[role=dialog]{
+  border-radius:16px;box-shadow:var(--sombra-alta);
+  animation:temaEntrada .22s ease;
+}
+.toast{animation:temaEntrada .22s ease}
+@keyframes temaEntrada{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}`;
+  document.head.append(st);
+})();
 </script>
 </body>
 </html>
