@@ -919,7 +919,7 @@ function painelGestor() {
   barra(eu.nome, 'gestor(a)');
       const telas = { escala: gMes, equipe: gEquipe, cobertura: gCobertura, regras: gRegras, audit: gAudit, marca: gMarca, log: gLog };
   if (!telas[abaGestor]) abaGestor = 'escala';
-  const abas = [['escala', 'Escala do mês'], ['equipe', 'Equipe'], ['cobertura', 'Cobertura mínima'], ['regras', 'Regras e parâmetros'], ['audit', 'Auditoria e resumo'], ['marca', 'Identidade'], ['log', 'Registro e backup']];
+ ['marca', 'Identidade'],
   const nav = h('div', { class: 'abas' }, abas.map(([k, t]) => h('button', { class: abaGestor === k ? 'ativa' : '', onclick: () => { abaGestor = k; painelGestor(); } }, t)));
   app.replaceChildren(nav, telas[abaGestor]());
   window.scrollTo(0, y);
@@ -1921,6 +1921,52 @@ td.clic:hover,.cal-dia:hover{
   *{animation:none!important;transition:none!important}
 }`;
   document.head.append(st);
+})();
+  // ---------- botão de configurações (abre a aba Identidade) ----------
+(function botaoConfig() {
+  const st = document.createElement('style');
+  st.textContent = '#btn-config.ativo{outline:2px solid #a78bfa;outline-offset:2px}';
+  document.head.append(st);
+
+  // só mostra o botão quando o painel do gestor está na tela
+  const ehPainelGestor = () =>
+    [...document.querySelectorAll('button')].some(b => b.textContent.trim() === 'Registro e backup');
+
+  let agendado = false;
+  function ajustar() {
+    agendado = false;
+    let btn = document.getElementById('btn-config');
+    if (!ehPainelGestor()) { if (btn) btn.remove(); return; }
+
+    const sair = [...document.querySelectorAll('button')].find(b => /^sair/i.test(b.textContent.trim()));
+    if (!sair) return;
+
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'btn-config';
+      btn.type = 'button';
+      btn.textContent = '⚙ Configurações';
+      btn.title = 'Identidade do site: nome, logo e cores';
+      btn.addEventListener('click', () => {
+        abaGestor = (abaGestor === 'marca') ? 'escala' : 'marca';
+        painelGestor();
+      });
+    }
+    if (btn.nextSibling !== sair) sair.parentNode.insertBefore(btn, sair);
+    btn.classList.toggle('ativo', abaGestor === 'marca');
+  }
+
+  function agendar() {
+    if (agendado) return;
+    agendado = true;
+    requestAnimationFrame(ajustar);
+  }
+
+  function iniciar() {
+    new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
+    agendar();
+  }
+  if (document.body) iniciar(); else document.addEventListener('DOMContentLoaded', iniciar);
 })();
 </script>
 </body>
