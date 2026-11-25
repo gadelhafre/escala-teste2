@@ -1922,6 +1922,49 @@ td.clic:hover,.cal-dia:hover{
 }`;
   document.head.append(st);
 })();
+  // ---------- botão de configurações (abre a aba Identidade) ----------
+(function botaoConfig() {
+  try {
+    const todos = () => [...document.querySelectorAll('button')];
+    const achar = txt => todos().find(b => b.textContent.trim() === txt);
+    let agendado = false;
+
+    function ajustar() {
+      agendado = false;
+      try {
+        const aba = achar('Identidade');
+        const sair = todos().find(b => /^sair/i.test(b.textContent.trim()));
+        let btn = document.getElementById('btn-config');
+        if (!aba || !sair) { if (btn) btn.remove(); return; }
+        aba.style.display = 'none';
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.id = 'btn-config';
+          btn.type = 'button';
+          btn.textContent = '⚙ Configurações';
+          btn.title = 'Identidade do site: nome, logo e cores';
+          btn.addEventListener('click', () => {
+            const a = achar('Identidade');
+            if (a) a.click();
+          });
+        }
+        if (btn.nextSibling !== sair) sair.parentNode.insertBefore(btn, sair);
+      } catch (e) { console.warn('botão config:', e); }
+    }
+
+    function agendar() {
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(ajustar);
+    }
+
+    function iniciar() {
+      new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
+      agendar();
+    }
+    if (document.body) iniciar(); else document.addEventListener('DOMContentLoaded', iniciar);
+  } catch (e) { console.warn('botão config:', e); }
+})();
 </script>
 </body>
 </html>
